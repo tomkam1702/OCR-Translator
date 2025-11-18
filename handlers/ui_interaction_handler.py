@@ -927,6 +927,9 @@ class UIInteractionHandler:
                 elif model_to_configure_for == 'deepl_api':
                     self.app.source_lang_var.set(self.app.deepl_source_lang)
                     self.app.target_lang_var.set(self.app.deepl_target_lang)
+                    # Update DeepL model type options for beta language restriction
+                    if hasattr(self.app, 'update_deepl_model_type_for_language'):
+                        self.app.update_deepl_model_type_for_language()
                 elif model_to_configure_for == 'gemini_api':
                     self.app.source_lang_var.set(self.app.gemini_source_lang)
                     self.app.target_lang_var.set(self.app.gemini_target_lang)

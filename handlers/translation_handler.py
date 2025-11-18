@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from logger import log_debug
 from marian_mt_translator import MarianMTTranslator
 from unified_translation_cache import UnifiedTranslationCache
+from constants import DEEPL_BETA_LANGUAGES
 
 # Import the new LLM provider classes
 from .llm_provider_base import NetworkCircuitBreaker # Used by legacy OCR (if needed)
@@ -533,6 +534,17 @@ Call Duration: {call_duration:.3f} seconds
         try:
             deepl_source_param = source_lang_dl if source_lang_dl and source_lang_dl.lower() != 'auto' else None
             
+            # Check if source or target language is a beta language
+            is_beta_translation = False
+            if source_lang_dl and source_lang_dl.upper() in DEEPL_BETA_LANGUAGES:
+                is_beta_translation = True
+            if target_lang_dl and target_lang_dl.upper() in DEEPL_BETA_LANGUAGES:
+                is_beta_translation = True
+            
+            # Log beta language detection
+            if is_beta_translation:
+                log_debug(f"Beta language detected - source: {source_lang_dl}, target: {target_lang_dl}")
+            
             # Prepare translation parameters
             translate_params = {
                 'text': text_to_translate_dl,
@@ -543,6 +555,12 @@ Call Duration: {call_duration:.3f} seconds
             # Add source language if not auto-detect
             if deepl_source_param:
                 translate_params['source_lang'] = deepl_source_param
+            
+            # Enable beta languages flag if using beta languages
+            # Must be passed via extra_body_parameters dictionary (note: plural)
+            if is_beta_translation:
+                translate_params['extra_body_parameters'] = {'enable_beta_languages': True}
+                log_debug("enable_beta_languages=True added to API call via extra_body_parameters")
             
             # Add context if available (IMPORTANT: context not counted for billing!)
             if context_string and deepl_source_param:  # Only send context with explicit source language
@@ -590,8 +608,16 @@ Call Duration: {call_duration:.3f} seconds
                         'model_type': "latency_optimized"
                     }
                     
+                    # Add source language if available
                     if deepl_source_param:
                         fallback_params['source_lang'] = deepl_source_param
+                    
+                    # Enable beta languages flag if using beta languages
+                    # Note: Beta languages cannot use latency_optimized, so this fallback might fail
+                    # Must be passed via extra_body_parameters dictionary (note: plural)
+                    if is_beta_translation:
+                        fallback_params['extra_body_parameters'] = {'enable_beta_languages': True}
+                        log_debug("Warning: Beta languages require quality_optimized model, fallback may fail")
                     
                     # Include context in fallback attempt as well
                     if context_string and deepl_source_param:

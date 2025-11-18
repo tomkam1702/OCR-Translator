@@ -393,6 +393,9 @@ def create_settings_tab(app):
                 elif active_model == 'deepl_api': 
                     app.deepl_source_lang = api_code
                     log_debug(f"DeepL source lang set to: {api_code}")
+                    # Update DeepL model type options for beta language restriction
+                    if hasattr(app, 'update_deepl_model_type_for_language'):
+                        app.update_deepl_model_type_for_language()
                 elif active_model == 'gemini_api':
                     app.gemini_source_lang = api_code
                     log_debug(f"Gemini source lang set to: {api_code}")
@@ -461,6 +464,9 @@ def create_settings_tab(app):
                 elif active_model == 'deepl_api': 
                     app.deepl_target_lang = api_code
                     log_debug(f"DeepL target lang set to: {api_code}")
+                    # Update DeepL model type options for beta language restriction
+                    if hasattr(app, 'update_deepl_model_type_for_language'):
+                        app.update_deepl_model_type_for_language()
                 elif active_model == 'gemini_api':
                     app.gemini_target_lang = api_code
                     log_debug(f"Gemini target lang set to: {api_code}")
@@ -750,14 +756,40 @@ def create_settings_tab(app):
     # Function to update DeepL model type options when language changes
     def update_deepl_model_type_for_language():
         if hasattr(app, 'deepl_model_type_combobox') and app.deepl_model_type_combobox.winfo_exists():
+            from constants import DEEPL_BETA_LANGUAGES
+            
             # Get current model type setting
             current_model_type = app.deepl_model_type_var.get()
             
-            # Update options with new language
-            new_deepl_model_options = [
-                ("latency_optimized", app.ui_lang.get_label("deepl_classic_model", "Classic")),
-                ("quality_optimized", app.ui_lang.get_label("deepl_nextgen_model", "Next-gen"))
-            ]
+            # Check if either source or target language is a beta language
+            is_beta_translation = False
+            deepl_source = getattr(app, 'deepl_source_lang', '')
+            deepl_target = getattr(app, 'deepl_target_lang', '')
+            
+            if deepl_source and deepl_source.upper() in DEEPL_BETA_LANGUAGES:
+                is_beta_translation = True
+                log_debug(f"DeepL source language {deepl_source} is a beta language")
+            if deepl_target and deepl_target.upper() in DEEPL_BETA_LANGUAGES:
+                is_beta_translation = True
+                log_debug(f"DeepL target language {deepl_target} is a beta language")
+            
+            # Build options based on whether beta languages are involved
+            if is_beta_translation:
+                # Beta languages only support quality_optimized
+                new_deepl_model_options = [
+                    ("quality_optimized", app.ui_lang.get_label("deepl_nextgen_model", "Next-gen"))
+                ]
+                # Force quality_optimized for beta languages
+                if current_model_type != "quality_optimized":
+                    app.deepl_model_type_var.set("quality_optimized")
+                    current_model_type = "quality_optimized"
+                    log_debug("Forced model type to quality_optimized for beta language")
+            else:
+                # Non-beta languages support both models
+                new_deepl_model_options = [
+                    ("latency_optimized", app.ui_lang.get_label("deepl_classic_model", "Classic")),
+                    ("quality_optimized", app.ui_lang.get_label("deepl_nextgen_model", "Next-gen"))
+                ]
             
             # Update combobox values
             app.deepl_model_type_combobox['values'] = [display for _, display in new_deepl_model_options]
@@ -773,7 +805,11 @@ def create_settings_tab(app):
             
             # Update stored options
             app.deepl_model_options = new_deepl_model_options
-            log_debug(f"Updated DeepL model type options for language change")
+            
+            if is_beta_translation:
+                log_debug(f"DeepL model type restricted to Next-gen only (beta language)")
+            else:
+                log_debug(f"DeepL model type options updated (both Classic and Next-gen available)")
     
     # Store function reference for calling during language updates
     app.update_deepl_model_type_for_language = update_deepl_model_type_for_language
