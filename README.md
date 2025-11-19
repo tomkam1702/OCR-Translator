@@ -70,6 +70,25 @@ This application was developed or rather vibe-coded with the support of the foll
 
 ## Key Features
 
+### NEW in Version 3.8.0
+**Release Date: 19 November 2025**
+
+#### 🌍 Massive Minority Language Support Update!
+We've just unlocked a whole new world of translation possibilities! Version 3.8.0 introduces support for **over 70 new languages** in DeepL, focusing on minority and regional languages that are often overlooked.
+
+**What does this mean for you?**
+It means you can now enjoy content in languages that were previously inaccessible.
+*   **Watch a video with Indonesian subtitles translated into Welsh?** *Diolch yn fawr!* (Yes, please!)
+*   **Play a game in Japanese and translate it to Icelandic?** *Já!* (Yes!)
+
+**New Languages Include:**
+Welsh, Irish, Breton, Basque, Catalan, Corsican, Occitan, Quechua, Guarani, Aymara, Maori, Sanskrit, Latin, Esperanto, and many, many more!
+
+> [!NOTE]
+> Please note that these are **DeepL beta languages**, so translation quality may vary compared to fully supported languages.
+
+This update empowers you to bridge the gap between major global languages and the rich tapestry of regional dialects and minority languages. Happy translating!
+
 ### 🚀 NEW in Version 3.7.0
 - **🎯 DeepL Translation with Context - A Game-Changing First!** 🌟: Revolutionary context-aware DeepL translation that intelligently remembers up to 3 previous subtitles for **dramatically improved grammar, accuracy, and natural conversational flow** ✨
   - 🎁 **Completely FREE Feature** - Context usage **doesn't count** towards DeepL's character limits! Unlimited context-aware translations at no extra cost 💰
