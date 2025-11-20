@@ -221,78 +221,78 @@ Turkish,marianmt,Turkish,turecki
 Ukrainian,marianmt,Ukrainian,ukraiński
 Vietnamese,marianmt,Vietnamese,wietnamski
 Welsh,marianmt,Welsh,walijski
-ACE,deepl,Acehnese,acziński
-AF,deepl,Afrikaans,afrikaans
-AN,deepl,Aragonese,aragoński
-AS,deepl,Assamese,asamski
-AY,deepl,Aymara,ajmara
-AZ,deepl,Azerbaijani,azerbejdżański
-BA,deepl,Bashkir,baszkirski
-BE,deepl,Belarusian,białoruski
-BHO,deepl,Bhojpuri,bhodźpuri
-BN,deepl,Bengali,bengalski
-BR,deepl,Breton,bretoński
-BS,deepl,Bosnian,bośniacki
-CA,deepl,Catalan,kataloński
-CEB,deepl,Cebuano,cebuano
-CKB,deepl,Kurdish (Sorani),kurdyjski (sorani)
-CY,deepl,Welsh,walijski
-EO,deepl,Esperanto,esperanto
-EU,deepl,Basque,baskijski
-FA,deepl,Persian,perski
-GA,deepl,Irish,irlandzki
-GL,deepl,Galician,galicyjski
-GN,deepl,Guarani,guarani
-GOM,deepl,Goan Konkani,konkani (goa)
-GU,deepl,Gujarati,gudźarati
-HA,deepl,Hausa,hausa
-HI,deepl,Hindi,hindi
-HR,deepl,Croatian,chorwacki
-HT,deepl,Haitian Creole,haitański
-HY,deepl,Armenian,ormiański
-IG,deepl,Igbo,igbo
-IS,deepl,Icelandic,islandzki
-JV,deepl,Javanese,jawajski
-KA,deepl,Georgian,gruziński
-KK,deepl,Kazakh,kazachski
-KMR,deepl,Kurdish (Kurmanji),kurdyjski (kurmandżi)
-KY,deepl,Kyrgyz,kirgiski
-LA,deepl,Latin,łacina
-LB,deepl,Luxembourgish,luksemburski
-LMO,deepl,Lombard,lombardzki
-LN,deepl,Lingala,lingala
-MAI,deepl,Maithili,maithili
-MG,deepl,Malagasy,malgaski
-MI,deepl,Maori,maoryski
-MK,deepl,Macedonian,macedoński
-MN,deepl,Mongolian,mongolski
-MR,deepl,Marathi,marathi
-MS,deepl,Malay,malajski
-MT,deepl,Maltese,maltański
-MY,deepl,Burmese,birmański
-NE,deepl,Nepali,nepalski
-OC,deepl,Occitan,prowansalski
-PAG,deepl,Pangasinan,pangasinan
-PAM,deepl,Kapampangan,pampango
-PRS,deepl,Dari,dari
-PS,deepl,Pashto,paszto
-QU,deepl,Quechua,keczua
-SA,deepl,Sanskrit,sanskryt
-SCN,deepl,Sicilian,sycylijski
-SQ,deepl,Albanian,albański
-SR,deepl,Serbian,serbski
-SU,deepl,Sundanese,sundajski
-SW,deepl,Swahili,suahili
-TA,deepl,Tamil,tamilski
-TE,deepl,Telugu,telugu
-TG,deepl,Tajik,tadżycki
-TK,deepl,Turkmen,turkmeński
-TL,deepl,Tagalog,tagalski
-TN,deepl,Tswana,tswana
-TS,deepl,Tsonga,tsonga
-TT,deepl,Tatar,tatarski
-UR,deepl,Urdu,urdu
-UZ,deepl,Uzbek,uzbecki
-WO,deepl,Wolof,wolof
-XH,deepl,Xhosa,xhosa
-YUE,deepl,Cantonese,kantoński
+ACE,deepl,Acehnese (beta),acziński (beta)
+AF,deepl,Afrikaans (beta),afrikaans (beta)
+AN,deepl,Aragonese (beta),aragoński (beta)
+AS,deepl,Assamese (beta),asamski (beta)
+AY,deepl,Aymara (beta),ajmara (beta)
+AZ,deepl,Azerbaijani (beta),azerbejdżański (beta)
+BA,deepl,Bashkir (beta),baszkirski (beta)
+BE,deepl,Belarusian (beta),białoruski (beta)
+BHO,deepl,Bhojpuri (beta),bhodźpuri (beta)
+BN,deepl,Bengali (beta),bengalski (beta)
+BR,deepl,Breton (beta),bretoński (beta)
+BS,deepl,Bosnian (beta),bośniacki (beta)
+CA,deepl,Catalan (beta),kataloński (beta)
+CEB,deepl,Cebuano (beta),cebuano (beta)
+CKB,deepl,Kurdish (Sorani) (beta),kurdyjski (sorani) (beta)
+CY,deepl,Welsh (beta),walijski (beta)
+EO,deepl,Esperanto (beta),esperanto (beta)
+EU,deepl,Basque (beta),baskijski (beta)
+FA,deepl,Persian (beta),perski (beta)
+GA,deepl,Irish (beta),irlandzki (beta)
+GL,deepl,Galician (beta),galicyjski (beta)
+GN,deepl,Guarani (beta),guarani (beta)
+GOM,deepl,Goan Konkani (beta),konkani (goa) (beta)
+GU,deepl,Gujarati (beta),gudźarati (beta)
+HA,deepl,Hausa (beta),hausa (beta)
+HI,deepl,Hindi (beta),hindi (beta)
+HR,deepl,Croatian (beta),chorwacki (beta)
+HT,deepl,Haitian Creole (beta),haitański (beta)
+HY,deepl,Armenian (beta),ormiański (beta)
+IG,deepl,Igbo (beta),igbo (beta)
+IS,deepl,Icelandic (beta),islandzki (beta)
+JV,deepl,Javanese (beta),jawajski (beta)
+KA,deepl,Georgian (beta),gruziński (beta)
+KK,deepl,Kazakh (beta),kazachski (beta)
+KMR,deepl,Kurdish (Kurmanji) (beta),kurdyjski (kurmandżi) (beta)
+KY,deepl,Kyrgyz (beta),kirgiski (beta)
+LA,deepl,Latin (beta),łacina (beta)
+LB,deepl,Luxembourgish (beta),luksemburski (beta)
+LMO,deepl,Lombard (beta),lombardzki (beta)
+LN,deepl,Lingala (beta),lingala (beta)
+MAI,deepl,Maithili (beta),maithili (beta)
+MG,deepl,Malagasy (beta),malgaski (beta)
+MI,deepl,Maori (beta),maoryski (beta)
+MK,deepl,Macedonian (beta),macedoński (beta)
+MN,deepl,Mongolian (beta),mongolski (beta)
+MR,deepl,Marathi (beta),marathi (beta)
+MS,deepl,Malay (beta),malajski (beta)
+MT,deepl,Maltese (beta),maltański (beta)
+MY,deepl,Burmese (beta),birmański (beta)
+NE,deepl,Nepali (beta),nepalski (beta)
+OC,deepl,Occitan (beta),prowansalski (beta)
+PAG,deepl,Pangasinan (beta),pangasinan (beta)
+PAM,deepl,Kapampangan (beta),pampango (beta)
+PRS,deepl,Dari (beta),dari (beta)
+PS,deepl,Pashto (beta),paszto (beta)
+QU,deepl,Quechua (beta),keczua (beta)
+SA,deepl,Sanskrit (beta),sanskryt (beta)
+SCN,deepl,Sicilian (beta),sycylijski (beta)
+SQ,deepl,Albanian (beta),albański (beta)
+SR,deepl,Serbian (beta),serbski (beta)
+SU,deepl,Sundanese (beta),sundajski (beta)
+SW,deepl,Swahili (beta),suahili (beta)
+TA,deepl,Tamil (beta),tamilski (beta)
+TE,deepl,Telugu (beta),telugu (beta)
+TG,deepl,Tajik (beta),tadżycki (beta)
+TK,deepl,Turkmen (beta),turkmeński (beta)
+TL,deepl,Tagalog (beta),tagalski (beta)
+TN,deepl,Tswana (beta),tswana (beta)
+TS,deepl,Tsonga (beta),tsonga (beta)
+TT,deepl,Tatar (beta),tatarski (beta)
+UR,deepl,Urdu (beta),urdu (beta)
+UZ,deepl,Uzbek (beta),uzbecki (beta)
+WO,deepl,Wolof (beta),wolof (beta)
+XH,deepl,Xhosa (beta),xhosa (beta)
+YUE,deepl,Cantonese (beta),kantoński (beta)
