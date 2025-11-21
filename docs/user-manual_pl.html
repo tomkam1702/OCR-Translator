@@ -1,679 +1,849 @@
 ﻿<!DOCTYPE html>
 <html lang="pl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="author" content="Tomasz Kamiński" />
-    <title>Instrukcja obsługi programu Game-Changing Translator</title>
-    <style type="text/css">
-        /* Base styling */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-            
-        /* Avoid page breaks inside the most common attributes, especially for exports (i.e. PDF) */
-        td, h1, h2, h3, h4, h5, p, ul, ol, li {
-            page-break-inside: avoid; 
-        }
 
-        /* Make all images responsive - fit within browser window width */
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 0 20px 0; /* Left-aligned with bottom margin */
-        }
-        
-        /* Set main screenshot to 75% of browser window width */
-        img[src="screenshots/screenshot2_pol_deepl.jpg"] {
-            width: 75vw;
-            height: auto;
-        }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Tomasz Kamiński" />
+  <title>Instrukcja obsługi programu Game-Changing Translator</title>
+  <style type="text/css">
+    /* Base styling */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-        /* Heading styles */
-        h1, h2, h3, h4, h5 {
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
-            color: #111;
-        }
-        
-        h1 {
-            font-size: 2.2em;
-            border-bottom: 2px solid #eaecef;
-            padding-bottom: 0.3em;
-        }
-        
-        h2 {
-            font-size: 1.8em;
-            border-bottom: 1px solid #eaecef;
-            padding-bottom: 0.3em;
-        }
-        
-        h3 {
-            font-size: 1.4em;
-        }
+    /* Avoid page breaks inside the most common attributes, especially for exports (i.e. PDF) */
+    td,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    p,
+    ul,
+    ol,
+    li {
+      page-break-inside: avoid;
+    }
 
-        /* Table styling */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 20px 0;
-            overflow: auto;
-        }
-        
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 12px 16px;
-            text-align: left;
-        }
-        
-        table th {
-            background-color: #f6f8fa;
-            font-weight: 600;
-        }
-        
-        table tr:nth-child(2n) {
-            background-color: #f8f8f8;
-        }
+    /* Make all images responsive - fit within browser window width */
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 0 20px 0;
+      /* Left-aligned with bottom margin */
+    }
 
-        /* List styling */
-        ol, ul {
-            padding-left: 2em;
-        }
-        
-        li {
-            margin: 0.3em 0;
-        }
+    /* Set main screenshot to 75% of browser window width */
+    img[src="screenshots/screenshot2_pol_deepl.jpg"] {
+      width: 75vw;
+      height: auto;
+    }
 
-        /* Code styling */
-        code {
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-            padding: 0.2em 0.4em;
-            margin: 0;
-            font-size: 0.9em;
-            background-color: rgba(27, 31, 35, 0.05);
-            border-radius: 3px;
-        }
+    /* Heading styles */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+      color: #111;
+    }
 
-        /* Link styling */
-        a {
-            color: #0366d6;
-            text-decoration: none;
-        }
-        
-        a:hover {
-            text-decoration: underline;
-        }
+    h1 {
+      font-size: 2.2em;
+      border-bottom: 2px solid #eaecef;
+      padding-bottom: 0.3em;
+    }
 
-        /* Blockquote styling */
-        blockquote {
-            padding: 0 1em;
-            color: #6a737d;
-            border-left: 0.25em solid #dfe2e5;
-            margin: 0 0 16px 0;
-        }
+    h2 {
+      font-size: 1.8em;
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: 0.3em;
+    }
 
-        /* Flag styling */
-        .flag-container {
-            position: fixed;
-            top: 8px;
-            right: 8px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 4px;
-            padding: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .flag-container img {
-            width: 48px;
-            height: auto;
-            display: block;
-            margin: 0;
-        }
+    h3 {
+      font-size: 1.4em;
+    }
 
-        /* Gaming note style */
-        .gaming-note {
-            background-color: #f3e5f5;
-            border: 2px solid #9c27b0;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 12px 0;
-            display: inline-flex;
-            align-items: flex-start;
-            gap: 12px;
-            max-width: 100%;
-        }
-        
-        .gaming-note-icon {
-            font-size: 1.2em;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-        
-        .gaming-note-content {
-            flex: 1;
-        }
+    /* Table styling */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+      overflow: auto;
+    }
 
-        /* MarianMT note style */
-        .marianmt-note {
-            background-color: #fffbf0;
-            border: 2px solid #ffa000;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 12px 0;
-            display: inline-flex;
-            align-items: flex-start;
-            gap: 12px;
-            max-width: 100%;
-        }
-        
-        .marianmt-note-icon {
-            font-size: 1.2em;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-        
-        .marianmt-note-content {
-            flex: 1;
-        }
-            
-        /* OpenAI note style */
-        .openai-note {
-            background-color: #e0f7fa;
-            border: 2px solid #0097a7;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 12px 0;
-            display: inline-flex;
-            align-items: flex-start;
-            gap: 12px;
-            max-width: 100%;
-        }
+    table th,
+    table td {
+      border: 1px solid #ddd;
+      padding: 12px 16px;
+      text-align: left;
+    }
 
-        .openai-note-icon {
-            font-size: 1.2em;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
+    table th {
+      background-color: #f6f8fa;
+      font-weight: 600;
+    }
 
-        .openai-note-content {
-            flex: 1;
-        }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8;
+    }
 
-        /* Disclaimer note style */
-        .disclaimer-note {
-            background-color: #ffebee;
-            border: 2px solid #d32f2f;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 12px 0;
-            display: inline-flex;
-            align-items: flex-start;
-            gap: 12px;
-            max-width: 100%;
-        }
-        
-        .disclaimer-note-icon {
-            font-size: 1.2em;
-            flex-shrink: 0;
-            margin-top: 2px;
-            color: #d32f2f;
-        }
-        
-        .disclaimer-note-content {
-            flex: 1;
-        }
-    </style>
-  </head>
-  <body>
-    <div class="flag-container">
-      <img src="screenshots/poland-flag-icon.svg" alt="Polish Flag" title="Polski" />
-    </div>
-    <h1 id="game-changing-translator-user-manual">Instrukcja obsługi programu Game-Changing Translator</h1>
-    <p>Copyright © 2025 Tomasz Kamiński<br>
-    <em>Ostatnia aktualizacja: 4 października 2025 r.</em></p>
-    <p>
-      <img src="screenshots/screenshot2_pol_deepl.jpg" alt="Główny interfejs Game-Changing Translator" class="logo-image" />
-    </p>
-    <h2 id="table-of-contents">Spis treści</h2>
-    <ol>
-      <li>
-        <a href="#introduction">Wprowadzenie</a>
-      </li>
-      <li>
-        <a href="#getting-started">Pierwsze kroki</a>
-      </li>
-      <li>
-        <a href="#main-interface">Interfejs główny</a>
-      </li>
-      <li>
-        <a href="#setting-up-translation-areas">Ustawianie obszarów tłumaczenia</a>
-      </li>
-      <li>
-        <a href="#settings-configuration">Konfiguracja ustawień</a>
-      </li>
-      <li>
-        <a href="#ai-translation-and-ocr">Tłumaczenie i OCR z wykorzystaniem sztucznej inteligencji</a>
-        <ul>
-            <li><a href="#gemini-ocr-premium-text-recognition">Gemini OCR – zaawansowane rozpoznawanie tekstu</a></li>
-            <li><a href="#gemini-api-cost-effective-and-context-aware-translation">Gemini API – tanie tłumaczenie kontekstowe</a></li>
-            <li><a href="#openai-api-a-flexible-alternative">OpenAI API – elastyczna alternatywa</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="#api-usage-monitoring">Monitorowanie zużycia API</a>
-      </li>
-      <li>
-        <a href="#other-translation-methods">Inne metody tłumaczenia</a>
-          <ul>
-              <li><a href="#marianmt-offline-and-free">MarianMT (lokalny i bezpłatny)</a></li>
-              <li><a href="#deepl-api">DeepL API</a></li>
-              <li><a href="#google-translate-api">Google Translate API</a></li>
-          </ul>
-      </li>
-      <li>
-        <a href="#keyboard-shortcuts">Skróty klawiszowe</a>
-      </li>
-      <li>
-        <a href="#troubleshooting">Rozwiązywanie problemów</a>
-      </li>
-      <li>
-        <a href="#tips-and-best-practices">Porady i najlepsze praktyki</a>
-      </li>
-    </ol>
-    <h2 id="introduction">Wprowadzenie</h2>
-    <p><strong>Game-Changing Translator</strong>  to program komputerowy, który automatycznie przechwytuje tekst z dowolnego fragmentu ekranu, przeprowadza optyczne rozpoznawanie znaków (OCR) i tłumaczy tekst w czasie rzeczywistym. Dzięki ruchomym oknom nakładek tłumaczenie można umieścić w dowolnym miejscu na ekranie, przez co aplikacja doskonale nadaje się do tłumaczenia gier, filmów, plików PDF lub dowolnych programów zawierających tekst, którego nie da się łatwo skopiować i wkleić.</p>
-    <h2 id="getting-started">Pierwsze kroki</h2>
-    <h3 id="requirements">Wymagania</h3>
-    <p>Przed rozpoczęciem korzystania z <strong>Game-Changing Translator</strong>  sprawdź, czy system spełnia następujące wymagania:</p>
-    <ul>
-      <li>System operacyjny Windows.</li>
-      <li>Zainstalowany program <a href="https://github.com/UB-Mannheim/tesseract/wiki">Tesseract OCR</a> (wymagany tylko przy korzystaniu z Tesseract OCR, ale zalecany w standardowych scenariuszach z wyraźnymi napisami).</li>
-      <li>Niniejsza aplikacja zainstalowana zgodnie z <a href="installation_pl.html">instrukcją instalacji</a>.</li>
-    </ul>
-    <h3 id="first-run">Pierwsze uruchomienie</h3>
-    <ol>
-      <li>Uruchom <strong>Game-Changing Translator</strong> przez wykonanie skryptu <code>main.py</code> lub pliku wykonywalnego, jeśli korzystasz z wersji skompilowanej.</li>
-      <li>Przy pierwszym uruchomieniu aplikacja ładuje się z domyślnymi ustawieniami, a oba obszary (źródłowy i docelowy) będą ukryte.</li>
-      <li>Przed rozpoczęciem tłumaczenia musisz:
-        <ul>
-          <li>sprawdzić ścieżkę do programu Tesseract w zakładce <strong>Ustawienia</strong>,</li>
-          <li>wybrać obszary źródłowy i docelowy,</li>
-          <li>skonfigurować preferowaną metodę tłumaczenia.</li>
-        </ul>
-      </li>
-      <li>Przycisk <strong>Start</strong> włącza proces tłumaczenia i automatycznie wyświetla <strong>okno tłumaczenia</strong>.</li>
-      <li>Przycisk <strong>Stop</strong> wyłącza proces tłumaczenia i automatycznie ukrywa <strong>okno tłumaczenia</strong>.</li>
-      <li>Widoczność <strong>okna tłumaczenia</strong> można przełączać ręcznie w dowolnym momencie za pomocą skrótu <strong>Alt+2</strong>.</li>
-    </ol>
-    <h2 id="main-interface">Interfejs główny</h2>
-    <p>Interfejs główny jest podzielony na pięć zakładek:</p>
-    <h3 id="main-tab">Zakładka Start</h3>
-    <p>
-      <img src="screenshots/Home_pl.png" alt="Zakładka Start" />
-    </p>
-    <ol>
-      <li>
-        <strong>Wybierz obszar źródłowy (OCR)</strong> – określ obszar, z którego tekst będzie przechwytywany.</li>
-      <li>
-        <strong>Wybierz obszar tłumaczenia</strong> – określ, gdzie ma się pojawić tłumaczenie.</li>
-      <li>
-        <strong>Start/Stop</strong> – włącz proces tłumaczenia.</li>
-      <li>
-        <strong>Pokaż lub ukryj okno źródłowe</strong> – przełącz widoczność obszaru przechwytywania tekstu źródłowego.</li>
-      <li>
-        <strong>Pokaż lub ukryj okno tłumaczenia</strong> – przełącz widoczność obszaru tłumaczenia.</li>
-      <li>
-        <strong>Wyczyść bufor tłumaczenia</strong> – usuń tłumaczenia przechowywane w pamięci, aby wymusić ponowne tłumaczenie.</li>
-      <li>
-        <strong>Wyczyść dziennik debugowania</strong> – wyczyść dziennik zdarzeń aplikacji.</li>
-      <li>
-        <strong>Wyłącz dziennik debugowania</strong> – wyłącz rejestrowanie zdarzeń w pliku w celu poprawy wydajności.</li>
-      <li>
-        <strong>Skróty klawiszowe</strong> – lista dostępnych skrótów klawiszowych.</li>
-      <li>
-        <strong>Status</strong> – aktualny stan aplikacji.</li>
-    </ol>
-    <h3 id="settings-tab">Zakładka Ustawienia</h3>
-    <p>
-      <img src="screenshots/Settings_pl.png" alt="Zakładka Ustawienia" />
-    </p>
-    <p>Tutaj można skonfigurować:</p>
-    <ol>
-      <li>
-        <strong>Model tłumaczenia</strong> – wybierz spośród różnych modeli tłumaczeń (Gemini, OpenAI, MarianMT, DeepL itp.).</li>
-      <li>
-        <strong>Model OCR</strong> – wybierz między <strong>Tesseract (lokalny)</strong>, <strong>Gemini API (online)</strong> lub <strong>OpenAI API (online)</strong>.</li>
-      <li>
-        <strong>Język źródłowy</strong> – język źródłowy i rozpoznawany przez OCR (tylko DeepL i Google Translate).</li>
-      <li>
-        <strong>Język docelowy</strong> – język tłumaczenia (tylko DeepL i Google Translate).</li>
-      <li>
-        <strong>Klucz API</strong> – tylko w przypadku Gemini, OpenAI, DeepL lub Google Translate.</li>
-      <li>
-        <strong>Jakość</strong> – wybierz między opcjami <strong>Klasyczna</strong> (szybsze tłumaczenie) lub <strong>Nowej generacji</strong> (potencjalnie lepsza jakość) (tylko DeepL).</li>
-      <li>
-        <strong>Opcje MarianMT</strong> – lokalne tłumaczenie neuronowe (tylko model MarianMT).</li>
-      <li>
-        <strong>Opcje Gemini/OpenAI</strong> – tanie tłumaczenie modelem LLM z uwzględnieniem kontekstu.</li>
-      <li>
-        <strong>Ścieżka do Tesseract</strong> – ścieżka do pliku wykonywalnego Tesseract OCR (tylko Tesseract).</li>
-      <li>
-        <strong>Interwał skanowania (ms)</strong> – jak często ma być przechwytywany ekran.</li>
-      <li>
-        <strong>Czas wyświetlania tłumaczenia (s)</strong> – czas, po którym tłumaczenie zostanie usunięte, gdy zniknie tekst źródłowy.</li>
-      <li>
-        <strong>Próg stabilności tekstu</strong> – liczba identycznych odczytów wymaganych przed tłumaczeniem (tylko Tesseract).</li>
-      <li>
-        <strong>Próg pewności OCR</strong> – minimalna pewność dla uwzględnienia tekstu wykrytego przez OCR (tylko Tesseract).</li>
-      <li>
-        <strong>Tryb przetwarzania obrazu</strong> – sposób przetwarzania obrazów przez OCR (tylko Tesseract).</li>
-      <li>
-        <strong>Debugowanie OCR</strong> – opcja wyświetlania obrazów debugowania i tekstu na zakładce <strong>Ustawienia</strong> (tylko Tesseract).</li>
-      <li>
-        Przycisk <strong>Podgląd</strong> – otwiera okno podglądu OCR (tylko Tesseract).</li>
-      <li>
-        <strong>Usuń śmieci na końcu</strong> – opcja usuwania tekstu po ostatnim znaku interpunkcyjnym (tylko Tesseract).</li>
-      <li>
-        <strong>Opcje wyglądu</strong> – kolory i rozmiary czcionek dla nakładek.</li>
-      <li>
-        <strong>Opcje buforowania do plików</strong> – ustawienia włączania/wyłączania buforowania w przypadku usług API.</li>
-    </ol>
-    <h3 id="ocr-preview">Podgląd OCR (tylko Tesseract)</h3>
-    <p>
-      <img src="screenshots/OCR_Preview_pl.png" alt="Okno podglądu OCR" />
-    </p>
-    <p>Kliknięcie przycisku <strong>Podgląd</strong> w zakładce <strong>Ustawienia</strong> otwiera osobne okno <strong>Podgląd OCR</strong> podczas korzystania z Tesseract OCR. To okno wyświetla:</p>
-    <ol>
-      <li>
-        <strong>Przetworzony obraz (skala 1:1)</strong> – wstępnie przetworzony obraz używany do rozpoznawania OCR.</li>
-      <li>
-        <strong>Rozpoznany tekst</strong> – tekst obecnie rozpoznawany przez silnik OCR.</li>
-    </ol>
-    <p>To okno podglądu jest szczególnie przydatne do precyzyjnego dostrajania ustawień OCR i zrozumienia, dlaczego niektóre teksty mogą nie być rozpoznawane prawidłowo. Można je przesuwać i zmieniać jego rozmiar niezależnie od <strong>głównego okna aplikacji</strong>.</p>
-    <h3 id="api-usage-tab">Zakładka Zużycie API</h3>
-    <p>
-      <img src="screenshots/API_Stats_pl.png" alt="Zakładka Zużycie API" />
-    </p>
-    <p>Ta zakładka umożliwia kompleksowe monitorowanie i analizę zużycia API usług takich jak Gemini i OpenAI. Obejmuje:</p>
-    <ol>
-      <li>
-        <strong>Statystyki OCR (Gemini i OpenAI)</strong> – śledzenie kosztów i wskaźniki wydajności OCR.</li>
-      <li>
-        <strong>Statystyki tłumaczenia (Gemini i OpenAI)</strong> – liczby słów, koszty i wskaźniki wydajności tłumaczeń.</li>
-      <li>
-        <strong>Łączne statystyki API</strong> – ogólna analiza kosztów i prognozy dla każdego dostawcy.</li>
-      <li>
-        <strong>Monitor zużycia DeepL</strong> – monitorowanie darmowych miesięcznych limitów DeepL API.</li>
-      <li>
-        <strong>Narzędzia eksportu i zarządzania</strong> – eksport statystyk do pliku CSV, pliku tekstowego i kopiowanie do schowka.</li>
-    </ol>    
-    <p>Szczegółowe informacje o wszystkich dostępnych statystykach i funkcjach śledzenia kosztów znajdziesz w sekcji <a href="#api-usage-monitoring">Monitorowanie zużycia API</a>.</p>
-    <h3 id="debug-tab">Zakładka Debugowanie</h3>
-    <p>
-      <img src="screenshots/Debugging_pl.png" alt="Zakładka Debugowanie" />
-    </p>
-    <p>Ta zakładka pokazuje:</p>
-    <ol>
-      <li>
-        <strong>Obraz oryginalny</strong> – nieprzetworzony przechwycony obraz.</li>
-      <li>
-        <strong>Obraz przetworzony</strong> – obraz po przetworzeniu przez OCR.</li>
-      <li>
-        <strong>Wyniki OCR</strong> – tekst rozpoznany przez OCR.</li>
-      <li>
-        <strong>Dziennik aplikacji</strong> – bieżący dziennik zdarzeń aplikacji.</li>
-      <li>
-        <strong>Zapisz obrazy OCR</strong> i <strong>Odśwież dziennik</strong> – przyciski do zapisywania obrazów debugowania i odświeżania dziennika.</li>
-    </ol>    
-    <h3 id="about-tab">Zakładka Informacje</h3>
-    <p>Ta zakładka zawiera podstawowe informacje o aplikacji oraz przycisk <strong>Sprawdź dostępność aktualizacji</strong>, który umożliwia prostą i szybką aktualizację do najnowszej wersji.</p>
-    <h2 id="setting-up-translation-areas">Ustawianie obszarów tłumaczenia</h2>
-    <h3 id="selecting-the-source-area">Wybór obszaru źródłowego</h3>
-    <ol>
-      <li>Kliknij przycisk <strong>Wybierz obszar źródłowy (OCR)</strong>.</li>
-      <li>Ekran zostanie przyciemniony i zobaczysz czarny krzyżyk.</li>
-      <li>Kliknij i przeciągnij, aby zaznaczyć obszar zawierający tekst, który chcesz przetłumaczyć.</li>
-      <li>Po zaznaczeniu półprzezroczyste okno nakładki pojawi się w wybranym miejscu.</li>
-      <li>Ta nakładka będzie domyślnie ukryta przy uruchomieniu aplikacji.</li>
-      <li>Nakładkę można:
-        <ul>
-          <li><strong>przesuwać</strong>: przeciągając za pasek tytułowy;</li>
-          <li><strong>powiększać i zmniejszać</strong>: przeciągając dowolną krawędź lub róg;</li>
-          <li><strong>ukrywać lub wyświetlać</strong>: za pomocą przycisku <strong>Pokaż lub ukryj okno źródłowe</strong> lub skrótu <strong>Alt+1</strong>.</li>
-        </ul>
-      </li>
-    </ol>
-    <h3 id="selecting-the-target-area">Wybór obszaru docelowego</h3>
-    <ol>
-      <li>Kliknij przycisk <strong>Wybierz obszar tłumaczenia</strong>.</li>
-      <li>Ekran zostanie przyciemniony i zobaczysz czarny krzyżyk.</li>
-      <li>Kliknij i przeciągnij, aby zaznaczyć miejsce, w którym chcesz, aby pojawiło się tłumaczenie.</li>
-      <li>Po zaznaczeniu półprzezroczyste okno nakładki pojawi się w wybranym miejscu.</li>
-      <li>Ta nakładka będzie domyślnie ukryta przy uruchomieniu aplikacji.</li>
-      <li>Nakładkę można:
-        <ul>
-          <li><strong>przesuwać</strong>: przeciągając za pasek tytułowy;</li>
-          <li><strong>powiększać i zmniejszać</strong>: przeciągając dowolną krawędź lub róg;</li>
-          <li><strong>ukrywać lub wyświetlać</strong>: za pomocą przycisku <strong>Pokaż lub ukryj okno tłumaczenia</strong> lub skrótu <strong>Alt+2</strong>.</li>
-        </ul>
-      </li>
-    </ol>
-    <h2 id="settings-configuration">Konfiguracja ustawień</h2>
-    <h3 id="translation-configuration">Konfiguracja tłumaczenia</h3>
-    <ol>
-      <li>
-        <p>
-          <strong>Model tłumaczenia</strong>:</p>
-        <p>Dostępne są różnorodne usługi tłumaczeniowe, zarówno oparte na sztucznej inteligencji, jak i tradycyjne:</p>
-        <ul>
-          <li>
-            <strong>Modele Gemini (różne)</strong> – różne modele AI od Google. Wymagają klucza API, zapewniają tanie tłumaczenia z uwzględnieniem kontekstu.</li>
-          <li>
-            <strong>Modele OpenAI (różne)</strong> – różne modele od OpenAI (GPT-5, GPT-4.1). Stanowią elastyczną alternatywę dla tłumaczeń AI.</li>
-          <li>
-            <strong>MarianMT (lokalny i bezpłatny)</strong> – nie wymaga klucza API, pobiera modele przy pierwszym użyciu, działa bez połączenia z Internetem.</li>
-          <li>
-            <strong>DeepL API</strong> – wymaga klucza API, zapewnia tłumaczenia wysokiej jakości.</li>
-          <li>
-            <strong>Google Translate API</strong> – wymaga klucza API, obsługuje wiele języków.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Język źródłowy</strong>:</p>
-        <ul>
-          <li>Język, który będzie tłumaczony na język docelowy.</li>
-          <li>Silnik OCR będzie używał tego języka do rozpoznawania tekstu w celu poprawy dokładności.</li>
-          <li>Gdy zmienisz język źródłowy do tłumaczenia, język OCR zostanie odpowiednio zaktualizowany.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Język docelowy</strong>:</p>
-        <ul>
-          <li>Język, na który tekst ma zostać przetłumaczony.</li>
-          <li>Pamiętaj, że nie wszystkie pary językowe są obsługiwane przez wszystkie metody tłumaczenia.</li>
-        </ul>
-      </li>
-    </ol>
-    <h3 id="ocr-configuration">Konfiguracja OCR</h3>
-    <ol>
-      <li>
-        <p>
-          <strong>Model OCR</strong>:</p>
-        <p>Wybierz między modelami online opartymi na AI a tradycyjnym silnikiem offline:</p>
-        <ul>
-          <li>
-            <strong>Modele Gemini (różne)</strong> – zaawansowane OCR z wykorzystaniem sztucznej inteligencji o doskonałej jakości w przypadku słabo widocznych napisów. Wymagają klucza API i połączenia z Internetem.</li>
-          <li>
-            <strong>Modele OpenAI (różne)</strong> - alternatywny dostawca OCR opartego na AI, wykorzystujący modele takie jak GPT-4.1 Nano, oferujący bardzo dobrą jakość.</li>
-          <li>
-            <strong>Tesseract (lokalny)</strong> – tradycyjne narzędzie OCR, bezpłatne i działa offline. Zalecane dla wyraźnych napisów o dobrym kontraście.</li>
-          <li>Podczas korzystania z Gemini lub OpenAI OCR można wybrać różne modele do operacji OCR i tłumaczenia.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Ścieżka do Tesseract (tylko Tesseract)</strong>:</p>
-        <ul>
-          <li>Powinna wskazywać miejsce instalacji programu Tesseract (np. <code>C:\Program Files\Tesseract-OCR\tesseract.exe</code>).</li>
-          <li>Użyj przycisku <strong>Wskaż</strong>, aby wskazać lokalizację.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Tryb przetwarzania obrazu (tylko Tesseract)</strong>:</p>
-        <ul>
-          <li>
-            <strong>Brak</strong> – bez przetwarzania, dobry dla wyraźnego tekstu.</li>
-          <li>
-            <strong>Binarny</strong> – konwersja czarno–biała, dobra dla tekstu o wysokim kontraście.</li>
-          <li>
-            <strong>Binarny odwrócony</strong> – odwrócony tryb binarny, dobry dla białego tekstu na ciemnym tle.</li>
-          <li>
-            <strong>Adaptacyjny</strong> – zaawansowane progowanie adaptacyjne dla trudnych środowisk.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Tryb adaptacyjny (tylko Tesseract)</strong>:</p>
-        <p>Po wybraniu trybu przetwarzania <strong>Adaptacyjny</strong> system odblokowuje zaawansowane możliwości progowania adaptacyjnego, które doskonale sprawdzają się w trudnych środowiskach graficznych. Ten tryb jest szczególnie cenny w przypadku kłopotliwych warunków, takich jak małe napisy nałożone na dynamiczne, migające tła o stale zmieniających się kolorach i oświetleniu.</p>
-        <p>W przeciwieństwie do trzech standardowych trybów przetwarzania tryb adaptacyjny zapewnia dwa regulowane parametry, które pozwalają na precyzyjne dostrojenie procesu rozpoznawania OCR:</p>
-        <ul>
-          <li><strong>Rozmiar bloku</strong> – kontroluje wielkość obszaru sąsiadującego używanego do obliczania wartości progowej. Większe wartości (np. 15–25) sprawdzają się lepiej w przypadku tekstu ze stopniowymi zmianami oświetlenia, podczas gdy mniejsze wartości (np. 7–13) są bardziej skuteczne dla tekstu z ostrymi zmianami kontrastu.</li>
-          <li><strong>Wartość C</strong> – działa jako stała odejmowana od średniej wartości progowej. Wartości dodatnie czynią progowanie bardziej konserwatywnym (mniej wykrywanego tekstu, ale wyższa dokładność), podczas gdy wartości ujemne czynią je bardziej agresywnym (więcej wykrywanego tekstu, ale potencjalnie więcej szumów).</li>
-        </ul>
-        <p>Ten tryb okazuje się bezcenny, gdy standardowe przetwarzanie nie zapewnia wiarygodnych wyników. Eksperymentując z tymi dwoma parametrami, często można osiągnąć lepsze rozpoznawanie OCR niż w przypadku gotowych trybów, szczególnie gdy tła zawierają ruchome elementy, zmienne oświetlenie lub złożone wzory wizualne, które w przeciwnym razie przeszkadzałyby w wykrywaniu tekstu.</p>
-        <p>Aby uzyskać optymalne rezultaty, zacznij od umiarkowanych wartości (<strong>Rozmiar bloku</strong>: 11, <strong>Wartość C</strong>: 2) i dostosowuj je do konkretnej treści. Zwiększ <strong>Rozmiar bloku</strong> dla większego tekstu lub stopniowych zmian oświetlenia i zmieniaj <strong>Wartość C</strong>, aby zachować równowagę między przechwytywaniem całego tekstu a rozpoznawaniem go tam, gdzie go nie ma.</p>
-      </li>
-      <li>
-        <p>
-          <strong>Próg pewności OCR (tylko Tesseract)</strong>:</p>
-        <ul>
-          <li>Wyższe wartości (np. 80) dają mniej wyników, ale są bardziej dokładne.</li>
-          <li>Niższe wartości (np. 40) wychwytują więcej tekstu, ale mogą zawierać błędy.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Próg stabilności tekstu (tylko Tesseract)</strong>:</p>
-        <ul>
-          <li>Określa, ile identycznych odczytów OCR jest potrzebnych przed rozpoczęciem tłumaczenia.</li>
-          <li>Wyższe wartości zmniejszają migotanie, ale zwiększają opóźnienie.</li>
-          <li>Ustaw na 0 w celu natychmiastowego tłumaczenia (może powodować migotanie).</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Debugowanie OCR (tylko Tesseract)</strong>:</p>
-        <ul>
-          <li>Po włączeniu pokazuje przechwycone obrazy i wyniki OCR w zakładce <strong>Debugowanie</strong>.</li>
-          <li>Przydatne przy rozwiązywaniu problemów z rozpoznawaniem tekstu.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Usuń śmieci na końcu (tylko Tesseract)</strong>:</p>
-        <ul>
-          <li>Po włączeniu usuwa tekst występujący po ostatnim znaku interpunkcyjnym (kropce, wykrzykniku lub znaku zapytania).</li>
-          <li>Przydatna funkcja do usuwania błędów OCR, które często pojawiają się na końcu rozpoznanego tekstu.</li>
-          <li>Poprawia jakość tłumaczenia poprzez usunięcie przypadkowych znaków lub fragmentów słów.</li>
-        </ul>
-      </li>
-    </ol>
-    <h3 id="performance-settings">Ustawienia wydajności</h3>
-    <ol>
-      <li>
-        <p>
-          <strong>Interwał skanowania (ms)</strong>:</p>
-        <ul>
-          <li>Czas w milisekundach między kolejnymi zrzutami ekranu.</li>
-          <li>Niższe wartości (np. 50 ms) dają szybszą odpowiedź, ale bardziej obciążają procesor.</li>
-          <li>Wyższe wartości (np. 500 ms) zmniejszają obciążenie procesora, ale spowalniają reakcję.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Czas wyświetlania tłumaczenia (s)</strong>:</p>
-        <ul>
-          <li>Czas w sekundach, po którym tłumaczenie zostanie usunięte, gdy tekst źródłowy zniknie.</li>
-          <li>Jeśli w obszarze źródłowym nadal jest tekst po upływie tego czasu, tłumaczenie pozostanie widoczne.</li>
-          <li>Tłumaczenie jest usuwane tylko wtedy, gdy w obszarze źródłowym nie wykryto żadnego tekstu.</li>
-          <li>Ustaw na 0, aby tłumaczenia były widoczne bezterminowo.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Wyczyść bufor tłumaczenia</strong>:</p>
-        <ul>
-          <li>Ten przycisk usuwa tłumaczenia, które są tymczasowo przechowywane w pamięci aplikacji.</li>
-          <li>Pamięć podręczna przechowuje najnowsze tłumaczenia, aby uniknąć ponownego tłumaczenia identycznego tekstu.</li>
-          <li>Wyczyszczenie tej pamięci podręcznej zmusza aplikację do ponownego przetłumaczenia całego tekstu, nawet jeśli został niedawno przetworzony.</li>
-          <li>Funkcja ta różni się od buforowania plików – dotyczy tylko tłumaczeń przechowywanych w pamięci RAM podczas bieżącej sesji.</li>
-          <li>Przydatne, gdy chcesz zobaczyć nowe tłumaczenia lub gdy wyniki z pamięci podręcznej wydają się nieprawidłowe.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Opcje buforowania do plików (tylko usługi tłumaczenia za pomocą API)</strong>:</p>
-        <ul>
-          <li>Włącza zapisywanie tłumaczeń w plikach na dysku, aby zmniejszyć liczbę zapytań API w przypadku usług Gemini, OpenAI, Google Translate i DeepL.</li>
-          <li>Przycisk <strong>Wyczyść pliki buforów</strong> usuwa wszystkie zapisane tłumaczenia przechowywane w plikach.</li>
-        </ul>
-      </li>
-      <li>
-        <p>
-          <strong>Zapisywanie zdarzeń w dzienniku</strong>:</p>
-        <ul>
-          <li>
-            <strong>Wyłącz dziennik debugowania</strong> – trwale wyłącza zapisywanie zdarzeń w dzienniku w celu poprawy wydajności aplikacji.</li>
-          <li>Po wyłączeniu informacje o zdarzeniach nie będą już zapisywane w pliku dziennika.</li>
-          <li>Może to zapewnić zauważalną poprawę wydajności w środowiskach o ograniczonych zasobach.</li>
-          <li>Ustawienie pozostaje w mocy między sesjami aplikacji.</li>
-        </ul>
-      </li>
-    </ol>
-    <h3 id="appearance-settings">Ustawienia wyglądu</h3>
-    <ol>
-      <li>
-        <strong>Kolor obszaru źródłowego</strong> – kolor tła nakładki obszaru źródłowego (możliwość dostosowania).</li>
-      <li>
-        <strong>Kolor obszaru tłumaczenia</strong> – kolor tła nakładki tłumaczenia (możliwość dostosowania).</li>
-      <li>
-        <strong>Kolor tekstu tłumaczenia</strong> – kolor przetłumaczonego tekstu (możliwość dostosowania).</li>
-      <li>
-        <strong>Rozmiar czcionki okna tłumaczenia</strong> – wielkość przetłumaczonego tekstu.</li>
-    </ol>
+    /* List styling */
+    ol,
+    ul {
+      padding-left: 2em;
+    }
 
-    <h2 id="ai-translation-and-ocr">Tłumaczenie i OCR z wykorzystaniem sztucznej inteligencji</h2>
+    li {
+      margin: 0.3em 0;
+    }
 
-    <p>Game-Changing Translator integruje najnowocześniejsze duże modele językowe (LLM) od Google (Gemini) i OpenAI (GPT), aby zapewnić zaawansowane możliwości zarówno w zakresie OCR, jak i tłumaczenia. Daje to wybór między wysoce zalecanymi, opłacalnymi modelami Gemini a elastycznymi, potężnymi alternatywami od OpenAI.</p>
-    
-    <h3 id="gemini-ocr-premium-text-recognition">Gemini OCR – zaawansowane rozpoznawanie tekstu</h2>
-    
-    <p>Gemini OCR to zaawansowane rozpoznawanie tekstu z wykorzystaniem sztucznej inteligencji. Doskonale rozpoznaje mało czytelny tekst, z którym tradycyjne programy OCR, takie jak Tesseract, sobie nie radzą. Ta zaawansowana funkcja wykorzystuje modele Gemini firmy Google, gwarantując doskonałe rozpoznawanie tekstu i elastyczny wybór modeli pod kątem optymalnej wydajności i ceny.</p>
-    
+    /* Code styling */
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      padding: 0.2em 0.4em;
+      margin: 0;
+      font-size: 0.9em;
+      background-color: rgba(27, 31, 35, 0.05);
+      border-radius: 3px;
+    }
+
+    /* Link styling */
+    a {
+      color: #0366d6;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Blockquote styling */
+    blockquote {
+      padding: 0 1em;
+      color: #6a737d;
+      border-left: 0.25em solid #dfe2e5;
+      margin: 0 0 16px 0;
+    }
+
+    /* Flag styling */
+    .flag-container {
+      position: fixed;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 4px;
+      padding: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .flag-container img {
+      width: 48px;
+      height: auto;
+      display: block;
+      margin: 0;
+    }
+
+    /* Gaming note style */
+    .gaming-note {
+      background-color: #f3e5f5;
+      border: 2px solid #9c27b0;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 12px;
+      max-width: 100%;
+    }
+
+    .gaming-note-icon {
+      font-size: 1.2em;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .gaming-note-content {
+      flex: 1;
+    }
+
+    /* MarianMT note style */
+    .marianmt-note {
+      background-color: #fffbf0;
+      border: 2px solid #ffa000;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 12px;
+      max-width: 100%;
+    }
+
+    .marianmt-note-icon {
+      font-size: 1.2em;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .marianmt-note-content {
+      flex: 1;
+    }
+
+    /* OpenAI note style */
+    .openai-note {
+      background-color: #e0f7fa;
+      border: 2px solid #0097a7;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 12px;
+      max-width: 100%;
+    }
+
+    .openai-note-icon {
+      font-size: 1.2em;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .openai-note-content {
+      flex: 1;
+    }
+
+    /* Disclaimer note style */
+    .disclaimer-note {
+      background-color: #ffebee;
+      border: 2px solid #d32f2f;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 12px;
+      max-width: 100%;
+    }
+
+    .disclaimer-note-icon {
+      font-size: 1.2em;
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: #d32f2f;
+    }
+
+    .disclaimer-note-content {
+      flex: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="flag-container">
+    <img src="screenshots/poland-flag-icon.svg" alt="Polish Flag" title="Polski" />
+  </div>
+  <h1 id="game-changing-translator-user-manual">Instrukcja obsługi programu Game-Changing Translator</h1>
+  <p>Copyright © 2025 Tomasz Kamiński<br>
+    <em>Ostatnia aktualizacja: 20 listopada 2025 r.</em>
+  </p>
+  <p>
+    <img src="screenshots/screenshot2_pol_deepl.jpg" alt="Główny interfejs Game-Changing Translator"
+      class="logo-image" />
+  </p>
+  <h2 id="table-of-contents">Spis treści</h2>
+  <ol>
+    <li>
+      <a href="#introduction">Wprowadzenie</a>
+    </li>
+    <li>
+      <a href="#getting-started">Pierwsze kroki</a>
+    </li>
+    <li>
+      <a href="#main-interface">Interfejs główny</a>
+    </li>
+    <li>
+      <a href="#setting-up-translation-areas">Ustawianie obszarów tłumaczenia</a>
+    </li>
+    <li>
+      <a href="#settings-configuration">Konfiguracja ustawień</a>
+    </li>
+    <li>
+      <a href="#ai-translation-and-ocr">Tłumaczenie i OCR z wykorzystaniem sztucznej inteligencji</a>
+      <ul>
+        <li><a href="#gemini-ocr-premium-text-recognition">Gemini OCR – zaawansowane rozpoznawanie tekstu</a></li>
+        <li><a href="#gemini-api-cost-effective-and-context-aware-translation">Gemini API – tanie tłumaczenie
+            kontekstowe</a></li>
+        <li><a href="#openai-api-a-flexible-alternative">OpenAI API – elastyczna alternatywa</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#api-usage-monitoring">Monitorowanie zużycia API</a>
+    </li>
+    <li>
+      <a href="#other-translation-methods">Inne metody tłumaczenia</a>
+      <ul>
+        <li><a href="#marianmt-offline-and-free">MarianMT (lokalny i bezpłatny)</a></li>
+        <li><a href="#deepl-api">DeepL API</a></li>
+        <li><a href="#google-translate-api">Google Translate API</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#keyboard-shortcuts">Skróty klawiszowe</a>
+    </li>
+    <li>
+      <a href="#troubleshooting">Rozwiązywanie problemów</a>
+    </li>
+    <li>
+      <a href="#tips-and-best-practices">Porady i najlepsze praktyki</a>
+    </li>
+  </ol>
+  <h2 id="introduction">Wprowadzenie</h2>
+  <p><strong>Game-Changing Translator</strong> to program komputerowy, który automatycznie przechwytuje tekst z
+    dowolnego fragmentu ekranu, przeprowadza optyczne rozpoznawanie znaków (OCR) i tłumaczy tekst w czasie rzeczywistym.
+    Dzięki ruchomym oknom nakładek tłumaczenie można umieścić w dowolnym miejscu na ekranie, przez co aplikacja
+    doskonale nadaje się do tłumaczenia gier, filmów, plików PDF lub dowolnych programów zawierających tekst, którego
+    nie da się łatwo skopiować i wkleić.</p>
+  <h2 id="getting-started">Pierwsze kroki</h2>
+  <h3 id="requirements">Wymagania</h3>
+  <p>Przed rozpoczęciem korzystania z <strong>Game-Changing Translator</strong> sprawdź, czy system spełnia następujące
+    wymagania:</p>
+  <ul>
+    <li>System operacyjny Windows.</li>
+    <li>Zainstalowany program <a href="https://github.com/UB-Mannheim/tesseract/wiki">Tesseract OCR</a> (wymagany tylko
+      przy korzystaniu z Tesseract OCR, ale zalecany w standardowych scenariuszach z wyraźnymi napisami).</li>
+    <li>Niniejsza aplikacja zainstalowana zgodnie z <a href="installation_pl.html">instrukcją instalacji</a>.</li>
+  </ul>
+  <h3 id="first-run">Pierwsze uruchomienie</h3>
+  <ol>
+    <li>Uruchom <strong>Game-Changing Translator</strong> przez wykonanie skryptu <code>main.py</code> lub pliku
+      wykonywalnego, jeśli korzystasz z wersji skompilowanej.</li>
+    <li>Przy pierwszym uruchomieniu aplikacja ładuje się z domyślnymi ustawieniami, a oba obszary (źródłowy i docelowy)
+      będą ukryte.</li>
+    <li>Przed rozpoczęciem tłumaczenia musisz:
+      <ul>
+        <li>sprawdzić ścieżkę do programu Tesseract w zakładce <strong>Ustawienia</strong>,</li>
+        <li>wybrać obszary źródłowy i docelowy,</li>
+        <li>skonfigurować preferowaną metodę tłumaczenia.</li>
+      </ul>
+    </li>
+    <li>Przycisk <strong>Start</strong> włącza proces tłumaczenia i automatycznie wyświetla <strong>okno
+        tłumaczenia</strong>.</li>
+    <li>Przycisk <strong>Stop</strong> wyłącza proces tłumaczenia i automatycznie ukrywa <strong>okno
+        tłumaczenia</strong>.</li>
+    <li>Widoczność <strong>okna tłumaczenia</strong> można przełączać ręcznie w dowolnym momencie za pomocą skrótu
+      <strong>Alt+2</strong>.
+    </li>
+  </ol>
+  <h2 id="main-interface">Interfejs główny</h2>
+  <p>Interfejs główny jest podzielony na pięć zakładek:</p>
+  <h3 id="main-tab">Zakładka Start</h3>
+  <p>
+    <img src="screenshots/Home_pl.png" alt="Zakładka Start" />
+  </p>
+  <ol>
+    <li>
+      <strong>Wybierz obszar źródłowy (OCR)</strong> – określ obszar, z którego tekst będzie przechwytywany.
+    </li>
+    <li>
+      <strong>Wybierz obszar tłumaczenia</strong> – określ, gdzie ma się pojawić tłumaczenie.
+    </li>
+    <li>
+      <strong>Start/Stop</strong> – włącz proces tłumaczenia.
+    </li>
+    <li>
+      <strong>Pokaż lub ukryj okno źródłowe</strong> – przełącz widoczność obszaru przechwytywania tekstu źródłowego.
+    </li>
+    <li>
+      <strong>Pokaż lub ukryj okno tłumaczenia</strong> – przełącz widoczność obszaru tłumaczenia.
+    </li>
+    <li>
+      <strong>Wyczyść bufor tłumaczenia</strong> – usuń tłumaczenia przechowywane w pamięci, aby wymusić ponowne
+      tłumaczenie.
+    </li>
+    <li>
+      <strong>Wyczyść dziennik debugowania</strong> – wyczyść dziennik zdarzeń aplikacji.
+    </li>
+    <li>
+      <strong>Wyłącz dziennik debugowania</strong> – wyłącz rejestrowanie zdarzeń w pliku w celu poprawy wydajności.
+    </li>
+    <li>
+      <strong>Skróty klawiszowe</strong> – lista dostępnych skrótów klawiszowych.
+    </li>
+    <li>
+      <strong>Status</strong> – aktualny stan aplikacji.
+    </li>
+  </ol>
+  <h3 id="settings-tab">Zakładka Ustawienia</h3>
+  <p>
+    <img src="screenshots/Settings_pl.png" alt="Zakładka Ustawienia" />
+  </p>
+  <p>Tutaj można skonfigurować:</p>
+  <ol>
+    <li>
+      <strong>Model tłumaczenia</strong> – wybierz spośród różnych modeli tłumaczeń (Gemini, OpenAI, MarianMT, DeepL
+      itp.).
+    </li>
+    <li>
+      <strong>Model OCR</strong> – wybierz między <strong>Tesseract (lokalny)</strong>, <strong>Gemini API
+        (online)</strong> lub <strong>OpenAI API (online)</strong>.
+    </li>
+    <li>
+      <strong>Język źródłowy</strong> – język źródłowy i rozpoznawany przez OCR (tylko DeepL i Google Translate).
+    </li>
+    <li>
+      <strong>Język docelowy</strong> – język tłumaczenia (tylko DeepL i Google Translate).
+    </li>
+    <li>
+      <strong>Klucz API</strong> – tylko w przypadku Gemini, OpenAI, DeepL lub Google Translate.
+    </li>
+    <li>
+      <strong>Jakość</strong> – wybierz między opcjami <strong>Klasyczna</strong> (szybsze tłumaczenie) lub
+      <strong>Nowej generacji</strong> (potencjalnie lepsza jakość) (tylko DeepL).
+    </li>
+    <li>
+      <strong>Opcje MarianMT</strong> – lokalne tłumaczenie neuronowe (tylko model MarianMT).
+    </li>
+    <li>
+      <strong>Opcje Gemini/OpenAI</strong> – tanie tłumaczenie modelem LLM z uwzględnieniem kontekstu.
+    </li>
+    <li>
+      <strong>Ścieżka do Tesseract</strong> – ścieżka do pliku wykonywalnego Tesseract OCR (tylko Tesseract).
+    </li>
+    <li>
+      <strong>Interwał skanowania (ms)</strong> – jak często ma być przechwytywany ekran.
+    </li>
+    <li>
+      <strong>Czas wyświetlania tłumaczenia (s)</strong> – czas, po którym tłumaczenie zostanie usunięte, gdy zniknie
+      tekst źródłowy.
+    </li>
+    <li>
+      <strong>Próg stabilności tekstu</strong> – liczba identycznych odczytów wymaganych przed tłumaczeniem (tylko
+      Tesseract).
+    </li>
+    <li>
+      <strong>Próg pewności OCR</strong> – minimalna pewność dla uwzględnienia tekstu wykrytego przez OCR (tylko
+      Tesseract).
+    </li>
+    <li>
+      <strong>Tryb przetwarzania obrazu</strong> – sposób przetwarzania obrazów przez OCR (tylko Tesseract).
+    </li>
+    <li>
+      <strong>Debugowanie OCR</strong> – opcja wyświetlania obrazów debugowania i tekstu na zakładce
+      <strong>Ustawienia</strong> (tylko Tesseract).
+    </li>
+    <li>
+      Przycisk <strong>Podgląd</strong> – otwiera okno podglądu OCR (tylko Tesseract).</li>
+    <li>
+      <strong>Usuń śmieci na końcu</strong> – opcja usuwania tekstu po ostatnim znaku interpunkcyjnym (tylko Tesseract).
+    </li>
+    <li>
+      <strong>Opcje wyglądu</strong> – kolory i rozmiary czcionek dla nakładek.
+    </li>
+    <li>
+      <strong>Opcje buforowania do plików</strong> – ustawienia włączania/wyłączania buforowania w przypadku usług API.
+    </li>
+  </ol>
+  <h3 id="ocr-preview">Podgląd OCR (tylko Tesseract)</h3>
+  <p>
+    <img src="screenshots/OCR_Preview_pl.png" alt="Okno podglądu OCR" />
+  </p>
+  <p>Kliknięcie przycisku <strong>Podgląd</strong> w zakładce <strong>Ustawienia</strong> otwiera osobne okno
+    <strong>Podgląd OCR</strong> podczas korzystania z Tesseract OCR. To okno wyświetla:
+  </p>
+  <ol>
+    <li>
+      <strong>Przetworzony obraz (skala 1:1)</strong> – wstępnie przetworzony obraz używany do rozpoznawania OCR.
+    </li>
+    <li>
+      <strong>Rozpoznany tekst</strong> – tekst obecnie rozpoznawany przez silnik OCR.
+    </li>
+  </ol>
+  <p>To okno podglądu jest szczególnie przydatne do precyzyjnego dostrajania ustawień OCR i zrozumienia, dlaczego
+    niektóre teksty mogą nie być rozpoznawane prawidłowo. Można je przesuwać i zmieniać jego rozmiar niezależnie od
+    <strong>głównego okna aplikacji</strong>.
+  </p>
+  <h3 id="api-usage-tab">Zakładka Zużycie API</h3>
+  <p>
+    <img src="screenshots/API_Stats_pl.png" alt="Zakładka Zużycie API" />
+  </p>
+  <p>Ta zakładka umożliwia kompleksowe monitorowanie i analizę zużycia API usług takich jak Gemini i OpenAI. Obejmuje:
+  </p>
+  <ol>
+    <li>
+      <strong>Statystyki OCR (Gemini i OpenAI)</strong> – śledzenie kosztów i wskaźniki wydajności OCR.
+    </li>
+    <li>
+      <strong>Statystyki tłumaczenia (Gemini i OpenAI)</strong> – liczby słów, koszty i wskaźniki wydajności tłumaczeń.
+    </li>
+    <li>
+      <strong>Łączne statystyki API</strong> – ogólna analiza kosztów i prognozy dla każdego dostawcy.
+    </li>
+    <li>
+      <strong>Monitor zużycia DeepL</strong> – monitorowanie darmowych miesięcznych limitów DeepL API.
+    </li>
+    <li>
+      <strong>Narzędzia eksportu i zarządzania</strong> – eksport statystyk do pliku CSV, pliku tekstowego i kopiowanie
+      do schowka.
+    </li>
+  </ol>
+  <p>Szczegółowe informacje o wszystkich dostępnych statystykach i funkcjach śledzenia kosztów znajdziesz w sekcji <a
+      href="#api-usage-monitoring">Monitorowanie zużycia API</a>.</p>
+  <h3 id="debug-tab">Zakładka Debugowanie</h3>
+  <p>
+    <img src="screenshots/Debugging_pl.png" alt="Zakładka Debugowanie" />
+  </p>
+  <p>Ta zakładka pokazuje:</p>
+  <ol>
+    <li>
+      <strong>Obraz oryginalny</strong> – nieprzetworzony przechwycony obraz.
+    </li>
+    <li>
+      <strong>Obraz przetworzony</strong> – obraz po przetworzeniu przez OCR.
+    </li>
+    <li>
+      <strong>Wyniki OCR</strong> – tekst rozpoznany przez OCR.
+    </li>
+    <li>
+      <strong>Dziennik aplikacji</strong> – bieżący dziennik zdarzeń aplikacji.
+    </li>
+    <li>
+      <strong>Zapisz obrazy OCR</strong> i <strong>Odśwież dziennik</strong> – przyciski do zapisywania obrazów
+      debugowania i odświeżania dziennika.
+    </li>
+  </ol>
+  <h3 id="about-tab">Zakładka Informacje</h3>
+  <p>Ta zakładka zawiera podstawowe informacje o aplikacji oraz przycisk <strong>Sprawdź dostępność
+      aktualizacji</strong>, który umożliwia prostą i szybką aktualizację do najnowszej wersji.</p>
+  <h2 id="setting-up-translation-areas">Ustawianie obszarów tłumaczenia</h2>
+  <h3 id="selecting-the-source-area">Wybór obszaru źródłowego</h3>
+  <ol>
+    <li>Kliknij przycisk <strong>Wybierz obszar źródłowy (OCR)</strong>.</li>
+    <li>Ekran zostanie przyciemniony i zobaczysz czarny krzyżyk.</li>
+    <li>Kliknij i przeciągnij, aby zaznaczyć obszar zawierający tekst, który chcesz przetłumaczyć.</li>
+    <li>Po zaznaczeniu półprzezroczyste okno nakładki pojawi się w wybranym miejscu.</li>
+    <li>Ta nakładka będzie domyślnie ukryta przy uruchomieniu aplikacji.</li>
+    <li>Nakładkę można:
+      <ul>
+        <li><strong>przesuwać</strong>: przeciągając za pasek tytułowy;</li>
+        <li><strong>powiększać i zmniejszać</strong>: przeciągając dowolną krawędź lub róg;</li>
+        <li><strong>ukrywać lub wyświetlać</strong>: za pomocą przycisku <strong>Pokaż lub ukryj okno źródłowe</strong>
+          lub skrótu <strong>Alt+1</strong>.</li>
+      </ul>
+    </li>
+  </ol>
+  <h3 id="selecting-the-target-area">Wybór obszaru docelowego</h3>
+  <ol>
+    <li>Kliknij przycisk <strong>Wybierz obszar tłumaczenia</strong>.</li>
+    <li>Ekran zostanie przyciemniony i zobaczysz czarny krzyżyk.</li>
+    <li>Kliknij i przeciągnij, aby zaznaczyć miejsce, w którym chcesz, aby pojawiło się tłumaczenie.</li>
+    <li>Po zaznaczeniu półprzezroczyste okno nakładki pojawi się w wybranym miejscu.</li>
+    <li>Ta nakładka będzie domyślnie ukryta przy uruchomieniu aplikacji.</li>
+    <li>Nakładkę można:
+      <ul>
+        <li><strong>przesuwać</strong>: przeciągając za pasek tytułowy;</li>
+        <li><strong>powiększać i zmniejszać</strong>: przeciągając dowolną krawędź lub róg;</li>
+        <li><strong>ukrywać lub wyświetlać</strong>: za pomocą przycisku <strong>Pokaż lub ukryj okno
+            tłumaczenia</strong> lub skrótu <strong>Alt+2</strong>.</li>
+      </ul>
+    </li>
+  </ol>
+  <h2 id="settings-configuration">Konfiguracja ustawień</h2>
+  <h3 id="translation-configuration">Konfiguracja tłumaczenia</h3>
+  <ol>
+    <li>
+      <p>
+        <strong>Model tłumaczenia</strong>:
+      </p>
+      <p>Dostępne są różnorodne usługi tłumaczeniowe, zarówno oparte na sztucznej inteligencji, jak i tradycyjne:</p>
+      <ul>
+        <li>
+          <strong>Modele Gemini (różne)</strong> – różne modele AI od Google. Wymagają klucza API, zapewniają tanie
+          tłumaczenia z uwzględnieniem kontekstu.
+        </li>
+        <li>
+          <strong>Modele OpenAI (różne)</strong> – różne modele od OpenAI (GPT-5, GPT-4.1). Stanowią elastyczną
+          alternatywę dla tłumaczeń AI.
+        </li>
+        <li>
+          <strong>MarianMT (lokalny i bezpłatny)</strong> – nie wymaga klucza API, pobiera modele przy pierwszym użyciu,
+          działa bez połączenia z Internetem.
+        </li>
+        <li>
+          <strong>DeepL API</strong> – wymaga klucza API, zapewnia tłumaczenia wysokiej jakości.
+        </li>
+        <li>
+          <strong>Google Translate API</strong> – wymaga klucza API, obsługuje wiele języków.
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Język źródłowy</strong>:
+      </p>
+      <ul>
+        <li>Język, który będzie tłumaczony na język docelowy.</li>
+        <li>Silnik OCR będzie używał tego języka do rozpoznawania tekstu w celu poprawy dokładności.</li>
+        <li>Gdy zmienisz język źródłowy do tłumaczenia, język OCR zostanie odpowiednio zaktualizowany.</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Język docelowy</strong>:
+      </p>
+      <ul>
+        <li>Język, na który tekst ma zostać przetłumaczony.</li>
+        <li>Pamiętaj, że nie wszystkie pary językowe są obsługiwane przez wszystkie metody tłumaczenia.</li>
+      </ul>
+    </li>
+  </ol>
+  <h3 id="ocr-configuration">Konfiguracja OCR</h3>
+  <ol>
+    <li>
+      <p>
+        <strong>Model OCR</strong>:
+      </p>
+      <p>Wybierz między modelami online opartymi na AI a tradycyjnym silnikiem offline:</p>
+      <ul>
+        <li>
+          <strong>Modele Gemini (różne)</strong> – zaawansowane OCR z wykorzystaniem sztucznej inteligencji o doskonałej
+          jakości w przypadku słabo widocznych napisów. Wymagają klucza API i połączenia z Internetem.
+        </li>
+        <li>
+          <strong>Modele OpenAI (różne)</strong> - alternatywny dostawca OCR opartego na AI, wykorzystujący modele takie
+          jak GPT-4.1 Nano, oferujący bardzo dobrą jakość.
+        </li>
+        <li>
+          <strong>Tesseract (lokalny)</strong> – tradycyjne narzędzie OCR, bezpłatne i działa offline. Zalecane dla
+          wyraźnych napisów o dobrym kontraście.
+        </li>
+        <li>Podczas korzystania z Gemini lub OpenAI OCR można wybrać różne modele do operacji OCR i tłumaczenia.</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Ścieżka do Tesseract (tylko Tesseract)</strong>:
+      </p>
+      <ul>
+        <li>Powinna wskazywać miejsce instalacji programu Tesseract (np.
+          <code>C:\Program Files\Tesseract-OCR\tesseract.exe</code>).
+        </li>
+        <li>Użyj przycisku <strong>Wskaż</strong>, aby wskazać lokalizację.</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Tryb przetwarzania obrazu (tylko Tesseract)</strong>:
+      </p>
+      <ul>
+        <li>
+          <strong>Brak</strong> – bez przetwarzania, dobry dla wyraźnego tekstu.
+        </li>
+        <li>
+          <strong>Binarny</strong> – konwersja czarno–biała, dobra dla tekstu o wysokim kontraście.
+        </li>
+        <li>
+          <strong>Binarny odwrócony</strong> – odwrócony tryb binarny, dobry dla białego tekstu na ciemnym tle.
+        </li>
+        <li>
+          <strong>Adaptacyjny</strong> – zaawansowane progowanie adaptacyjne dla trudnych środowisk.
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Tryb adaptacyjny (tylko Tesseract)</strong>:
+      </p>
+      <p>Po wybraniu trybu przetwarzania <strong>Adaptacyjny</strong> system odblokowuje zaawansowane możliwości
+        progowania adaptacyjnego, które doskonale sprawdzają się w trudnych środowiskach graficznych. Ten tryb jest
+        szczególnie cenny w przypadku kłopotliwych warunków, takich jak małe napisy nałożone na dynamiczne, migające tła
+        o stale zmieniających się kolorach i oświetleniu.</p>
+      <p>W przeciwieństwie do trzech standardowych trybów przetwarzania tryb adaptacyjny zapewnia dwa regulowane
+        parametry, które pozwalają na precyzyjne dostrojenie procesu rozpoznawania OCR:</p>
+      <ul>
+        <li><strong>Rozmiar bloku</strong> – kontroluje wielkość obszaru sąsiadującego używanego do obliczania wartości
+          progowej. Większe wartości (np. 15–25) sprawdzają się lepiej w przypadku tekstu ze stopniowymi zmianami
+          oświetlenia, podczas gdy mniejsze wartości (np. 7–13) są bardziej skuteczne dla tekstu z ostrymi zmianami
+          kontrastu.</li>
+        <li><strong>Wartość C</strong> – działa jako stała odejmowana od średniej wartości progowej. Wartości dodatnie
+          czynią progowanie bardziej konserwatywnym (mniej wykrywanego tekstu, ale wyższa dokładność), podczas gdy
+          wartości ujemne czynią je bardziej agresywnym (więcej wykrywanego tekstu, ale potencjalnie więcej szumów).
+        </li>
+      </ul>
+      <p>Ten tryb okazuje się bezcenny, gdy standardowe przetwarzanie nie zapewnia wiarygodnych wyników. Eksperymentując
+        z tymi dwoma parametrami, często można osiągnąć lepsze rozpoznawanie OCR niż w przypadku gotowych trybów,
+        szczególnie gdy tła zawierają ruchome elementy, zmienne oświetlenie lub złożone wzory wizualne, które w
+        przeciwnym razie przeszkadzałyby w wykrywaniu tekstu.</p>
+      <p>Aby uzyskać optymalne rezultaty, zacznij od umiarkowanych wartości (<strong>Rozmiar bloku</strong>: 11,
+        <strong>Wartość C</strong>: 2) i dostosowuj je do konkretnej treści. Zwiększ <strong>Rozmiar bloku</strong> dla
+        większego tekstu lub stopniowych zmian oświetlenia i zmieniaj <strong>Wartość C</strong>, aby zachować równowagę
+        między przechwytywaniem całego tekstu a rozpoznawaniem go tam, gdzie go nie ma.
+      </p>
+    </li>
+    <li>
+      <p>
+        <strong>Próg pewności OCR (tylko Tesseract)</strong>:
+      </p>
+      <ul>
+        <li>Wyższe wartości (np. 80) dają mniej wyników, ale są bardziej dokładne.</li>
+        <li>Niższe wartości (np. 40) wychwytują więcej tekstu, ale mogą zawierać błędy.</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Próg stabilności tekstu (tylko Tesseract)</strong>:
+      </p>
+      <ul>
+        <li>Określa, ile identycznych odczytów OCR jest potrzebnych przed rozpoczęciem tłumaczenia.</li>
+        <li>Wyższe wartości zmniejszają migotanie, ale zwiększają opóźnienie.</li>
+        <li>Ustaw na 0 w celu natychmiastowego tłumaczenia (może powodować migotanie).</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Debugowanie OCR (tylko Tesseract)</strong>:
+      </p>
+      <ul>
+        <li>Po włączeniu pokazuje przechwycone obrazy i wyniki OCR w zakładce <strong>Debugowanie</strong>.</li>
+        <li>Przydatne przy rozwiązywaniu problemów z rozpoznawaniem tekstu.</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Usuń śmieci na końcu (tylko Tesseract)</strong>:
+      </p>
+      <ul>
+        <li>Po włączeniu usuwa tekst występujący po ostatnim znaku interpunkcyjnym (kropce, wykrzykniku lub znaku
+          zapytania).</li>
+        <li>Przydatna funkcja do usuwania błędów OCR, które często pojawiają się na końcu rozpoznanego tekstu.</li>
+        <li>Poprawia jakość tłumaczenia poprzez usunięcie przypadkowych znaków lub fragmentów słów.</li>
+      </ul>
+    </li>
+  </ol>
+  <h3 id="performance-settings">Ustawienia wydajności</h3>
+  <ol>
+    <li>
+      <p>
+        <strong>Interwał skanowania (ms)</strong>:
+      </p>
+      <ul>
+        <li>Czas w milisekundach między kolejnymi zrzutami ekranu.</li>
+        <li>Niższe wartości (np. 50 ms) dają szybszą odpowiedź, ale bardziej obciążają procesor.</li>
+        <li>Wyższe wartości (np. 500 ms) zmniejszają obciążenie procesora, ale spowalniają reakcję.</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Czas wyświetlania tłumaczenia (s)</strong>:
+      </p>
+      <ul>
+        <li>Czas w sekundach, po którym tłumaczenie zostanie usunięte, gdy tekst źródłowy zniknie.</li>
+        <li>Jeśli w obszarze źródłowym nadal jest tekst po upływie tego czasu, tłumaczenie pozostanie widoczne.</li>
+        <li>Tłumaczenie jest usuwane tylko wtedy, gdy w obszarze źródłowym nie wykryto żadnego tekstu.</li>
+        <li>Ustaw na 0, aby tłumaczenia były widoczne bezterminowo.</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Wyczyść bufor tłumaczenia</strong>:
+      </p>
+      <ul>
+        <li>Ten przycisk usuwa tłumaczenia, które są tymczasowo przechowywane w pamięci aplikacji.</li>
+        <li>Pamięć podręczna przechowuje najnowsze tłumaczenia, aby uniknąć ponownego tłumaczenia identycznego tekstu.
+        </li>
+        <li>Wyczyszczenie tej pamięci podręcznej zmusza aplikację do ponownego przetłumaczenia całego tekstu, nawet
+          jeśli został niedawno przetworzony.</li>
+        <li>Funkcja ta różni się od buforowania plików – dotyczy tylko tłumaczeń przechowywanych w pamięci RAM podczas
+          bieżącej sesji.</li>
+        <li>Przydatne, gdy chcesz zobaczyć nowe tłumaczenia lub gdy wyniki z pamięci podręcznej wydają się
+          nieprawidłowe.</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Opcje buforowania do plików (tylko usługi tłumaczenia za pomocą API)</strong>:
+      </p>
+      <ul>
+        <li>Włącza zapisywanie tłumaczeń w plikach na dysku, aby zmniejszyć liczbę zapytań API w przypadku usług Gemini,
+          OpenAI, Google Translate i DeepL.</li>
+        <li>Przycisk <strong>Wyczyść pliki buforów</strong> usuwa wszystkie zapisane tłumaczenia przechowywane w
+          plikach.</li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        <strong>Zapisywanie zdarzeń w dzienniku</strong>:
+      </p>
+      <ul>
+        <li>
+          <strong>Wyłącz dziennik debugowania</strong> – trwale wyłącza zapisywanie zdarzeń w dzienniku w celu poprawy
+          wydajności aplikacji.
+        </li>
+        <li>Po wyłączeniu informacje o zdarzeniach nie będą już zapisywane w pliku dziennika.</li>
+        <li>Może to zapewnić zauważalną poprawę wydajności w środowiskach o ograniczonych zasobach.</li>
+        <li>Ustawienie pozostaje w mocy między sesjami aplikacji.</li>
+      </ul>
+    </li>
+  </ol>
+  <h3 id="appearance-settings">Ustawienia wyglądu</h3>
+  <ol>
+    <li>
+      <strong>Kolor obszaru źródłowego</strong> – kolor tła nakładki obszaru źródłowego (możliwość dostosowania).
+    </li>
+    <li>
+      <strong>Kolor obszaru tłumaczenia</strong> – kolor tła nakładki tłumaczenia (możliwość dostosowania).
+    </li>
+    <li>
+      <strong>Kolor tekstu tłumaczenia</strong> – kolor przetłumaczonego tekstu (możliwość dostosowania).
+    </li>
+    <li>
+      <strong>Rozmiar czcionki okna tłumaczenia</strong> – wielkość przetłumaczonego tekstu.
+    </li>
+  </ol>
+
+  <h2 id="ai-translation-and-ocr">Tłumaczenie i OCR z wykorzystaniem sztucznej inteligencji</h2>
+
+  <p>Game-Changing Translator integruje najnowocześniejsze duże modele językowe (LLM) od Google (Gemini) i OpenAI (GPT),
+    aby zapewnić zaawansowane możliwości zarówno w zakresie OCR, jak i tłumaczenia. Daje to wybór między wysoce
+    zalecanymi, opłacalnymi modelami Gemini a elastycznymi, potężnymi alternatywami od OpenAI.</p>
+
+  <h3 id="gemini-ocr-premium-text-recognition">Gemini OCR – zaawansowane rozpoznawanie tekstu</h2>
+
+    <p>Gemini OCR to zaawansowane rozpoznawanie tekstu z wykorzystaniem sztucznej inteligencji. Doskonale rozpoznaje
+      mało czytelny tekst, z którym tradycyjne programy OCR, takie jak Tesseract, sobie nie radzą. Ta zaawansowana
+      funkcja wykorzystuje modele Gemini firmy Google, gwarantując doskonałe rozpoznawanie tekstu i elastyczny wybór
+      modeli pod kątem optymalnej wydajności i ceny.</p>
+
     <h4>Inteligentny wybór modelu</h4>
-    
-    <p>Aplikacja oferuje elastyczny wybór modeli do operacji OCR i tłumaczenia, co pozwala zoptymalizować wydajność w zależności od konkretnego zastosowania:</p>
-    
+
+    <p>Aplikacja oferuje elastyczny wybór modeli do operacji OCR i tłumaczenia, co pozwala zoptymalizować wydajność w
+      zależności od konkretnego zastosowania:</p>
+
     <p><strong>Zalecany wybór modelu:</strong></p>
     <ul>
-      <li><strong>Szybko zmieniające się napisy (czas wyświetlania poniżej sekundy):</strong> Gemini 2.5 Flash-Lite do OCR i tłumaczenia – model zoptymalizowany pod kątem szybkości przy zachowaniu doskonałej jakości.</li>
-      <li><strong>Dłuższe napisy (czas wyświetlania powyżej sekundy):</strong> Gemini 2.0 Flash do OCR i tłumaczenia – doskonała dokładność OCR i naturalne tłumaczenia przy takich samych kosztach jak 2.5 Flash-Lite.</li>
+      <li><strong>Szybko zmieniające się napisy (czas wyświetlania poniżej sekundy):</strong> Gemini 2.5 Flash-Lite do
+        OCR i tłumaczenia – model zoptymalizowany pod kątem szybkości przy zachowaniu doskonałej jakości.</li>
+      <li><strong>Dłuższe napisy (czas wyświetlania powyżej sekundy):</strong> Gemini 2.0 Flash do OCR i tłumaczenia –
+        doskonała dokładność OCR i naturalne tłumaczenia przy takich samych kosztach jak 2.5 Flash-Lite.</li>
     </ul>
-    
-    <p><strong>Zaawansowana konfiguracja:</strong> dostępność modeli i koszty można dostosować, edytując plik <code>gemini_models.csv</code> w katalogu <strong>resources</strong>. Można dodawać nowe modele, aktualizować ceny oraz określać, które modele są dostępne do operacji OCR i tłumaczenia w miarę pojawiania się nowych modeli Gemini.</p>
-    
+
+    <p><strong>Zaawansowana konfiguracja:</strong> dostępność modeli i koszty można dostosować, edytując plik
+      <code>gemini_models.csv</code> w katalogu <strong>resources</strong>. Można dodawać nowe modele, aktualizować ceny
+      oraz określać, które modele są dostępne do operacji OCR i tłumaczenia w miarę pojawiania się nowych modeli Gemini.
+    </p>
+
     <h4>Mało czytelne napisy</h4>
-    
+
     <p>Gemini OCR najlepiej nadaje się do mało czytelnych napisów z powodu:</p>
     <ul>
       <li>złożonych teł o zmieniających się kolorach i teksturach;</li>
@@ -681,23 +851,30 @@
       <li>małych lub stylizowanych czcionek, z którymi nie radzą sobie tradycyjne programy OCR;</li>
       <li>rozmycia ruchu lub artefaktów kompresji w filmach.</li>
     </ul>
-    
+
     <p><strong>Porównanie Tesseract i Gemini pod kątem jakości OCR</strong></p>
     <p>
       <img src="screenshots/ocr_1.png" alt="Przykład trudnego napisu 1" />
     </p>
     <p><strong>Wynik Tesseract OCR:</strong> <code>~ Trust me, OD tite WE loca mS</code><br>
-    <strong>Wynik Gemini OCR:</strong> <code>Trust me, Oakmonters know a newcomer when they see one. We locals can tell.</code></p>
+      <strong>Wynik Gemini OCR:</strong>
+      <code>Trust me, Oakmonters know a newcomer when they see one. We locals can tell.</code>
+    </p>
     <p>
       <img src="screenshots/ocr_2.png" alt="Przykład trudnego napisu 2" />
     </p>
-    <p><strong>Wynik Tesseract OCR:</strong> <code>' Paulie: Driv: show, Tom. Next stop's Bi the motel. 7 jj ie</code><br>
-    <strong>Wynik Gemini OCR:</strong> <code>Paulie: Drive before the cops show, Tom. Next stop's Bill at the motel.</code></p>
-    
+    <p><strong>Wynik Tesseract OCR:</strong>
+      <code>' Paulie: Driv: show, Tom. Next stop's Bi the motel. 7 jj ie</code><br>
+      <strong>Wynik Gemini OCR:</strong>
+      <code>Paulie: Drive before the cops show, Tom. Next stop's Bill at the motel.</code>
+    </p>
+
     <h4>Doskonała jakość z wieloma modelami</h4>
-    
-    <p>Gemini OCR to zaawansowana funkcja, która znacznie przewyższa tradycyjne metody rozpoznawania tekstu dzięki inteligentnemu wyborowi modeli. Aplikacja zapewnia dostęp do wielu modeli Gemini, każdy zoptymalizowany pod kątem różnych scenariuszy:</p>
-    
+
+    <p>Gemini OCR to zaawansowana funkcja, która znacznie przewyższa tradycyjne metody rozpoznawania tekstu dzięki
+      inteligentnemu wyborowi modeli. Aplikacja zapewnia dostęp do wielu modeli Gemini, każdy zoptymalizowany pod kątem
+      różnych scenariuszy:</p>
+
     <p><strong>Modele Gemini 2.0 – doskonała dokładność OCR i jakość tłumaczenia:</strong></p>
     <ul>
       <li>Sprawdzona doskonała dokładność OCR w kompleksowych testach w wielu językach.</li>
@@ -706,50 +883,67 @@
       <li>Takie same koszty jak Gemini 2.5 Flash-Lite, ale z bardziej stabilnym rozpoznawaniem tekstu.</li>
       <li>Idealne do gier, gdzie dokładność napisów ma priorytet nad szybkością przetwarzania.</li>
     </ul>
-    
+
     <p><strong>Modele Gemini 2.5 – zoptymalizowane pod kątem szybkości:</strong></p>
     <ul>
       <li>Zoptymalizowane do szybko zmieniających się treści, gdzie szybkość jest kluczowa.</li>
       <li>Zalecane do napisów, które zmieniają się szybko (mniej niż 1 sekunda wyświetlania).</li>
       <li>Doskonały stosunek wydajności do ceny w szybkich operacjach OCR.</li>
     </ul>
-    
+
     <p><strong>Wydajność i koszty:</strong></p>
     <ul>
       <li>Wywołania OCR zwykle trwają 0,8–1,5 sekundy.</li>
       <li>Wywołania tłumaczenia wymagają dodatkowych 0,3 sekundy.</li>
-      <li>Oczekiwany koszt: około 0,25–0,30 USD za godzinę lub 2,5–3,0 USD za 10 godzin przy interwale skanowania 0,5 s.</li>
+      <li>Oczekiwany koszt: około 0,25–0,30 USD za godzinę lub 2,5–3,0 USD za 10 godzin przy interwale skanowania 0,5 s.
+      </li>
       <li>Rzeczywiste koszty mogą się różnić w zależności od konkretnego zastosowania i złożoności napisów.</li>
     </ul>
-    
+
     <h4>Doskonały stosunek jakości do ceny</h4>
-    
-    <p>Dostępne modele Gemini zapewniają wyjątkowo szybkie i dokładne rozpoznawanie tekstu, które znacznie przewyższa Tesseract czy Paddle OCR. Dzięki inteligentnemu wyborowi modeli można zoptymalizować stosunek jakości do ceny dla konkretnego zastosowania przy zachowaniu doskonałej wydajności w porównaniu z bezpłatnymi i płatnymi rozwiązaniami OCR.</p>
-    
+
+    <p>Dostępne modele Gemini zapewniają wyjątkowo szybkie i dokładne rozpoznawanie tekstu, które znacznie przewyższa
+      Tesseract czy Paddle OCR. Dzięki inteligentnemu wyborowi modeli można zoptymalizować stosunek jakości do ceny dla
+      konkretnego zastosowania przy zachowaniu doskonałej wydajności w porównaniu z bezpłatnymi i płatnymi rozwiązaniami
+      OCR.</p>
+
     <p><strong>Porównanie kosztów (na podstawie cen Gemini 2.5 Flash-Lite):</strong></p>
     <ul>
       <li><strong>Gemini 2.5 Flash-Lite / 2.0 Flash:</strong> ok. 0,00004 USD za zrzut ekranu napisów.</li>
       <li><strong>Google Cloud Vision API:</strong> 0,0015 USD za zrzut ekranu napisów.</li>
-      <li><strong>Różnica:</strong> modele Gemini są ok. 37,5 razy tańsze (0,04 USD wobec 1,5 USD za 1000 wywołań API).</li>
+      <li><strong>Różnica:</strong> modele Gemini są ok. 37,5 razy tańsze (0,04 USD wobec 1,5 USD za 1000 wywołań API).
+      </li>
     </ul>
-    
+
     <h4>Najlepsze praktyki z Gemini OCR</h4>
     <ul>
-      <li><strong>Wybór modelu:</strong> wybierz Gemini 2.0 Flash do dłuższych napisów (ponad 1 sekunda), aby skorzystać z doskonałej dokładności OCR przy takich samych kosztach, lub Gemini 2.5 Flash-Lite do szybko zmieniających się treści.</li>
-      <li><strong>Minimalny interwał skanowania:</strong> używaj co najmniej 500 ms interwału skanowania, co wystarcza w większości przypadków.</li>
-      <li><strong>Dłuższe interwały dla dłuższych treści:</strong> w grach z długimi napisami (np. seria Wiedźmin) rozważ zwiększenie interwału skanowania, aby zminimalizować koszty przy zachowaniu jakości.</li>
-      <li><strong>Szersze obszary przechwytywania:</strong> w przeciwieństwie do tradycyjnych programów OCR duże modele językowe (LLM) zapewniają lepsze wyniki przy szerszym kontekście. Wybierz szeroki obszar wokół napisów zamiast ciasnego kadrowania, aby uzyskać spójne, dokładne rozpoznawanie identycznego tekstu wyświetlanego przez kilka sekund.</li>
+      <li><strong>Wybór modelu:</strong> wybierz Gemini 2.0 Flash do dłuższych napisów (ponad 1 sekunda), aby skorzystać
+        z doskonałej dokładności OCR przy takich samych kosztach, lub Gemini 2.5 Flash-Lite do szybko zmieniających się
+        treści.</li>
+      <li><strong>Minimalny interwał skanowania:</strong> używaj co najmniej 500 ms interwału skanowania, co wystarcza w
+        większości przypadków.</li>
+      <li><strong>Dłuższe interwały dla dłuższych treści:</strong> w grach z długimi napisami (np. seria Wiedźmin)
+        rozważ zwiększenie interwału skanowania, aby zminimalizować koszty przy zachowaniu jakości.</li>
+      <li><strong>Szersze obszary przechwytywania:</strong> w przeciwieństwie do tradycyjnych programów OCR duże modele
+        językowe (LLM) zapewniają lepsze wyniki przy szerszym kontekście. Wybierz szeroki obszar wokół napisów zamiast
+        ciasnego kadrowania, aby uzyskać spójne, dokładne rozpoznawanie identycznego tekstu wyświetlanego przez kilka
+        sekund.</li>
     </ul>
 
     <h2 id="gemini-api-cost-effective-and-context-aware-translation">Gemini API – tanie tłumaczenie kontekstowe</h2>
-    
-    <p>Zaawansowane modele Gemini firmy Google reprezentują przełom w technologii tłumaczenia za pomocą sztucznej inteligencji, zapewniając wysokiej jakości tłumaczenia w niespotykanie niskiej cenie. Te zaawansowane modele inteligentnie uwzględniają kontekst poprzednich zdań, umożliwiając tanie tłumaczenie napisów w rozbudowanych grach za ułamek tradycyjnych kosztów.</p>
-    
+
+    <p>Zaawansowane modele Gemini firmy Google reprezentują przełom w technologii tłumaczenia za pomocą sztucznej
+      inteligencji, zapewniając wysokiej jakości tłumaczenia w niespotykanie niskiej cenie. Te zaawansowane modele
+      inteligentnie uwzględniają kontekst poprzednich zdań, umożliwiając tanie tłumaczenie napisów w rozbudowanych grach
+      za ułamek tradycyjnych kosztów.</p>
+
     <h3 id="superior-translation-quality">Doskonała jakość tłumaczeń</h3>
-    
+
     <p><strong>Technologia okna kontekstu</strong></p>
-    <p>W przeciwieństwie do tradycyjnych metod, które tłumaczą każdy napis osobno, Gemini API zapewnia konfigurowalne przesuwne okno kontekstu, które uwzględnia tłumaczenie poprzednich zdań. To rewolucyjne podejście zapewnia spójność narracji i poprawność gramatyczną oraz umożliwia bardziej naturalne i poprawne tłumaczenie dialogów.</p>
-    
+    <p>W przeciwieństwie do tradycyjnych metod, które tłumaczą każdy napis osobno, Gemini API zapewnia konfigurowalne
+      przesuwne okno kontekstu, które uwzględnia tłumaczenie poprzednich zdań. To rewolucyjne podejście zapewnia
+      spójność narracji i poprawność gramatyczną oraz umożliwia bardziej naturalne i poprawne tłumaczenie dialogów.</p>
+
     <p>Okno kontekstu może obejmować 0–5 poprzednich napisów, co umożliwia sztucznej inteligencji:</p>
     <ul>
       <li>utrzymanie spójnego stylu wypowiedzi postaci w dialogach;</li>
@@ -757,10 +951,11 @@
       <li>poprawne stosowanie zaimków i odmian gramatycznych;</li>
       <li>wyświetlanie bardziej naturalnych, idiomatycznych tłumaczeń.</li>
     </ul>
-    
+
     <p><strong>Przykład: tłumaczenie z uwzględnieniem kontekstu</strong></p>
-    <p>Poniższy przykład dobrze pokazuje, jak kontekst poprzednich zdań umożliwia zastosowanie poprawnych form gramatycznych przy tłumaczeniu z czeskiego na polski:</p>
-    
+    <p>Poniższy przykład dobrze pokazuje, jak kontekst poprzednich zdań umożliwia zastosowanie poprawnych form
+      gramatycznych przy tłumaczeniu z czeskiego na polski:</p>
+
     <table>
       <thead>
         <tr>
@@ -792,24 +987,38 @@
         </tr>
       </tbody>
     </table>
-    
+
     <p><strong>Kluczowe poprawki wynikające z kontekstu:</strong></p>
     <ul>
-      <li><strong>„<span style="color: #d32f2f;">Jakiego stawu?</span>” a „<span style="color: #2e7d32;">Nad jakim stawem?</span>”</strong> – Gemini poprawnie używa wyrażenia przyimkowego „nad stawem”, odnosząc się do poprzedniego zdania („nad stawem”), podczas gdy DeepL używa formy dopełniacza.</li>
-      <li><strong>„<span style="color: #d32f2f;">była!</span>” a „<span style="color: #2e7d32;">byłaś!</span>”</strong> – Gemini poprawnie używa formy drugiej osoby rodzaju żeńskiego („byłaś”), aby zachować spójność dialogu, podczas gdy DeepL używa formy trzeciej osoby („była”).</li>
+      <li><strong>„<span style="color: #d32f2f;">Jakiego stawu?</span>” a „<span style="color: #2e7d32;">Nad jakim
+            stawem?</span>”</strong> – Gemini poprawnie używa wyrażenia przyimkowego „nad stawem”, odnosząc się do
+        poprzedniego zdania („nad stawem”), podczas gdy DeepL używa formy dopełniacza.</li>
+      <li><strong>„<span style="color: #d32f2f;">była!</span>” a „<span style="color: #2e7d32;">byłaś!</span>”</strong>
+        – Gemini poprawnie używa formy drugiej osoby rodzaju żeńskiego („byłaś”), aby zachować spójność dialogu, podczas
+        gdy DeepL używa formy trzeciej osoby („była”).</li>
     </ul>
-    
-    <p>Te przykłady wyraźnie pokazują, jak okno kontekstu Gemini pomaga utrzymać spójność gramatyczną i płynność dialogów, co byłoby niemożliwe przy tłumaczeniu zdanie po zdaniu.</p>
-    
+
+    <p>Te przykłady wyraźnie pokazują, jak okno kontekstu Gemini pomaga utrzymać spójność gramatyczną i płynność
+      dialogów, co byłoby niemożliwe przy tłumaczeniu zdanie po zdaniu.</p>
+
     <p><strong>Inteligentna korekta błędów OCR</strong></p>
-    <p>Jedną z najbardziej imponujących cech Gemini jest zdolność interpretowania i automatycznego korygowania niedoskonałości OCR. Gdy rozpoznawanie tekstu generuje zniekształcone lub niepełne wyniki, zaawansowane rozumienie języka przez Gemini często pozwala odgadnąć zamierzone znaczenie i zapewnić poprawne, dokładne tłumaczenia bez powielania błędów OCR w zwracanym tłumaczeniu.</p>
-    
+    <p>Jedną z najbardziej imponujących cech Gemini jest zdolność interpretowania i automatycznego korygowania
+      niedoskonałości OCR. Gdy rozpoznawanie tekstu generuje zniekształcone lub niepełne wyniki, zaawansowane rozumienie
+      języka przez Gemini często pozwala odgadnąć zamierzone znaczenie i zapewnić poprawne, dokładne tłumaczenia bez
+      powielania błędów OCR w zwracanym tłumaczeniu.</p>
+
     <p><strong>Elastyczna konfiguracja modeli</strong></p>
-    <p>Aplikacja obsługuje wiele modeli Gemini do operacji OCR i tłumaczenia. Można wybrać różne modele w zależności od konkretnych potrzeb: modele Gemini 2.0 zapewniają doskonałą dokładność OCR do dłuższych napisów, natomiast modele Gemini 2.5 gwarantują wydajność zoptymalizowaną pod kątem szybkości do szybko zmieniających się treści. Wybór modeli i ceny można dostosować, edytując plik <code>gemini_models.csv</code> w katalogu <strong>resources</strong>.</p>
-    
+    <p>Aplikacja obsługuje wiele modeli Gemini do operacji OCR i tłumaczenia. Można wybrać różne modele w zależności od
+      konkretnych potrzeb: modele Gemini 2.0 zapewniają doskonałą dokładność OCR do dłuższych napisów, natomiast modele
+      Gemini 2.5 gwarantują wydajność zoptymalizowaną pod kątem szybkości do szybko zmieniających się treści. Wybór
+      modeli i ceny można dostosować, edytując plik <code>gemini_models.csv</code> w katalogu
+      <strong>resources</strong>.
+    </p>
+
     <p><strong>Przykład: korekta błędów OCR</strong></p>
-    <p>Oto rzeczywisty przykład pokazujący, jak Gemini radzi sobie z błędami OCR w porównaniu z DeepL przy tłumaczeniu z francuskiego na angielski:</p>
-    
+    <p>Oto rzeczywisty przykład pokazujący, jak Gemini radzi sobie z błędami OCR w porównaniu z DeepL przy tłumaczeniu z
+      francuskiego na angielski:</p>
+
     <table>
       <thead>
         <tr>
@@ -834,35 +1043,40 @@
         </tr>
       </tbody>
     </table>
-    
+
     <h3 id="exceptional-cost-effectiveness">Wyjątkowa opłacalność</h3>
-    
+
     <p><strong>Analiza kosztów w praktyce</strong></p>
-    <p>Gemini API zapewnia ogromne korzyści w dużych projektach tłumaczeniowych. Nawet bardzo rozbudowane gry, takie jak Wiedźmin 3, z setkami godzin dialogów i napisów, można przetłumaczyć za łączną kwotę kilku dolarów. I to nawet przy uwzględnieniu:</p>
+    <p>Gemini API zapewnia ogromne korzyści w dużych projektach tłumaczeniowych. Nawet bardzo rozbudowane gry, takie jak
+      Wiedźmin 3, z setkami godzin dialogów i napisów, można przetłumaczyć za łączną kwotę kilku dolarów. I to nawet
+      przy uwzględnieniu:</p>
     <ul>
       <li>wielu wersji OCR z powodu różnic w rozpoznanym tekście;</li>
       <li>dodatkowych kosztów związanych z oknem kontekstu (wysyłanie 1–2 poprzednich napisów w każdym zapytaniu);</li>
       <li>braku tłumaczeń w buforze, co wymaga nowych zapytań do API;</li>
       <li>złożonej treści narracyjnej wymagającej dłuższego kontekstu.</li>
     </ul>
-    
+
     <p><strong>Szacowanie kosztów: tłumaczenie Wiedźmina 3</strong></p>
-    <p>Oto szczegółowa analiza kosztów tłumaczenia napisów do gry Wiedźmin 3 za pomocą DeepL i Gemini 2.5 Flash-Lite:</p>
-    
+    <p>Oto szczegółowa analiza kosztów tłumaczenia napisów do gry Wiedźmin 3 za pomocą DeepL i Gemini 2.5 Flash-Lite:
+    </p>
+
     <p><strong>Założenia:</strong></p>
     <ul>
       <li><strong>Liczba słów:</strong> 450 000 słów.</li>
       <li><strong>Niedokładność OCR:</strong> założono, że każdy napis jest wysyłany do tłumaczenia 3 razy.</li>
       <li><strong>Średnia długość słowa:</strong> 5 znaków.</li>
       <li><strong>Tokeny na słowo:</strong> 2 tokeny na słowo.</li>
-      <li><strong>Kontekst Gemini:</strong> założono, że każda wiadomość wejściowa jest 4 razy dłuższa niż sam napis.</li>
+      <li><strong>Kontekst Gemini:</strong> założono, że każda wiadomość wejściowa jest 4 razy dłuższa niż sam napis.
+      </li>
       <li><strong>Koszt DeepL API Pro:</strong> 20,00 € za 1 milion znaków.</li>
-      <li><strong>Koszt Gemini 2.5 Flash-Lite:</strong> 0,10 $ za 1 milion tokenów wejściowych i 0,40 $ za 1 milion tokenów wyjściowych.</li>
+      <li><strong>Koszt Gemini 2.5 Flash-Lite:</strong> 0,10 $ za 1 milion tokenów wejściowych i 0,40 $ za 1 milion
+        tokenów wyjściowych.</li>
       <li><strong>Kurs EUR do USD:</strong> 1,08.</li>
     </ul>
-    
+
     <p><strong>Rozkład kosztów:</strong></p>
-    
+
     <p><strong>DeepL:</strong></p>
     <ul>
       <li><strong>Całkowita liczba znaków:</strong> 450 000 słów × 5 znaków/słowo = 2 250 000 znaków.</li>
@@ -870,7 +1084,7 @@
       <li><strong>Szacowany koszt (EUR):</strong> (6 750 000 ÷ 1 000 000) × 20,00 € = <strong>135,00 €</strong>.</li>
       <li><strong>Szacowany koszt (USD):</strong> 135,00 € × 1,08 = <strong>145,80 $</strong>.</li>
     </ul>
-    
+
     <p><strong>Gemini 2.5 Flash-Lite:</strong></p>
     <ul>
       <li><strong>Całkowita liczba tokenów:</strong> 450 000 słów × 2 tokeny/słowo = 900 000 tokenów.</li>
@@ -879,9 +1093,10 @@
       <li><strong>Koszt wejściowy:</strong> (10 800 000 ÷ 1 000 000) × 0,10 $ = <strong>1,08 $</strong>.</li>
       <li><strong>Tokeny wyjściowe:</strong> 2 700 000 tokenów.</li>
       <li><strong>Koszt wyjściowy:</strong> (2 700 000 ÷ 1 000 000) × 0,40 $ = <strong>1,08 $</strong>.</li>
-      <li><strong>Całkowity szacowany koszt (USD):</strong> 1,08 $ (wejście) + 1,08 $ (wyjście) = <strong>2,16 $</strong>.</li>
+      <li><strong>Całkowity szacowany koszt (USD):</strong> 1,08 $ (wejście) + 1,08 $ (wyjście) = <strong>2,16
+          $</strong>.</li>
     </ul>
-    
+
     <table>
       <thead>
         <tr>
@@ -903,30 +1118,40 @@
         </tr>
       </tbody>
     </table>
-    
-    <p><em>Uwaga: są to szacunki przybliżone. Rzeczywiste koszty zależą od pary językowej, dokładności OCR, ustawień kontekstu i skuteczności bufora.</em></p>
+
+    <p><em>Uwaga: są to szacunki przybliżone. Rzeczywiste koszty zależą od pary językowej, dokładności OCR, ustawień
+        kontekstu i skuteczności bufora.</em></p>
 
     <div class="disclaimer-note">
       <div class="disclaimer-note-icon">❗</div>
       <div class="disclaimer-note-content">
-        <strong>Zastrzeżenie:</strong> monitorowanie kosztów ma charakter wyłącznie poglądowy. Jest to darmowe oprogramowanie, a jego autor nie udziela żadnych gwarancji dotyczących dokładności szacunków. Użytkownicy są odpowiedzialni za samodzielne monitorowanie wykorzystania API i kosztów w panelu rozliczeniowym Google.
+        <strong>Zastrzeżenie:</strong> monitorowanie kosztów ma charakter wyłącznie poglądowy. Jest to darmowe
+        oprogramowanie, a jego autor nie udziela żadnych gwarancji dotyczących dokładności szacunków. Użytkownicy są
+        odpowiedzialni za samodzielne monitorowanie wykorzystania API i kosztów w panelu rozliczeniowym Google.
       </div>
     </div>
-    
+
     <p><strong>Wbudowane monitorowanie kosztów</strong></p>
-    <p>Game-Changing Translator umożliwia kompleksowe monitorowanie kosztów, zaprojektowane specjalnie na potrzeby Gemini API:</p>
+    <p>Game-Changing Translator umożliwia kompleksowe monitorowanie kosztów, zaprojektowane specjalnie na potrzeby
+      Gemini API:</p>
     <ul>
-      <li><strong>Wyświetlanie kosztów w czasie rzeczywistym</strong> – Koszty sumują się na bieżąco podczas tłumaczenia.</li>
-      <li><strong>Analiza zużycia tokenów</strong> – Śledzenie dokładnego zużycia tokenów wejściowych i wyjściowych.</li>
-      <li><strong>Rejestrowanie zapytań API</strong> – Opcjonalne, szczegółowe rejestrowanie zapewniające pełną przejrzystość w pliku <code>Gemini_API_call_logs.txt</code>.</li>
-      <li><strong>Krótsze dzienniki API</strong> – Skondensowane dzienniki w pliku <code>GEMINI_API_TRA_short_log.txt</code> dla usprawnionego śledzenia kosztów.</li>
+      <li><strong>Wyświetlanie kosztów w czasie rzeczywistym</strong> – Koszty sumują się na bieżąco podczas
+        tłumaczenia.</li>
+      <li><strong>Analiza zużycia tokenów</strong> – Śledzenie dokładnego zużycia tokenów wejściowych i wyjściowych.
+      </li>
+      <li><strong>Rejestrowanie zapytań API</strong> – Opcjonalne, szczegółowe rejestrowanie zapewniające pełną
+        przejrzystość w pliku <code>Gemini_API_call_logs.txt</code>.</li>
+      <li><strong>Krótsze dzienniki API</strong> – Skondensowane dzienniki w pliku
+        <code>GEMINI_API_TRA_short_log.txt</code> dla usprawnionego śledzenia kosztów.
+      </li>
       <li><strong>Licznik słów</strong> – Monitorowanie łącznej liczby przetłumaczonych słów we wszystkich sesjach.</li>
-      <li><strong>Zintegrowane monitorowanie</strong> – Śledzenie kosztów zarówno Gemini OCR, jak i tłumaczenia razem w zakładce <a href="#api-usage-monitoring">Zużycie API</a>.</li>
+      <li><strong>Zintegrowane monitorowanie</strong> – Śledzenie kosztów zarówno Gemini OCR, jak i tłumaczenia razem w
+        zakładce <a href="#api-usage-monitoring">Zużycie API</a>.</li>
     </ul>
-    
+
     <p><strong>Szczegółowy przykład zapytania do API</strong></p>
     <p>Oto rzeczywisty przykład działania dziennika zapytań API, który pokazuje cały proces tłumaczenia:</p>
-    
+
     <pre><code>=== GEMINI API CALL LOG ===
 Timestamp: 2025-07-06 17:19:03
 Language Pair: fr -> en
@@ -976,13 +1201,19 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
 - Cumulative Log Cost: $0.03376710
 
 ========================================</code></pre>
-    
-    <p>Ten szczegółowy dziennik jest zapisywany w pliku <code>Gemini_API_call_logs.txt</code>. W zakładce <strong>Ustawienia</strong> znajdziesz pola <strong>Łącznie słów</strong> i <strong>Łączny koszt</strong>, które wyświetlają wartości oparte wyłącznie na tym pliku dziennika. Jeśli plik zostanie wyczyszczony lub usunięty, wartości te zostaną odpowiednio zresetowane.</p>
-    
+
+    <p>Ten szczegółowy dziennik jest zapisywany w pliku <code>Gemini_API_call_logs.txt</code>. W zakładce
+      <strong>Ustawienia</strong> znajdziesz pola <strong>Łącznie słów</strong> i <strong>Łączny koszt</strong>, które
+      wyświetlają wartości oparte wyłącznie na tym pliku dziennika. Jeśli plik zostanie wyczyszczony lub usunięty,
+      wartości te zostaną odpowiednio zresetowane.
+    </p>
+
     <h3 id="configuration-and-setup">Konfiguracja i ustawienia</h3>
-    
+
     <ol>
-      <li><strong>Konfiguracja klucza API</strong> – wymaga konta Google AI Studio lub Google Cloud z dostępem do Gemini API. Przejdź do Google AI Studio i kliknij przycisk „Get API key”, aby skonfigurować klucz API dla modeli Gemini.</li>
+      <li><strong>Konfiguracja klucza API</strong> – wymaga konta Google AI Studio lub Google Cloud z dostępem do Gemini
+        API. Przejdź do Google AI Studio i kliknij przycisk „Get API key”, aby skonfigurować klucz API dla modeli
+        Gemini.</li>
       <li><strong>Wybór modelu</strong> – Gemini 2.5 Flash-Lite zapewnia doskonałą jakość w atrakcyjnej cenie.</li>
       <li><strong>Okno kontekstu</strong> – wybierz między:
         <ul>
@@ -991,91 +1222,122 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
           <li><strong>2 (dwa napisy)</strong> – rozszerzony kontekst dla spójności narracji.</li>
           <li><strong>3 (trzy napisy)</strong> – rozszerzony kontekst dla złożonych dialogów.</li>
           <li><strong>4 (cztery napisy)</strong> – rozszerzony kontekst dla języków azjatyckich.</li>
-          <li><strong>5 (pięć napisów)</strong> – maksymalny kontekst dla języków azjatyckich, które w większym stopniu opierają się na kontekście.</li>
+          <li><strong>5 (pięć napisów)</strong> – maksymalny kontekst dla języków azjatyckich, które w większym stopniu
+            opierają się na kontekście.</li>
         </ul>
       </li>
-      <li><strong>Włącz rejestr API</strong> – opcjonalne, szczegółowe rejestrowanie analizy kosztów i wykonanych tłumaczeń (zapytania do API są zapisywane w pliku <strong>Gemini_API_call_logs.txt</strong>).</li>
-      <li><strong>Włącz bufor Gemini</strong> – pozwala zmniejszyć liczbę zapytań do API w przypadku powtarzających się treści (tłumaczenia są zapisywane w pliku <strong>gemini_cache.txt</strong>).</li>
-      <li><strong>Ustawienie temperatury</strong> – to ustawienie można zmienić tylko ręcznie w pliku <code>ocr_translator_config.ini</code>. Jest ustawione domyślnie na 0.0 (<code>gemini_model_temp = 0.0</code>), co jest zalecanym ustawieniem dla uzyskania spójnych i powtarzalnych tłumaczeń.</li>
+      <li><strong>Włącz rejestr API</strong> – opcjonalne, szczegółowe rejestrowanie analizy kosztów i wykonanych
+        tłumaczeń (zapytania do API są zapisywane w pliku <strong>Gemini_API_call_logs.txt</strong>).</li>
+      <li><strong>Włącz bufor Gemini</strong> – pozwala zmniejszyć liczbę zapytań do API w przypadku powtarzających się
+        treści (tłumaczenia są zapisywane w pliku <strong>gemini_cache.txt</strong>).</li>
+      <li><strong>Ustawienie temperatury</strong> – to ustawienie można zmienić tylko ręcznie w pliku
+        <code>ocr_translator_config.ini</code>. Jest ustawione domyślnie na 0.0 (<code>gemini_model_temp = 0.0</code>),
+        co jest zalecanym ustawieniem dla uzyskania spójnych i powtarzalnych tłumaczeń.
+      </li>
     </ol>
-    
+
     <h3 id="performance-optimization">Optymalizacja wydajności</h3>
-    
+
     <p><strong>Inteligentny system buforowania</strong></p>
-    <p>Gemini API korzysta z tego samego systemu buforowania w pliku co DeepL i Google Translate. Gdy buforowanie jest włączone, identyczne fragmenty tekstu są przechowywane lokalnie i pobierane bez dodatkowych zapytań do API. Jednak skuteczność bufora zależy od spójności działania OCR – nawet niewielkie różnice w rozpoznanym tekście spowodują wysłanie nowego zapytania do API.</p>
-    
+    <p>Gemini API korzysta z tego samego systemu buforowania w pliku co DeepL i Google Translate. Gdy buforowanie jest
+      włączone, identyczne fragmenty tekstu są przechowywane lokalnie i pobierane bez dodatkowych zapytań do API. Jednak
+      skuteczność bufora zależy od spójności działania OCR – nawet niewielkie różnice w rozpoznanym tekście spowodują
+      wysłanie nowego zapytania do API.</p>
+
     <p><strong>Strategie optymalizacji kosztów</strong>:</p>
     <ul>
-      <li>Używaj okna kontekstu rozważnie – wyższe ustawienia zapewniają lepszą jakość, ale zwiększają zużycie tokenów.</li>
+      <li>Używaj okna kontekstu rozważnie – wyższe ustawienia zapewniają lepszą jakość, ale zwiększają zużycie tokenów.
+      </li>
       <li>Włącz buforowanie do pliku w przypadku treści z powtarzającymi się elementami.</li>
       <li>Umieszczaj obszary źródłowe precyzyjnie, aby poprawić spójność OCR.</li>
       <li>Używaj adaptacyjnych trybów przetwarzania w przypadku trudnego tekstu.</li>
       <li>Monitoruj wbudowany licznik kosztów, aby poznać schematy korzystania z API.</li>
     </ul>
-        
+
     <h3 id="gaming-and-large-project-applications">Zastosowania w grach i dużych projektach</h3>
-    
+
     <p><strong>Idealne do tłumaczenia gier</strong></p>
     <p>Gemini API doskonale sprawdza się w grach, w których kluczowy jest kontekst i płynność narracji:</p>
     <ul>
       <li><strong>Gry RPG i fabularne</strong> – okno kontekstu utrzymuje spójność wypowiedzi postaci i fabuły.</li>
       <li><strong>Powieści wizualne</strong> – doskonała obsługa dialogów i rozwoju narracji.</li>
-      <li><strong>Treści z dużą ilością napisów</strong> – inteligentna korekta błędów radzi sobie z niedoskonałym wynikiem OCR tekstu nałożonego na obraz.</li>
-      <li><strong>Dialogi wielopostaciowe</strong> – świadomość kontekstu poprawia dobór zaimków i identyfikację rozmówcy.</li>
+      <li><strong>Treści z dużą ilością napisów</strong> – inteligentna korekta błędów radzi sobie z niedoskonałym
+        wynikiem OCR tekstu nałożonego na obraz.</li>
+      <li><strong>Dialogi wielopostaciowe</strong> – świadomość kontekstu poprawia dobór zaimków i identyfikację
+        rozmówcy.</li>
     </ul>
 
     <h3 id="openai-api-a-flexible-alternative">OpenAI API – elastyczna alternatywa</h3>
     <div class="openai-note">
-        <div class="openai-note-icon">💡</div>
-        <div class="openai-note-content">
-            <strong>Większy wybór, większe możliwości:</strong> dodanie obsługi model OpenAI zapewnia użytkownikom większą elastyczność. Chociaż modele Gemini są zalecane ze względu na wyjątkowy stosunek jakości do ceny, OpenAI jest atrakcyjną alternatywą, szczególnie dla użytkowników, którzy nie chcą lub nie mogą korzystać z modeli Gemini.
-        </div>
+      <div class="openai-note-icon">💡</div>
+      <div class="openai-note-content">
+        <strong>Większy wybór, większe możliwości:</strong> dodanie obsługi model OpenAI zapewnia użytkownikom większą
+        elastyczność. Chociaż modele Gemini są zalecane ze względu na wyjątkowy stosunek jakości do ceny, OpenAI jest
+        atrakcyjną alternatywą, szczególnie dla użytkowników, którzy nie chcą lub nie mogą korzystać z modeli Gemini.
+      </div>
     </div>
 
-    <p>Integracja modeli OpenAI poszerza wybór modeli zaawansowanej sztucznej inteligencji na potrzeby tłumaczenia i OCR. Zwiększa to wszechstronność aplikacji, pozwalając wybrać dostawcę, który najlepiej odpowiada wymaganiom użytkownika.</p>
+    <p>Integracja modeli OpenAI poszerza wybór modeli zaawansowanej sztucznej inteligencji na potrzeby tłumaczenia i
+      OCR. Zwiększa to wszechstronność aplikacji, pozwalając wybrać dostawcę, który najlepiej odpowiada wymaganiom
+      użytkownika.</p>
 
     <h4>Obsługiwane modele OpenAI i zalecenia</h4>
     <p>Obsługiwane są trzy główne modele OpenAI, z których każdy ma swoje mocne strony:</p>
     <table>
-        <thead>
-            <tr>
-                <th>Nazwa modelu</th>
-                <th>Zalecane zastosowanie</th>
-                <th>Jakość tłumaczenia</th>
-                <th>Jakość OCR</th>
-                <th>Koszt</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><code>GPT 4.1 Mini</code></td>
-                <td><strong>Tłumaczenie</strong></td>
-                <td>Doskonała (dobrze radzi sobie z kontekstem)</td>
-                <td>Nie dotyczy (zbyt drogi)</td>
-                <td>Wysoki</td>
-            </tr>
-            <tr>
-                <td><code>GPT 4.1 Nano</code></td>
-                <td><strong>OCR</strong></td>
-                <td>Przeciętna (może mieć problemy z kontekstem)</td>
-                <td>Bardzo dobra</td>
-                <td>Wysoki</td>
-            </tr>
-            <tr>
-                <td><code>GPT 5 Nano</code></td>
-                <td>Budżetowe</td>
-                <td>Przeciętna (może mieć problemy z kontekstem)</td>
-                <td>Dobra</td>
-                <td>Niski</td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th>Nazwa modelu</th>
+          <th>Zalecane zastosowanie</th>
+          <th>Jakość tłumaczenia</th>
+          <th>Jakość OCR</th>
+          <th>Koszt</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>GPT 4.1 Mini</code></td>
+          <td><strong>Tłumaczenie</strong></td>
+          <td>Doskonała (dobrze radzi sobie z kontekstem)</td>
+          <td>Nie dotyczy (zbyt drogi)</td>
+          <td>Wysoki</td>
+        </tr>
+        <tr>
+          <td><code>GPT 4.1 Nano</code></td>
+          <td><strong>OCR</strong></td>
+          <td>Przeciętna (może mieć problemy z kontekstem)</td>
+          <td>Bardzo dobra</td>
+          <td>Wysoki</td>
+        </tr>
+        <tr>
+          <td><code>GPT 5 Nano</code></td>
+          <td>Budżetowe</td>
+          <td>Przeciętna (może mieć problemy z kontekstem)</td>
+          <td>Dobra</td>
+          <td>Niski</td>
+        </tr>
+      </tbody>
     </table>
-    <p>Aby uzyskać najlepsze możliwe rezultaty z OpenAI, zaleca się użycie kombinacji modeli: <strong><code>GPT 4.1 Nano</code> do OCR oraz <code>GPT 4.1 Mini</code> do tłumaczenia</strong>. Pozwala to wykorzystać mocne strony każdego z modeli, zapewniając wysokiej jakości rozpoznawanie tekstu i doskonałe, świadome kontekstu tłumaczenie.</p>
+    <p>Aby uzyskać najlepsze możliwe rezultaty z OpenAI, zaleca się użycie kombinacji modeli:
+      <strong><code>GPT 4.1 Nano</code> do OCR oraz <code>GPT 4.1 Mini</code> do tłumaczenia</strong>. Pozwala to
+      wykorzystać mocne strony każdego z modeli, zapewniając wysokiej jakości rozpoznawanie tekstu i doskonałe, świadome
+      kontekstu tłumaczenie.
+    </p>
 
     <h4>Porównanie wydajności i kosztów: OpenAI kontra Gemini</h4>
-    <p>Chociaż modele OpenAI są bardzo zaawansowane, warto zauważyć, że w testach modele Gemini – w szczególności Gemini 2.0 Flash – spisują się lepiej przy niższych kosztach zarówno w zadaniach tłumaczenia, jak i OCR.</p>
-    
-    <p>Całkowity koszt konfiguracji Gemini był ponad dwa razy niższy niż w przypadku kombinacji OpenAI. Wyższy koszt OpenAI wynika z dwóch czynników. Po pierwsze, model OCR (<code>GPT 4.1 Nano</code>) zużywa ponad dwukrotnie więcej tokenów do przetworzenia tych samych obrazów co <code>Gemini 2.0 Flash</code>. Po drugie, koszt tłumaczenia jest również znacznie wyższy, ponieważ jedyny model OpenAI oferujący doskonałą jakość tłumaczenia z uwzględnieniem kontekstu, <code>GPT 4.1 Mini</code>, ma cenę za token cztery razy wyższą niż <code>Gemini 2.0 Flash</code>. Jeśli chodzi o model <code>GPT-5 Nano</code>, ma on doskonałe zdolności rozumowania. Jednakże, gdy parametr <code>effort</code> jest ustawiony na <code>minimal</code>, jakość tłumaczenia i OCR jest zaledwie przeciętna. Co więcej, zwiększenie tego parametru nawet do <code>low</code> powoduje, że zużycie tokenów, koszt i opóźnienia stają się zbyt wysokie, aby umożliwić tłumaczenie w czasie rzeczywistym. To wszystko sprawia, że Gemini jest bardziej opłacalnym wyborem przy dłuższym użytkowaniu.</p>
+    <p>Chociaż modele OpenAI są bardzo zaawansowane, warto zauważyć, że w testach modele Gemini – w szczególności Gemini
+      2.0 Flash – spisują się lepiej przy niższych kosztach zarówno w zadaniach tłumaczenia, jak i OCR.</p>
+
+    <p>Całkowity koszt konfiguracji Gemini był ponad dwa razy niższy niż w przypadku kombinacji OpenAI. Wyższy koszt
+      OpenAI wynika z dwóch czynników. Po pierwsze, model OCR (<code>GPT 4.1 Nano</code>) zużywa ponad dwukrotnie więcej
+      tokenów do przetworzenia tych samych obrazów co <code>Gemini 2.0 Flash</code>. Po drugie, koszt tłumaczenia jest
+      również znacznie wyższy, ponieważ jedyny model OpenAI oferujący doskonałą jakość tłumaczenia z uwzględnieniem
+      kontekstu, <code>GPT 4.1 Mini</code>, ma cenę za token cztery razy wyższą niż <code>Gemini 2.0 Flash</code>. Jeśli
+      chodzi o model <code>GPT-5 Nano</code>, ma on doskonałe zdolności rozumowania. Jednakże, gdy parametr
+      <code>effort</code> jest ustawiony na <code>minimal</code>, jakość tłumaczenia i OCR jest zaledwie przeciętna. Co
+      więcej, zwiększenie tego parametru nawet do <code>low</code> powoduje, że zużycie tokenów, koszt i opóźnienia
+      stają się zbyt wysokie, aby umożliwić tłumaczenie w czasie rzeczywistym. To wszystko sprawia, że Gemini jest
+      bardziej opłacalnym wyborem przy dłuższym użytkowaniu.
+    </p>
 
     <p>Oto wyniki testu tłumaczenia tego samego fragmentu gry z interwałem skanowania 500 ms:</p>
 
@@ -1106,18 +1368,21 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
       </tbody>
     </table>
 
-    <p>Ogólnie rzecz biorąc, modele OpenAI należy traktować jako solidną opcję zapasową lub alternatywę, jeśli z jakiegoś powodu nie można używać modeli Gemini. Całe zużycie API OpenAI można śledzić w zakładce <strong>Zużycie API</strong>.</p>
-    
+    <p>Ogólnie rzecz biorąc, modele OpenAI należy traktować jako solidną opcję zapasową lub alternatywę, jeśli z
+      jakiegoś powodu nie można używać modeli Gemini. Całe zużycie API OpenAI można śledzić w zakładce <strong>Zużycie
+        API</strong>.</p>
+
     <h2 id="api-usage-monitoring">Monitorowanie zużycia API</h2>
-    
-    <p>Zakładka <strong>Zużycie API</strong> umożliwia kompleksowe monitorowanie i analizę kosztów zużycia API Gemini i OpenAI, pomagając śledzić wydatki i optymalizować wykorzystanie API zarówno dla usług OCR, jak i tłumaczenia.</p>
-    
+
+    <p>Zakładka <strong>Zużycie API</strong> umożliwia kompleksowe monitorowanie i analizę kosztów zużycia API Gemini i
+      OpenAI, pomagając śledzić wydatki i optymalizować wykorzystanie API zarówno dla usług OCR, jak i tłumaczenia.</p>
+
     <p>
       <img src="screenshots/API_Stats_pl.png" alt="Zakładka Zużycie API" />
     </p>
-    
+
     <p>Zakładka zawiera szczegółowe statystyki w kilku kategoriach dla każdego dostawcy:</p>
-    
+
     <h3 id="ocr-statistics">📊 Statystyki OCR (Gemini i OpenAI)</h3>
     <ul>
       <li><strong>Łączny koszt OCR</strong> – skumulowany koszt wszystkich wywołań API OCR.</li>
@@ -1125,7 +1390,7 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
       <li><strong>Mediana czasu trwania</strong> – typowy czas odpowiedzi dla żądań OCR.</li>
       <li><strong>Średni koszt na wywołanie/minutę/godzinę</strong> – prognozy kosztów dla ciągłego użytkowania.</li>
     </ul>
-    
+
     <h3 id="translation-statistics">🔄 Statystyki tłumaczenia (Gemini i OpenAI)</h3>
     <ul>
       <li><strong>Łączne wywołania tłumaczenia</strong> – liczba wysłanych żądań tłumaczenia.</li>
@@ -1135,35 +1400,39 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
       <li><strong>Średni koszt na słowo/wywołanie/minutę/godzinę</strong> – koszty jednostkowe i prognozy kosztów.</li>
       <li><strong>Łączny koszt tłumaczenia</strong> – skumulowany koszt wszystkich wywołań API tłumaczenia.</li>
     </ul>
-    
+
     <h3 id="combined-api-statistics">💰 Łączne statystyki API</h3>
     <ul>
       <li><strong>Łączny koszt API</strong> – całkowity koszt wszystkich usług danego dostawcy.</li>
       <li><strong>Łączny koszt na minutę/godzinę</strong> – jednolite prognozy kosztów.</li>
     </ul>
-    
+
     <h3 id="deepl-usage-tracker">📈 Monitor zużycia DeepL</h3>
     <ul>
       <li><strong>Darmowy miesięczny limit</strong> – monitoruj wykorzystanie limitu bezpłatnej wersji DeepL.</li>
     </ul>
-    
+
     <h3 id="statistics-management">Zarządzanie statystykami</h3>
     <p>Zakładka zawiera kilka opcji zarządzania:</p>
     <ul>
       <li><strong>Odśwież statystyki</strong> – zaktualizuj wszystkie wyświetlane dane o bieżące zużycie.</li>
-      <li><strong>Eksportuj do CSV / tekstu</strong> – eksportuj szczegółowe statystyki do analizy zewnętrznej lub raportowania.</li>
+      <li><strong>Eksportuj do CSV / tekstu</strong> – eksportuj szczegółowe statystyki do analizy zewnętrznej lub
+        raportowania.</li>
       <li><strong>Kopiuj</strong> – skopiuj statystyki do schowka.</li>
     </ul>
-    
-    <p><strong>Uwaga:</strong> statystyki opierają się na plikach takich jak <code>GEMINI_API_OCR_short_log.txt</code> i <code>OpenAI_API_TRA_short_log.txt</code>. Dane zostaną zresetowane po usunięciu tych plików.</p>
-    
+
+    <p><strong>Uwaga:</strong> statystyki opierają się na plikach takich jak <code>GEMINI_API_OCR_short_log.txt</code> i
+      <code>OpenAI_API_TRA_short_log.txt</code>. Dane zostaną zresetowane po usunięciu tych plików.
+    </p>
+
     <div class="disclaimer-note">
       <div class="disclaimer-note-icon">❗</div>
       <div class="disclaimer-note-content">
-        <strong>Ważne:</strong> śledzenie kosztów ma charakter wyłącznie poglądowy. Użytkownik sam odpowiada za monitorowanie rzeczywistego zużycia API i kosztów w panelu rozliczeniowym swojego dostawcy usługi.
+        <strong>Ważne:</strong> śledzenie kosztów ma charakter wyłącznie poglądowy. Użytkownik sam odpowiada za
+        monitorowanie rzeczywistego zużycia API i kosztów w panelu rozliczeniowym swojego dostawcy usługi.
       </div>
     </div>
-    
+
     <h2 id="other-translation-methods">Inne metody tłumaczenia</h2>
     <h3 id="marianmt-offline-and-free">MarianMT (lokalny i bezpłatny)</h3>
     <ol>
@@ -1174,12 +1443,19 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
         <ul>
           <li>Wybierz <strong>MarianMT (lokalny i bezpłatny)</strong> jako model tłumaczenia.</li>
           <li>Wybierz parę językową z listy rozwijanej <strong>Model MarianMT</strong>.</li>
-          <li>Dostosuj parametr <strong>Rozmiar wiązki tłumaczenia (MarianMT)</strong> (wyższe wartości = lepsza jakość, ale wolniejsze działanie).</li>
+          <li>Dostosuj parametr <strong>Rozmiar wiązki tłumaczenia (MarianMT)</strong> (wyższe wartości = lepsza jakość,
+            ale wolniejsze działanie).</li>
         </ul>
       </li>
     </ol>
-    <p>Modele MarianMT to otwarte systemy tłumaczenia maszynowego oparte na sieciach neuronowych, które zapewniają całkiem dobrą jakość tłumaczenia. Choć nie dorównują standardom usług premium takich jak DeepL, zapewniają zaskakująco dobre tłumaczenia bez kosztów i połączenia z Internetem po początkowym pobraniu modelu.</p>
-    <p>Modele te zostały pierwotnie zaprojektowane do tłumaczenia krótkich, pojedynczych zdań i zwykle obcinają dłuższe fragmenty. Jednak <strong>Game-Changing Translator</strong> w pomysłowy sposób obchodzi to ograniczenie. Aplikacja automatycznie dzieli dłuższe teksty na pojedyncze zdania i tłumaczy je równolegle przy użyciu trybu wsadowego. Wszystkie zdania są przetwarzane razem w jednym, zoptymalizowanym wywołaniu modelu, a następnie płynnie łączone w całość, co zapewnia kompletne tłumaczenia niezależnie od długości tekstu.</p>
+    <p>Modele MarianMT to otwarte systemy tłumaczenia maszynowego oparte na sieciach neuronowych, które zapewniają
+      całkiem dobrą jakość tłumaczenia. Choć nie dorównują standardom usług premium takich jak DeepL, zapewniają
+      zaskakująco dobre tłumaczenia bez kosztów i połączenia z Internetem po początkowym pobraniu modelu.</p>
+    <p>Modele te zostały pierwotnie zaprojektowane do tłumaczenia krótkich, pojedynczych zdań i zwykle obcinają dłuższe
+      fragmenty. Jednak <strong>Game-Changing Translator</strong> w pomysłowy sposób obchodzi to ograniczenie. Aplikacja
+      automatycznie dzieli dłuższe teksty na pojedyncze zdania i tłumaczy je równolegle przy użyciu trybu wsadowego.
+      Wszystkie zdania są przetwarzane razem w jednym, zoptymalizowanym wywołaniu modelu, a następnie płynnie łączone w
+      całość, co zapewnia kompletne tłumaczenia niezależnie od długości tekstu.</p>
     <p>Takie podejście ma kilka praktycznych zalet:</p>
     <ul>
       <li>Pełna prywatność – tekst nigdy nie opuszcza komputera użytkownika.</li>
@@ -1187,15 +1463,18 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
       <li>Działa nawet podczas przerw w dostępie do Internetu.</li>
       <li>Brak opóźnień API – tłumaczenia działają z prędkością komputera użytkownika.</li>
     </ul>
-    <p>Ustawienie <strong>Rozmiar wiązki tłumaczenia (MarianMT)</strong> pozwala zrównoważyć szybkość i jakość. Wyższe wartości (8–12) dają bardziej dopracowane tłumaczenia, ale wymagają więcej czasu przetwarzania, podczas gdy niższe wartości (1–4) priorytetowo traktują szybkość kosztem idealnego sformułowania.</p>
-    
+    <p>Ustawienie <strong>Rozmiar wiązki tłumaczenia (MarianMT)</strong> pozwala zrównoważyć szybkość i jakość. Wyższe
+      wartości (8–12) dają bardziej dopracowane tłumaczenia, ale wymagają więcej czasu przetwarzania, podczas gdy niższe
+      wartości (1–4) priorytetowo traktują szybkość kosztem idealnego sformułowania.</p>
+
     <div class="marianmt-note">
       <div class="marianmt-note-icon">⚠️</div>
       <div class="marianmt-note-content">
-        <strong>UWAGA:</strong> Model angielsko-polski wymaga nieco więcej czasu na instalację przy pierwszym wyborze, ponieważ jest pobierany i konwertowany z innego źródła niż pozostałe modele MarianMT.
+        <strong>UWAGA:</strong> Model angielsko-polski wymaga nieco więcej czasu na instalację przy pierwszym wyborze,
+        ponieważ jest pobierany i konwertowany z innego źródła niż pozostałe modele MarianMT.
       </div>
     </div>
-    
+
     <h3 id="deepl-api">DeepL API</h3>
     <ol>
       <li>Wymaga konta DeepL i klucza API.</li>
@@ -1210,33 +1489,62 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
           <li>Wybierz preferowaną opcję w polu <strong>Jakość</strong>:
             <ul>
               <li><strong>Klasyczna</strong> – szybsze tłumaczenie z doskonałą jakością</li>
-              <li><strong>Nowej generacji</strong> – minimalnie wolniejsze tłumaczenie, ale czasami jeszcze lepsza jakość</li>
+              <li><strong>Nowej generacji</strong> – minimalnie wolniejsze tłumaczenie, ale czasami jeszcze lepsza
+                jakość</li>
             </ul>
           </li>
           <li>Jeśli nie masz klucza API, zapoznaj się z <a href="installation_pl.html">Instrukcją instalacji</a>.</li>
         </ul>
       </li>
     </ol>
-    
+
     <p><strong>Dwa tryby jakości</strong></p>
-    <p>DeepL ma dwa tryby jakości. Model <strong>Klasyczny</strong> zapewnia szybkie, wysokiej jakości tłumaczenia, które działają ze wszystkimi obsługiwanymi parami językowymi. Model <strong>Nowej generacji</strong> wykorzystuje najnowszą technologię tłumaczeniową DeepL, która może dawać jeszcze lepsze wyniki w przypadku niektórych treści, choć jest nieco wolniejsza i może nie obsługiwać wszystkich par językowych.</p>
-    <p>Jeśli wybierzesz model <strong>Nowej generacji</strong>, a wybrana para językowa nie jest obsługiwana, aplikacja automatycznie przełączy się na tryb <strong>Klasyczny</strong>, aby zapewnić ciągłość tłumaczenia. Obie opcje gwarantują doskonałą jakość, z której słynie DeepL.</p>
-    
+    <p>DeepL ma dwa tryby jakości. Model <strong>Klasyczny</strong> zapewnia szybkie, wysokiej jakości tłumaczenia,
+      które działają ze wszystkimi obsługiwanymi parami językowymi. Model <strong>Nowej generacji</strong> wykorzystuje
+      najnowszą technologię tłumaczeniową DeepL, która może dawać jeszcze lepsze wyniki w przypadku niektórych treści,
+      choć jest nieco wolniejsza i może nie obsługiwać wszystkich par językowych.</p>
+    <p>Jeśli wybierzesz model <strong>Nowej generacji</strong>, a wybrana para językowa nie jest obsługiwana, aplikacja
+      automatycznie przełączy się na tryb <strong>Klasyczny</strong>, aby zapewnić ciągłość tłumaczenia. Obie opcje
+      gwarantują doskonałą jakość, z której słynie DeepL.</p>
+
+    <p><strong>Obsługa rzadkich języków (wersja beta)</strong></p>
+    <p>W wersji 3.8.0 wprowadzono obsługę ponad 70 nowych języków w DeepL, skupiając się na językach mniejszościowych i
+      regionalnych. Są one obecnie w fazie <strong>beta</strong>, co oznacza, że jakość tłumaczenia może być
+      zróżnicowana.</p>
+    <p>Nowe języki to m.in. walijski, irlandzki, bretoński, baskijski, kataloński, korsykański, oksytański, keczua,
+      guarani, ajmara, maoryski, sanskryt, łacina, esperanto i wiele innych.</p>
+    <p><strong>Uwaga:</strong> aby korzystać z tych języków, aplikacja automatycznie włącza jakość
+      <code>Nowej generacji</code>.
+    </p>
+
     <p><strong>Tłumaczenie z uwzględnieniem kontekstu</strong></p>
-    <p>Tłumaczenie DeepL obsługuje obecnie uwzględnianie kontekstu przez możliwość dołączenia do każdego żądania tłumaczenia nawet 3 poprzednich napisów. Funkcja ta znacząco poprawia jakość poprzez:</p>
+    <p>Tłumaczenie DeepL obsługuje obecnie uwzględnianie kontekstu przez możliwość dołączenia do każdego żądania
+      tłumaczenia nawet 3 poprzednich napisów. Funkcja ta znacząco poprawia jakość poprzez:</p>
     <ul>
       <li>utrzymanie zgodności gramatycznej w kolejnych napisach;</li>
       <li>poprawę doboru zaimków i spójności wypowiedzi postaci;</li>
       <li>zachowanie płynności narracji w treściach z dużą liczbą dialogów;</li>
       <li>generowanie bardziej naturalnych, idiomatycznych tłumaczeń.</li>
     </ul>
-    <p><strong>Ważne:</strong> korzystanie z kontekstu w DeepL <em>nie</em> jest wliczane do limitu zużycia znaków. Kontekst można przesyłać bezpłatnie, dzięki czemu funkcja ta nie zużywa limitów, a poprawia jakość tłumaczenia.</p>
-    <p>Wykorzystanie kontekstu jest automatycznie rejestrowane w pliku <code>DeepL_Translation_Long_Log.txt</code>, który zapisuje pełne okno kontekstu wysyłane z każdym żądaniem tłumaczenia. Ten szczegółowy dziennik pomaga zweryfikować jakość tłumaczenia i zrozumieć, jak kontekst poprawia wyniki.</p>
-    
+    <p><strong>Ważne:</strong> korzystanie z kontekstu w DeepL <em>nie</em> jest wliczane do limitu zużycia znaków.
+      Kontekst można przesyłać bezpłatnie, dzięki czemu funkcja ta nie zużywa limitów, a poprawia jakość tłumaczenia.
+    </p>
+    <p>Wykorzystanie kontekstu jest automatycznie rejestrowane w pliku <code>DeepL_Translation_Long_Log.txt</code>,
+      który zapisuje pełne okno kontekstu wysyłane z każdym żądaniem tłumaczenia. Ten szczegółowy dziennik pomaga
+      zweryfikować jakość tłumaczenia i zrozumieć, jak kontekst poprawia wyniki.</p>
+
     <p><strong>System buforowania tłumaczeń DeepL w plikach</strong></p>
-    <p><strong>Game-Changing Translator</strong> umożliwia buforowanie tłumaczeń DeepL. Po przetłumaczeniu fragmentu tekstu jest on zapisywany w lokalnej pamięci podręcznej aplikacji (<code>deepl_cache.txt</code>). Gdy ten sam tekst pojawi się ponownie, aplikacja pobiera tłumaczenie z pamięci podręcznej zamiast wysyłać kolejne zapytanie API.</p>
-    <p>Należy pamiętać, że mechanizm buforowania zależy całkowicie od jakości OCR. Aby tłumaczenie zostało pobrane z pamięci podręcznej, tekst rozpoznany przez OCR musi być identyczny – co do ostatniego znaku – z tym, co już jest w niej przechowywane. Nawet pojedyncza różnica znaku spowoduje nowe wywołanie API i nowe tłumaczenie. Oznacza to, że faktyczna efektywność pamięci podręcznej zależy w dużej mierze od spójności wyników OCR.</p>
-    <p>Pamięć podręczna jest zachowywana między sesjami aplikacji, ale jej praktyczną korzyść należy traktować jako dodatkowy atut, a nie główną funkcję oszczędzającą API. Im bardziej jednolita i wyraźna prezentacja tekstu, tym większa szansa na skorzystanie z systemu buforowania.</p>
+    <p><strong>Game-Changing Translator</strong> umożliwia buforowanie tłumaczeń DeepL. Po przetłumaczeniu fragmentu
+      tekstu jest on zapisywany w lokalnej pamięci podręcznej aplikacji (<code>deepl_cache.txt</code>). Gdy ten sam
+      tekst pojawi się ponownie, aplikacja pobiera tłumaczenie z pamięci podręcznej zamiast wysyłać kolejne zapytanie
+      API.</p>
+    <p>Należy pamiętać, że mechanizm buforowania zależy całkowicie od jakości OCR. Aby tłumaczenie zostało pobrane z
+      pamięci podręcznej, tekst rozpoznany przez OCR musi być identyczny – co do ostatniego znaku – z tym, co już jest w
+      niej przechowywane. Nawet pojedyncza różnica znaku spowoduje nowe wywołanie API i nowe tłumaczenie. Oznacza to, że
+      faktyczna efektywność pamięci podręcznej zależy w dużej mierze od spójności wyników OCR.</p>
+    <p>Pamięć podręczna jest zachowywana między sesjami aplikacji, ale jej praktyczną korzyść należy traktować jako
+      dodatkowy atut, a nie główną funkcję oszczędzającą API. Im bardziej jednolita i wyraźna prezentacja tekstu, tym
+      większa szansa na skorzystanie z systemu buforowania.</p>
     <h3 id="google-translate-api">Google Translate API</h3>
     <ol>
       <li>Wymaga konta Google Cloud i klucza API.</li>
@@ -1250,8 +1558,11 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
         </ul>
       </li>
     </ol>
-    <p>Google Translate wykorzystuje ten sam system pamięci podręcznej plików co DeepL. W sekcji na temat DeepL powyżej znajduje się szczegółowe wyjaśnienie działania mechanizmu buforowania, jego zależności od jakości OCR oraz praktycznych korzyści i ograniczeń. Wszystkie te same uwagi i zastrzeżenia dotyczą funkcji buforowania Google Translate.</p>
-    
+    <p>Google Translate wykorzystuje ten sam system pamięci podręcznej plików co DeepL. W sekcji na temat DeepL powyżej
+      znajduje się szczegółowe wyjaśnienie działania mechanizmu buforowania, jego zależności od jakości OCR oraz
+      praktycznych korzyści i ograniczeń. Wszystkie te same uwagi i zastrzeżenia dotyczą funkcji buforowania Google
+      Translate.</p>
+
     <h2 id="keyboard-shortcuts">Skróty klawiszowe</h2>
     <p>Dostępne są następujące skróty klawiszowe:</p>
     <table>
@@ -1289,22 +1600,32 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
       </tbody>
     </table>
     <p>
-      <strong>Uwaga</strong>: gdy aplikacja jest zatrzymana (tłumaczenie nieaktywne), <strong>okno tłumaczenia</strong> zostanie automatycznie ukryte. Gdy aplikacja jest uruchomiona, <strong>okno tłumaczenia</strong> pojawi się automatycznie. Można ręcznie zmienić to zachowanie za pomocą skrótu <strong>Alt+2</strong> w dowolnym momencie.</p>
+      <strong>Uwaga</strong>: gdy aplikacja jest zatrzymana (tłumaczenie nieaktywne), <strong>okno tłumaczenia</strong>
+      zostanie automatycznie ukryte. Gdy aplikacja jest uruchomiona, <strong>okno tłumaczenia</strong> pojawi się
+      automatycznie. Można ręcznie zmienić to zachowanie za pomocą skrótu <strong>Alt+2</strong> w dowolnym momencie.
+    </p>
     <h2 id="troubleshooting">Rozwiązywanie problemów</h2>
     <p>W razie problemów:</p>
     <ol>
       <li>Sprawdź zakładkę <strong>Debugowanie</strong> pod kątem komunikatów o błędach oraz dziennik aplikacji.</li>
-      <li>Włącz <strong>Debugowanie OCR</strong> w zakładce <strong>Ustawienia</strong>, aby zobaczyć, co jest przechwytywane i rozpoznawane w zakładce <strong>Debugowanie</strong>. Wyświetl też okno <strong>Podgląd OCR</strong> (dostępne w zakładce <strong>Ustawienia</strong> po kliknięciu przycisku <strong>Podgląd</strong>).</li>
+      <li>Włącz <strong>Debugowanie OCR</strong> w zakładce <strong>Ustawienia</strong>, aby zobaczyć, co jest
+        przechwytywane i rozpoznawane w zakładce <strong>Debugowanie</strong>. Wyświetl też okno <strong>Podgląd
+          OCR</strong> (dostępne w zakładce <strong>Ustawienia</strong> po kliknięciu przycisku
+        <strong>Podgląd</strong>).
+      </li>
       <li>Dostosuj ustawienia w razie potrzeby:
         <ul>
-          <li>Wypróbuj różne tryby przetwarzania obrazu, w tym <strong>tryb adaptacyjny</strong> dla trudnych środowisk.</li>
+          <li>Wypróbuj różne tryby przetwarzania obrazu, w tym <strong>tryb adaptacyjny</strong> dla trudnych środowisk.
+          </li>
           <li>Dostosuj progi pewności i stabilności.</li>
           <li>Sprawdź, czy wybrany język źródłowy jest prawidłowy.</li>
           <li>Włącz <strong>Usuń śmieci na końcu</strong>, aby wyeliminować błędy OCR.</li>
-          <li>Precyzyjnie ustaw parametry <strong>trybu adaptacyjnego</strong>, jeśli tło tekstu zmienia się lub jest niejednolite.</li>
+          <li>Precyzyjnie ustaw parametry <strong>trybu adaptacyjnego</strong>, jeśli tło tekstu zmienia się lub jest
+            niejednolite.</li>
         </ul>
       </li>
-      <li>Zapoznaj się z <a href="troubleshooting.md">Przewodnikiem rozwiązywania problemów</a> (tylko w języku angielskim), aby poznać typowe problemy i ich rozwiązania.</li>
+      <li>Zapoznaj się z <a href="troubleshooting.md">Przewodnikiem rozwiązywania problemów</a> (tylko w języku
+        angielskim), aby poznać typowe problemy i ich rozwiązania.</li>
     </ol>
     <h2 id="tips-and-best-practices">Porady i najlepsze praktyki</h2>
     <h3 id="ocr-accuracy">Dokładność OCR</h3>
@@ -1312,20 +1633,27 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
     <ol>
       <li>Przechwytuj wyraźny tekst o wysokim kontraście.</li>
       <li>Wybierz odpowiedni język źródłowy.</li>
-      <li>Dostosuj tryb przetwarzania obrazu do wyglądu tekstu – wypróbuj <strong>tryb adaptacyjny</strong> dla trudnych teł.</li>
+      <li>Dostosuj tryb przetwarzania obrazu do wyglądu tekstu – wypróbuj <strong>tryb adaptacyjny</strong> dla trudnych
+        teł.</li>
       <li>Dostosuj rozmiar obszaru przechwytywania tak, aby obejmował tekst ciasno, ale w całości.</li>
       <li>Użyj większego obszaru źródłowego dla szerszego kontekstu, jeśli OCR ma problemy.</li>
       <li>Włącz <strong>Usuń śmieci na końcu</strong>, aby wyeliminować artefakty rozpoznawania.</li>
-      <li>Dostosuj próg pewności, aby zrównoważyć przechwytywanie całego tekstu (niższe wartości) i ograniczanie błędów (wyższe wartości).</li>
-      <li>Dla małych napisów na zmieniających się tłach eksperymentuj z parametrami <strong>Rozmiar bloku</strong> i <strong>Wartość C</strong> trybu <strong>adaptacyjnego</strong>.</li>
+      <li>Dostosuj próg pewności, aby zrównoważyć przechwytywanie całego tekstu (niższe wartości) i ograniczanie błędów
+        (wyższe wartości).</li>
+      <li>Dla małych napisów na zmieniających się tłach eksperymentuj z parametrami <strong>Rozmiar bloku</strong> i
+        <strong>Wartość C</strong> trybu <strong>adaptacyjnego</strong>.
+      </li>
     </ol>
     <h3 id="performance-optimization">Optymalizacja wydajności</h3>
     <ol>
       <li>Używaj mniejszego obszaru przechwytywania tekstu źródłowego.</li>
       <li>Kliknij <strong>Wyłącz dziennik debugowania</strong> w zakładce <strong>Start</strong>.</li>
-      <li>Zwiększ <strong>Interwał skanowania (ms)</strong> w zakładce <strong>Ustawienia</strong>, aby zmniejszyć obciążenie procesora.</li>
+      <li>Zwiększ <strong>Interwał skanowania (ms)</strong> w zakładce <strong>Ustawienia</strong>, aby zmniejszyć
+        obciążenie procesora.</li>
       <li>Wyłącz <strong>Debugowanie OCR</strong> w zakładce <strong>Ustawienia</strong>.</li>
-      <li>Ustaw <strong>Tryb przetwarzania obrazu</strong> na <strong>Brak</strong> w zakładce <strong>Ustawienia</strong>.</li>
+      <li>Ustaw <strong>Tryb przetwarzania obrazu</strong> na <strong>Brak</strong> w zakładce
+        <strong>Ustawienia</strong>.
+      </li>
       <li>W przypadku modelu MarianMT:
         <ul>
           <li>Niższy <strong>Rozmiar wiązki tłumaczenia (MarianMT)</strong> zapewni szybsze tłumaczenie.</li>
@@ -1346,13 +1674,16 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
         <div class="gaming-note">
           <div class="gaming-note-icon">🎮</div>
           <div class="gaming-note-content">
-            <strong>UWAGA:</strong> Game-Changing Translator może nie działać w niektórych grach w trybie pełnoekranowym.<br>Zalecane jest korzystanie z <strong>trybu okienkowego bez ramek</strong> (ang. „borderless windowed mode") obsługiwanego w większości nowych gier.
+            <strong>UWAGA:</strong> Game-Changing Translator może nie działać w niektórych grach w trybie
+            pełnoekranowym.<br>Zalecane jest korzystanie z <strong>trybu okienkowego bez ramek</strong> (ang.
+            „borderless windowed mode") obsługiwanego w większości nowych gier.
           </div>
         </div>
         <ul>
           <li>Umieść okno źródłowe na napisach lub dialogach w grze.</li>
           <li>Umieść okno tłumaczenia w miejscu, w którym nie przeszkadza.</li>
-          <li>Użyj opcji <strong>Czas wyświetlania tłumaczenia (s)</strong>, aby tłumaczenia pozostawały widoczne tak długo, jak tekst jest obecny na ekranie.</li>
+          <li>Użyj opcji <strong>Czas wyświetlania tłumaczenia (s)</strong>, aby tłumaczenia pozostawały widoczne tak
+            długo, jak tekst jest obecny na ekranie.</li>
           <li>Włącz <strong>Usuń śmieci na końcu</strong>, aby wyeliminować błędy OCR typowe dla tekstu w grach.</li>
           <li>Dla gier z trudnymi tłami napisów eksperymentuj z ustawieniami <strong>trybu adaptacyjnego</strong>.</li>
         </ul>
@@ -1363,10 +1694,12 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
         </p>
         <ul>
           <li>Przechwyć obszar napisów.</li>
-          <li>Dostosuj tryb przetwarzania, jeśli napisy są wbudowane – <strong>tryb adaptacyjny</strong> często sprawdza się dobrze przy zmiennych tłach filmowych.</li>
+          <li>Dostosuj tryb przetwarzania, jeśli napisy są wbudowane – <strong>tryb adaptacyjny</strong> często sprawdza
+            się dobrze przy zmiennych tłach filmowych.</li>
           <li>W przypadku treści strumieniowych ustaw niższy próg stabilności (0–1) dla szybszej reakcji.</li>
         </ul>
       </li>
     </ol>
-  </body>
+</body>
+
 </html>

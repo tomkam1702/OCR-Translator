@@ -71,7 +71,7 @@ This application was developed or rather vibe-coded with the support of the foll
 ## Key Features
 
 ### NEW in Version 3.8.0
-**Release Date: 19 November 2025**
+**Release Date: 20 November 2025**
 
 #### 🌍 Massive Minority Language Support Update!
 We've just unlocked a whole new world of translation possibilities! Version 3.8.0 introduces support for **over 70 new languages** in DeepL, focusing on minority and regional languages that are often overlooked.

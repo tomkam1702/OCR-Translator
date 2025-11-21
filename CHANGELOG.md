@@ -5,6 +5,13 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.0] - 2025-11-20
+
+### Added
+- **DeepL Minority Language Support (Beta)**: Added support for over 70 new minority and regional languages via DeepL API.
+  - Includes languages such as Welsh, Irish, Breton, Basque, Catalan, Corsican, Occitan, Quechua, Guarani, Aymara, Maori, Sanskrit, Latin, and Esperanto.
+  - Note: These languages are currently in Beta status within DeepL, so translation quality may vary.
+
 ## [3.7.0] - 2025-10-04
 
 ### Added
