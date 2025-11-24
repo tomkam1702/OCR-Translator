@@ -84,6 +84,8 @@ It means you can now enjoy content in languages that were previously inaccessibl
 **New Languages Include:**
 Welsh, Irish, Breton, Basque, Catalan, Corsican, Occitan, Quechua, Guarani, Aymara, Maori, Sanskrit, Latin, Esperanto, and many, many more!
 
+![English to Luxembourgish Translation Example](docs/gallery/64_eng-to-lux_deepl_trans_gemini_ocr.jpg)
+
 > [!NOTE]
 > Please note that these are **DeepL beta languages**, so translation quality may vary compared to fully supported languages.
 
