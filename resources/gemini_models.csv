@@ -1,7 +1,8 @@
 ﻿Model Name,API Name,Input Cost per 1M,Output Cost per 1M,Translation,OCR
-Gemini 2.5 Flash 09-2025,gemini-2.5-flash-preview-09-2025,0.3,2.5,yes,no
+Gemini 3 Flash,gemini-3-flash-preview,0.5,3.0,yes,yes
+Gemini 2.5 Flash 09-2025,gemini-2.5-flash-preview-09-2025,0.3,2.5,yes,yes
 Gemini 2.5 Flash-Lite 09-2025,gemini-2.5-flash-lite-preview-09-2025,0.1,0.4,yes,yes
-Gemini 2.5 Flash,gemini-2.5-flash,0.3,2.5,yes,no
+Gemini 2.5 Flash,gemini-2.5-flash,0.3,2.5,yes,yes
 Gemini 2.5 Flash-Lite,gemini-2.5-flash-lite,0.1,0.4,yes,yes
 Gemini 2.0 Flash,gemini-2.0-flash-001,0.1,0.4,yes,yes
 Gemini 2.0 Flash-Lite,gemini-2.0-flash-lite-001,0.075,0.3,no,yes

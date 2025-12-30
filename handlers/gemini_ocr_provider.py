@@ -75,16 +75,34 @@ class GeminiOCRProvider(AbstractOCRProvider):
         ocr_model_api_name = self.app.get_current_gemini_model_for_ocr() or 'gemini-2.5-flash-lite'
         
         # Configure the OCR request
-        ocr_config = types.GenerateContentConfig(
-            temperature=0.0,
-            max_output_tokens=512,
-            media_resolution="MEDIA_RESOLUTION_MEDIUM",
-            safety_settings=[
+        # Configure the OCR request
+        ocr_model_lower = ocr_model_api_name.lower()
+        
+        # Base arguments
+        config_args = {
+            "temperature": 0.0,
+            "max_output_tokens": 512,
+            "media_resolution": "MEDIA_RESOLUTION_MEDIUM",
+            "safety_settings": [
                 types.SafetySetting(category=c, threshold='BLOCK_NONE') 
                 for c in ['HARM_CATEGORY_HARASSMENT', 'HARM_CATEGORY_HATE_SPEECH', 
                          'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT']
             ]
-        )
+        }
+        
+        # Add model-specific thinking config
+        try:
+            if "gemini-3" in ocr_model_lower:
+                # Gemini 3 requires thinking_level instead of defaulting (or strict budget)
+                config_args["thinking_config"] = types.ThinkingConfig(thinking_level="MINIMAL")
+            # For Gemini 2.5, we don't set thinking_budget for OCR to keep it standard/fast unless needed, 
+            # but usually OCR doesn't trigger severe thinking unless requested. 
+            # If we wanted to be strict for G2.5 OCR too, we could add thinking_budget=0 here, 
+            # but let's stick to G3 requirement as per prompt.
+        except Exception as e:
+            log_debug(f"Error setting thinking config for OCR: {e}")
+
+        ocr_config = types.GenerateContentConfig(**config_args)
         
         # OCR prompt optimized for text transcription
         if self.app.keep_linebreaks_var.get():

@@ -202,9 +202,39 @@ class GeminiProvider(AbstractLLMProvider):
             # Fallback to config if no specific model selected
             translation_model_api_name = self.app.config['Settings'].get('gemini_model_name', 'gemini-2.5-flash-lite')
         
+        # Determine strictness/thought configuration based on model version
+        # Gemini 3.0 uses 'thinking_level', Gemini 2.5 uses 'thinking_budget'
+        current_config = self.generation_config
+        
+        try:
+            if "gemini-3" in translation_model_api_name.lower():
+                # Gemini 3 specific config: Temperature 0, Minimal Thinking
+                if GENAI_AVAILABLE:
+                    from google.genai import types
+                    current_config = types.GenerateContentConfig(
+                        temperature=0.0,  # Strict temperature for Gemini 3
+                        max_output_tokens=1024,
+                        candidate_count=1,
+                        top_p=0.95,
+                        top_k=40,
+                        response_mime_type="text/plain",
+                        thinking_config=types.ThinkingConfig(thinking_level="MINIMAL"), # Use MINIMAL for Gemini 3
+                        safety_settings=[
+                            types.SafetySetting(category=c, threshold='BLOCK_NONE')
+                            for c in ['HARM_CATEGORY_HARASSMENT', 'HARM_CATEGORY_HATE_SPEECH', 
+                                     'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT']
+                        ]
+                    )
+            else:
+                 # Default config (already set in __init__ with thinking_budget=0 if supported)
+                 pass
+        except Exception as e:
+            log_debug(f"Error configuring specific settings for model {translation_model_api_name}: {e}")
+            # Fallback to default self.generation_config
+        
         return {
             'api_name': translation_model_api_name,
-            'config': self.generation_config
+            'config': current_config
         }
     
     def _make_api_call(self, message_content, model_config):
