@@ -41,8 +41,13 @@ class GeminiOCRProvider(AbstractOCRProvider):
         """Check if Gemini libraries are available."""
         return GENAI_AVAILABLE
 
-    def _initialize_client(self, api_key):
-        """Initialize the Gemini API client."""
+    def _initialize_client(self, api_key, use_alpha_api=False):
+        """Initialize the Gemini API client.
+        
+        Args:
+            api_key: The Gemini API key
+            use_alpha_api: If True, use v1alpha API (required for per-Part media_resolution)
+        """
         if not GENAI_AVAILABLE:
             log_debug("Google Gen AI libraries not available for Gemini OCR session")
             self.client = None
@@ -52,11 +57,20 @@ class GeminiOCRProvider(AbstractOCRProvider):
             self._force_client_refresh()
 
         try:
-            log_debug("Creating new Gemini client for OCR")
-            self.client = genai.Client(api_key=api_key)
+            if use_alpha_api:
+                log_debug("Creating new Gemini client for OCR with v1alpha API (per-Part resolution enabled)")
+                self.client = genai.Client(
+                    api_key=api_key,
+                    http_options={'api_version': 'v1alpha'}
+                )
+            else:
+                log_debug("Creating new Gemini client for OCR with default API version")
+                self.client = genai.Client(api_key=api_key)
+            
             self.session_api_key = api_key
             self.client_created_time = time.time()
             self.api_call_count = 0
+            self._current_api_version = 'v1alpha' if use_alpha_api else 'v1beta'
             return self.client is not None
         except Exception as e:
             log_debug(f"Failed to initialize Gemini OCR client: {e}")
@@ -75,14 +89,47 @@ class GeminiOCRProvider(AbstractOCRProvider):
         ocr_model_api_name = self.app.get_current_gemini_model_for_ocr() or 'gemini-2.5-flash-lite'
         
         # Configure the OCR request
-        # Configure the OCR request
         ocr_model_lower = ocr_model_api_name.lower()
+        
+        # Get media resolution from model config
+        # Use gemini_ocr_model_var which contains the full display name (e.g., "Gemini 3 Flash (Low)")
+        # Note: ocr_model_var only contains the provider type ("gemini")
+        ocr_model_display_name = self.app.gemini_ocr_model_var.get()
+        media_resolution_str = self.app.gemini_models_manager.get_model_media_resolution(ocr_model_display_name)
+        
+        # Check if we need v1alpha API for per-Part media resolution (required for LOW resolution on Gemini 3)
+        needs_alpha_api = (media_resolution_str == 'LOW' and 'gemini-3' in ocr_model_lower)
+        current_api_version = getattr(self, '_current_api_version', 'v1beta')
+        
+        log_debug(f"OCR Resolution check: display_name='{ocr_model_display_name}', resolution='{media_resolution_str}', model_lower='{ocr_model_lower}', needs_alpha={needs_alpha_api}, current_api='{current_api_version}'")
+        
+        # Reinitialize client if API version mismatch
+        if needs_alpha_api and current_api_version != 'v1alpha':
+            log_debug("Switching to v1alpha API for LOW resolution per-Part settings")
+            api_key = self._get_api_key()
+            self._initialize_client(api_key, use_alpha_api=True)
+        elif not needs_alpha_api and current_api_version == 'v1alpha':
+            log_debug("Switching back to default API version (v1beta)")
+            api_key = self._get_api_key()
+            self._initialize_client(api_key, use_alpha_api=False)
+        
+        # Store for logging
+        self._current_media_resolution = media_resolution_str
+        
+        # Map string to enum value
+        media_resolution_map = {
+            'LOW': types.MediaResolution.MEDIA_RESOLUTION_LOW,
+            'MEDIUM': types.MediaResolution.MEDIA_RESOLUTION_MEDIUM,
+            'HIGH': types.MediaResolution.MEDIA_RESOLUTION_HIGH,
+            'ULTRA_HIGH': types.MediaResolution.MEDIA_RESOLUTION_HIGH  # Fallback, no ULTRA_HIGH in base enum
+        }
+        media_resolution = media_resolution_map.get(media_resolution_str, types.MediaResolution.MEDIA_RESOLUTION_MEDIUM)
         
         # Base arguments
         config_args = {
             "temperature": 0.0,
             "max_output_tokens": 512,
-            "media_resolution": "MEDIA_RESOLUTION_MEDIUM",
+            "media_resolution": media_resolution,
             "safety_settings": [
                 types.SafetySetting(category=c, threshold='BLOCK_NONE') 
                 for c in ['HARM_CATEGORY_HARASSMENT', 'HARM_CATEGORY_HATE_SPEECH', 
@@ -114,9 +161,37 @@ class GeminiOCRProvider(AbstractOCRProvider):
         
         # Make the API call
         api_call_start_time = time.time()
+        
+        # Per-Part media resolution is only supported for Gemini 3 models
+        if 'gemini-3' in ocr_model_lower:
+            # Map string to PartMediaResolutionLevel enum for per-Part resolution
+            part_resolution_map = {
+                'LOW': types.PartMediaResolutionLevel.MEDIA_RESOLUTION_LOW,
+                'MEDIUM': types.PartMediaResolutionLevel.MEDIA_RESOLUTION_MEDIUM,
+                'HIGH': types.PartMediaResolutionLevel.MEDIA_RESOLUTION_HIGH,
+                'ULTRA_HIGH': types.PartMediaResolutionLevel.MEDIA_RESOLUTION_ULTRA_HIGH
+            }
+            part_resolution_level = part_resolution_map.get(
+                media_resolution_str, 
+                types.PartMediaResolutionLevel.MEDIA_RESOLUTION_MEDIUM
+            )
+            
+            image_part = types.Part.from_bytes(
+                data=image_data, 
+                mime_type='image/webp',
+                media_resolution=types.PartMediaResolution(level=part_resolution_level)
+            )
+        else:
+            # For Gemini 2.x models, per-Part media resolution is not supported
+            # Use simple Part without media_resolution (relies on global config)
+            image_part = types.Part.from_bytes(
+                data=image_data, 
+                mime_type='image/webp'
+            )
+        
         response = self.client.models.generate_content(
             model=ocr_model_api_name,
-            contents=[types.Part.from_bytes(data=image_data, mime_type='image/webp'), prompt],
+            contents=[image_part, prompt],
             config=ocr_config
         )
         call_duration = time.time() - api_call_start_time
@@ -167,10 +242,15 @@ class GeminiOCRProvider(AbstractOCRProvider):
             model_name_for_logging = model_name_for_costing # Fallback
         
         if self._is_logging_enabled():
+            # Get stored values for logging
+            api_version = getattr(self, '_current_api_version', 'v1beta')
+            media_resolution = getattr(self, '_current_media_resolution', 'MEDIUM')
+            
             self._log_complete_ocr_call(
                 prompt, image_size, ocr_result, parsed_text, 
                 call_duration, input_tokens, output_tokens, self._current_source_lang,
-                model_name_for_costing, model_name_for_logging, model_source
+                model_name_for_costing, model_name_for_logging, model_source,
+                api_version, media_resolution
             )
         
         log_debug(f"Gemini OCR result: '{parsed_text}' (took {call_duration:.3f}s)")
@@ -187,7 +267,8 @@ class GeminiOCRProvider(AbstractOCRProvider):
 
     def _log_complete_ocr_call(self, prompt, image_size, raw_response, parsed_response, 
                               call_duration, input_tokens, output_tokens, source_lang, 
-                              model_name_for_costing, model_name_for_logging, model_source):
+                              model_name_for_costing, model_name_for_logging, model_source,
+                              api_version='v1beta', media_resolution='MEDIUM'):
         """Log the complete OCR call with detailed information."""
         try:
             with self._log_lock:
@@ -232,6 +313,8 @@ REQUEST PROMPT:
 
 RESPONSE RECEIVED:
 Model: {model_name_for_logging} ({model_source})
+Requested version: {api_version}
+Requested media resolution: {media_resolution}
 Cost: input {input_cost_str}, output {output_cost_str} (per 1M)
 Timestamp: {call_end_time}
 Call Duration: {call_duration:.3f} seconds

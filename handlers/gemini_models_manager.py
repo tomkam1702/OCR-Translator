@@ -62,6 +62,12 @@ class GeminiModelsManager:
                             'output_cost': output_cost
                         }
                         
+                        # Store media resolution (default to MEDIUM if missing)
+                        media_resolution = row.get('Media Resolution', 'MEDIUM').strip().upper()
+                        if media_resolution not in ['LOW', 'MEDIUM', 'HIGH', 'ULTRA_HIGH']:
+                            media_resolution = 'MEDIUM'
+                        model_info['media_resolution'] = media_resolution
+                        
                         # Add to appropriate lists
                         if translation_enabled:
                             self.translation_models.append(model_info)
@@ -101,6 +107,13 @@ class GeminiModelsManager:
     def get_model_costs(self, api_name):
         """Get input and output costs for a model."""
         return self.model_costs.get(api_name, {'input_cost': 0.1, 'output_cost': 0.4})
+        
+    def get_model_media_resolution(self, display_name):
+        """Get configured media resolution for a model by display name."""
+        model = self.get_model_info_by_display_name(display_name)
+        if model:
+            return model.get('media_resolution', 'MEDIUM')
+        return 'MEDIUM'
     
     def get_model_info_by_api_name(self, api_name):
         """Get complete model info by API name."""
