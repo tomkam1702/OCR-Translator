@@ -646,6 +646,8 @@ Result:
     
     def _get_language_display_name(self, lang_code):
         """Get display name for language code using the language manager."""
+        if lang_code is None:
+            return 'Unknown'
         try:
             # Use the language manager's existing functionality
             display_name = self.app.language_manager.get_localized_language_name(lang_code, self.provider_name, 'english')
