@@ -208,8 +208,8 @@ class GeminiProvider(AbstractLLMProvider):
         
         try:
             if response.usage_metadata:
-                input_tokens = response.usage_metadata.prompt_token_count
-                output_tokens = response.usage_metadata.candidates_token_count
+                input_tokens = response.usage_metadata.prompt_token_count or 0
+                output_tokens = response.usage_metadata.candidates_token_count or 0
             
             # Get the model name for logging from the actual API response
             model_name_for_logging = "unknown"
