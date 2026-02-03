@@ -832,16 +832,22 @@
 
     <p><strong>Recommended Model Selection:</strong></p>
     <ul>
+      <li><strong>Best quality-to-cost ratio:</strong> Gemini 2.5 Flash-Lite for OCR combined with Gemini 3 Flash
+        for translation – this pairing offers excellent idiomatic translations at a reasonable cost.</li>
+      <li><strong>Highest quality:</strong> Gemini 3 Flash for both OCR and translation – superior cultural and
+        idiomatic adaptation, though significantly more expensive as OCR consumes the majority of tokens.</li>
       <li><strong>Fast-changing subtitles (< 1 second display time):</strong> Gemini 2.5 Flash-Lite for both OCR and
-            translation – optimised for speed whilst maintaining excellent quality.</li>
-      <li><strong>Longer subtitles (games, 1+ seconds display time):</strong> Gemini 2.0 Flash for both OCR and
-        translation – superior OCR accuracy and idiomatic translation with the same cost as 2.5 Flash-Lite.</li>
+        translation – optimised for speed whilst maintaining excellent quality.</li>
+      <li><strong>Lower cost with Gemini 3 OCR:</strong> If using Gemini 3 for OCR, the Low resolution variant reduces
+        token consumption compared to the Medium variant whilst maintaining good accuracy.</li>
     </ul>
 
-    <p><strong>Advanced Configuration:</strong> Model availability and costs can be customised by editing the
-      <code>gemini_models.csv</code> file in the <strong>resources</strong> directory. This allows you to add new
-      models, update pricing, or modify which models are available for OCR versus translation operations as Google
-      releases new Gemini models.
+    <p><strong>Advanced Configuration:</strong> Model availability, costs, and resolution settings can be customised
+      by editing the <code>gemini_models.csv</code> file in the <strong>resources</strong> directory. This file
+      includes a <code>Media Resolution</code> column that controls OCR image quality (LOW, MEDIUM, HIGH). The
+      application automatically switches API versions when required for specific resolution settings. This allows you
+      to add new models, update pricing, or modify which models are available for OCR versus translation operations
+      as Google releases new Gemini models.
     </p>
 
     <h4>Challenging Subtitles Scenarios</h4>
@@ -876,20 +882,33 @@
     <p>Gemini OCR is a premium feature that significantly outperforms traditional OCR methods through intelligent model
       selection. The application provides access to multiple Gemini models, each optimised for different scenarios:</p>
 
-    <p><strong>Gemini 2.0 Models - Superior OCR Accuracy and Translation Quality:</strong></p>
+    <p><strong>Gemini 3 Models - Premium Quality Translation:</strong></p>
     <ul>
-      <li>Demonstrated superior OCR accuracy in comprehensive testing across multiple languages.</li>
-      <li>Idiomatic, natural translations.</li>
-      <li>Particularly recommended when subtitles are displayed for 1 second or more on average.</li>
-      <li>Same cost as Gemini 2.5 Flash-Lite but with more consistent text recognition capabilities.</li>
-      <li>Ideal for games where subtitle accuracy is prioritised over processing speed.</li>
+      <li>Google's latest generation model with superior cultural and idiomatic adaptation.</li>
+      <li>Excellent for translating nuanced dialogue with proper localisation (e.g., adapting idioms and cultural
+        references appropriately for the target language).</li>
+      <li>Available in two OCR variants: <strong>Gemini 3 Flash (Medium)</strong> for balanced quality and
+        <strong>Gemini 3 Flash (Low)</strong> for reduced token consumption.</li>
+      <li>Uses <code>thinking_level="MINIMAL"</code> configuration for fast, accurate responses.</li>
+      <li>Higher cost than Gemini 2.x models ($0.50 input / $3.00 output per 1M tokens), but offers the best
+        translation quality available.</li>
     </ul>
 
     <p><strong>Gemini 2.5 Models - Speed Optimised:</strong></p>
     <ul>
       <li>Optimised for fast-changing content where speed is essential.</li>
       <li>Recommended for subtitles that change rapidly (less than 1 second display time).</li>
-      <li>Excellent cost-to-performance ratio for high-speed OCR operations.</li>
+      <li>Excellent cost-to-performance ratio for high-speed OCR operations ($0.10 input / $0.40 output per 1M tokens).</li>
+      <li>Best paired with Gemini 3 Flash for translation to benefit from both speed and quality.</li>
+    </ul>
+
+    <p><strong>Gemini 2.0 Models - Legacy (Retiring February/March 2026):</strong></p>
+    <ul>
+      <li>Demonstrated superior OCR accuracy in comprehensive testing across multiple languages.</li>
+      <li>Idiomatic, natural translations at the same cost as Gemini 2.5 Flash-Lite.</li>
+      <li>Ideal for games where subtitle accuracy is prioritised over processing speed.</li>
+      <li><strong>Note:</strong> These models will be retired in February/March 2026. Consider migrating to
+        Gemini 2.5 Flash-Lite for OCR and Gemini 3 Flash for translation.</li>
     </ul>
 
     <p><strong>Performance and Cost:</strong></p>
@@ -917,12 +936,14 @@
     <h4>Best Practices with Gemini OCR</h4>
 
     <ul>
-      <li><strong>Model selection:</strong> Choose Gemini 2.0 Flash for longer subtitles (1+ seconds) to benefit from
-        superior OCR accuracy at the same cost, or Gemini 2.5 Flash-Lite for fast-changing content.</li>
+      <li><strong>Model selection:</strong> For the best balance of quality and cost, use Gemini 2.5 Flash-Lite for OCR
+        combined with Gemini 3 Flash for translation. For fast-changing subtitles, Gemini 2.5 Flash-Lite for both
+        operations offers excellent speed. If you prefer Gemini 3 for OCR, consider the Low resolution variant to
+        reduce token consumption compared to the Medium variant.</li>
       <li><strong>Minimum scan interval:</strong> Use at least 500ms scan interval, which is sufficient for most
         scenarios.</li>
       <li><strong>Extended intervals for long content:</strong> In games with lengthy subtitles (e.g., The Witcher
-        series), consider increasing the scan interval to minimise costs while maintaining quality.</li>
+        series), consider increasing the scan interval to minimise costs whilst maintaining quality.</li>
       <li><strong>Wider capture areas:</strong> Unlike traditional OCR engines, LLMs provide better results with broader
         context. Select a wide area around subtitles rather than tight cropping for consistent, accurate recognition of
         identical text displayed over several seconds.</li>
@@ -1014,9 +1035,12 @@
 
     <p><strong>Flexible Model Configuration</strong></p>
     <p>The application supports multiple Gemini models for both OCR and translation operations. You can select different
-      models based on your specific needs: Gemini 2.0 models offer superior OCR accuracy for longer subtitles, whilst
-      Gemini 2.5 models provide speed-optimised performance for rapidly changing content. Model selection and pricing
-      can be customised by editing the <code>gemini_models.csv</code> file in the <strong>resources</strong> directory.
+      models based on your specific needs: Gemini 3 Flash offers the highest quality translations with superior
+      cultural adaptation, Gemini 2.5 Flash-Lite provides speed-optimised OCR for rapidly changing content, and
+      legacy Gemini 2.0 models remain available until their retirement in early 2026. For OCR, Gemini 3 Flash is
+      available in Medium and Low resolution variants, allowing you to balance quality against token consumption.
+      Model selection, pricing, and resolution settings can be customised by editing the <code>gemini_models.csv</code>
+      file in the <strong>resources</strong> directory.
     </p>
 
     <p><strong>Example: OCR Error Correction</strong></p>
