@@ -24,9 +24,9 @@ DEEPL_BETA_LANGUAGES = {
 }
 
 # Version Management - Centralized version control
-APP_VERSION = "v3.8.0"
-APP_RELEASE_DATE = "20 November 2025"
-APP_RELEASE_DATE_POLISH = "20 listopada 2025"
+APP_VERSION = "v3.9.0"
+APP_RELEASE_DATE = "8 February 2026"
+APP_RELEASE_DATE_POLISH = "8 lutego 2026"
 GITHUB_API_URL = "https://api.github.com/repos/tomkam1702/OCR-Translator/releases/latest"
 
 def parse_version(version_str):

@@ -238,7 +238,7 @@ The `AbstractOCRProvider` class contains all common functionality shared across 
 - Migrated from legacy `TranslationHandler._gemini_ocr_only()` method
 - Uses Google's Gen AI library with advanced AI-powered text recognition
 - Superior accuracy for challenging subtitle scenarios
-- Supports multiple Gemini models (2.5 Flash-Lite, 2.0 Flash, etc.)
+- Supports multiple Gemini models (Gemini 3 Flash, 2.5 Flash-Lite, etc.)
 - Comprehensive debugging with image saving capabilities
 - Integrated with `GeminiModelsManager` for dynamic model configuration
 
@@ -484,7 +484,7 @@ The system maintains multiple log levels for different use cases:
 
 ### Gemini API Integration and Logging
 
-The application features sophisticated Gemini API integration with comprehensive logging and cost tracking capabilities designed for the Gemini 2.5 Flash-Lite model and other Gemini models.
+The application features sophisticated Gemini API integration with comprehensive logging and cost tracking capabilities designed for the Gemini 3 Flash, Gemini 2.5 Flash-Lite, and other Gemini models.
 
 #### Gemini API Call Logging System (`Gemini_API_call_logs.txt`)
 
@@ -646,10 +646,10 @@ The GeminiModelsManager class provides centralized management of Gemini model co
 
 **Configuration File Format (`gemini_models.csv`):**
 ```csv
-Model Name,API Name,Input Cost per 1M,Output Cost per 1M,Translation,OCR
-Gemini 2.5 Flash-Lite,gemini-2.5-flash-lite,0.1,0.4,yes,yes
-Gemini 2.0 Flash,gemini-2.0-flash-001,0.1,0.4,yes,yes
-Gemini 2.0 Flash-Lite,gemini-2.0-flash-lite-001,0.075,0.3,no,yes
+Model Name,API Name,Input Cost per 1M,Output Cost per 1M,Translation,OCR,Media Resolution
+Gemini 3 Flash,gemini-3-flash-preview,0.5,3.0,yes,no,MEDIUM
+Gemini 3 Flash (Low),gemini-3-flash-preview,0.5,3.0,no,yes,LOW
+Gemini 2.5 Flash-Lite,gemini-2.5-flash-lite,0.1,0.4,yes,yes,MEDIUM
 ```
 
 **Key Methods:**

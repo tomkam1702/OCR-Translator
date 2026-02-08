@@ -70,6 +70,24 @@ This application was developed or rather vibe-coded with the support of the foll
 
 ## Key Features
 
+### 🚀 NEW in Version 3.9.0
+**Release Date: 8 February 2026**
+
+#### 🌌 Gemini 3 Flash Support - The Next Generation of AI
+We've integrated Google's latest **Gemini 3 Flash** model, bringing you the most advanced AI capabilities for both translation and OCR!
+
+- **🧠 Superior Cultural Adaptation**: Gemini 3 Flash understands cultural nuances and idioms better than any previous model.
+- **⚡ Two OCR Variants**: Choose between **Medium** (balanced) and **Low** (token-optimized) resolution for OCR to perfectly match your quality and cost needs.
+- **💰 Optimized Cost-Efficiency**: Combine **Gemini 2.5 Flash-Lite for OCR** with **Gemini 3 Flash for Translation** to get the best of both worlds—lightning-fast text recognition and premium, idiomatically rich translations at a fraction of the cost.
+- **✨ Hybrid Workflow**: Seamlessly mix and match models for OCR and Translation tasks to create your perfect setup.
+
+**See the Difference:**
+*Czech "Trhani z Nemanic" → English "Ragtag nobodies from Nowhere"*
+
+<p align="center">
+<img src="https://github.com/tomkam1702/OCR-Translator/blob/main/docs/screenshots/nemanic.jpg?raw=true" width="70%" alt="Gemini 3 Flash Translation Example">
+</p>
+
 ### NEW in Version 3.8.0
 **Release Date: 20 November 2025**
 
