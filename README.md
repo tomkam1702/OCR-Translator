@@ -1,5 +1,5 @@
 # Game-Changing Translator
-Copyright © 2025 Tomasz Kamiński
+Copyright © 2025-2026 Tomasz Kamiński
 
 ![Game-Changing Translator Logo](docs/screenshots/readme_screen.jpg)
 
@@ -71,7 +71,7 @@ This application was developed or rather vibe-coded with the support of the foll
 ## Key Features
 
 ### 🚀 NEW in Version 3.9.0
-**Release Date: 8 February 2026**
+**Release Date: 11 February 2026**
 
 #### 🌌 Gemini 3 Flash Support - The Next Generation of AI
 We've integrated Google's latest **Gemini 3 Flash** model, bringing you the most advanced AI capabilities for both translation and OCR!
@@ -80,6 +80,10 @@ We've integrated Google's latest **Gemini 3 Flash** model, bringing you the most
 - **⚡ Two OCR Variants**: Choose between **Medium** (balanced) and **Low** (token-optimized) resolution for OCR to perfectly match your quality and cost needs.
 - **💰 Optimized Cost-Efficiency**: Combine **Gemini 2.5 Flash-Lite for OCR** with **Gemini 3 Flash for Translation** to get the best of both worlds—lightning-fast text recognition and premium, idiomatically rich translations at a fraction of the cost.
 - **✨ Hybrid Workflow**: Seamlessly mix and match models for OCR and Translation tasks to create your perfect setup.
+
+> [!WARNING]
+> **Gemini 2.0 Flash Deprecation**: Please note that the **Gemini 2.0 Flash** model is being retired. As a result, the cost of high-quality translations using Gemini will increase.
+> Detailed information and recommendations on the best Gemini models for OCR and translation can be found in the updated [User Manual](https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html) and [Polish User Manual](https://tomkam1702.github.io/OCR-Translator/docs/user-manual_pl.html).
 
 **See the Difference:**
 *Czech "Trhani z Nemanic" → English "Ragtag nobodies from Nowhere"*
