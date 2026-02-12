@@ -100,3 +100,8 @@ downloads.html
 # Obsolete files (no longer used)
 bundled_app.py
 GameChangingTranslator_Alternative.spec
+
+# User excluded scripts
+run.bat
+run_python_compiler.bat
+sync_to_github.ps1
