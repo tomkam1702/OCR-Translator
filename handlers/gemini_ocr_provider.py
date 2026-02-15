@@ -41,12 +41,11 @@ class GeminiOCRProvider(AbstractOCRProvider):
         """Check if Gemini libraries are available."""
         return GENAI_AVAILABLE
 
-    def _initialize_client(self, api_key, use_alpha_api=False):
+    def _initialize_client(self, api_key):
         """Initialize the Gemini API client.
         
         Args:
             api_key: The Gemini API key
-            use_alpha_api: If True, use v1alpha API (required for per-Part media_resolution)
         """
         if not GENAI_AVAILABLE:
             log_debug("Google Gen AI libraries not available for Gemini OCR session")
@@ -57,20 +56,13 @@ class GeminiOCRProvider(AbstractOCRProvider):
             self._force_client_refresh()
 
         try:
-            if use_alpha_api:
-                log_debug("Creating new Gemini client for OCR with v1alpha API (per-Part resolution enabled)")
-                self.client = genai.Client(
-                    api_key=api_key,
-                    http_options={'api_version': 'v1alpha'}
-                )
-            else:
-                log_debug("Creating new Gemini client for OCR with default API version")
-                self.client = genai.Client(api_key=api_key)
+            log_debug("Creating new Gemini client for OCR with default API version")
+            self.client = genai.Client(api_key=api_key)
             
             self.session_api_key = api_key
             self.client_created_time = time.time()
             self.api_call_count = 0
-            self._current_api_version = 'v1alpha' if use_alpha_api else 'v1beta'
+            self._current_api_version = 'v1beta'
             return self.client is not None
         except Exception as e:
             log_debug(f"Failed to initialize Gemini OCR client: {e}")
@@ -98,20 +90,13 @@ class GeminiOCRProvider(AbstractOCRProvider):
         media_resolution_str = self.app.gemini_models_manager.get_model_media_resolution(ocr_model_display_name)
         
         # Check if we need v1alpha API for per-Part media resolution (required for LOW resolution on Gemini 3)
-        needs_alpha_api = (media_resolution_str == 'LOW' and 'gemini-3' in ocr_model_lower)
+        # needs_alpha_api = (media_resolution_str == 'LOW' and 'gemini-3' in ocr_model_lower)
         current_api_version = getattr(self, '_current_api_version', 'v1beta')
         
-        log_debug(f"OCR Resolution check: display_name='{ocr_model_display_name}', resolution='{media_resolution_str}', model_lower='{ocr_model_lower}', needs_alpha={needs_alpha_api}, current_api='{current_api_version}'")
+        log_debug(f"OCR Resolution check: display_name='{ocr_model_display_name}', resolution='{media_resolution_str}', model_lower='{ocr_model_lower}', current_api='{current_api_version}'")
         
-        # Reinitialize client if API version mismatch
-        if needs_alpha_api and current_api_version != 'v1alpha':
-            log_debug("Switching to v1alpha API for LOW resolution per-Part settings")
-            api_key = self._get_api_key()
-            self._initialize_client(api_key, use_alpha_api=True)
-        elif not needs_alpha_api and current_api_version == 'v1alpha':
-            log_debug("Switching back to default API version (v1beta)")
-            api_key = self._get_api_key()
-            self._initialize_client(api_key, use_alpha_api=False)
+        # We now use global media resolution for all models (including Gemini 3), so we stay on v1beta
+        # Re-initialization logic for alpha API removed.
         
         # Store for logging
         self._current_media_resolution = media_resolution_str
@@ -162,32 +147,12 @@ class GeminiOCRProvider(AbstractOCRProvider):
         # Make the API call
         api_call_start_time = time.time()
         
-        # Per-Part media resolution is only supported for Gemini 3 models
-        if 'gemini-3' in ocr_model_lower:
-            # Map string to PartMediaResolutionLevel enum for per-Part resolution
-            part_resolution_map = {
-                'LOW': types.PartMediaResolutionLevel.MEDIA_RESOLUTION_LOW,
-                'MEDIUM': types.PartMediaResolutionLevel.MEDIA_RESOLUTION_MEDIUM,
-                'HIGH': types.PartMediaResolutionLevel.MEDIA_RESOLUTION_HIGH,
-                'ULTRA_HIGH': types.PartMediaResolutionLevel.MEDIA_RESOLUTION_ULTRA_HIGH
-            }
-            part_resolution_level = part_resolution_map.get(
-                media_resolution_str, 
-                types.PartMediaResolutionLevel.MEDIA_RESOLUTION_MEDIUM
-            )
-            
-            image_part = types.Part.from_bytes(
-                data=image_data, 
-                mime_type='image/webp',
-                media_resolution=types.PartMediaResolution(level=part_resolution_level)
-            )
-        else:
-            # For Gemini 2.x models, per-Part media resolution is not supported
-            # Use simple Part without media_resolution (relies on global config)
-            image_part = types.Part.from_bytes(
-                data=image_data, 
-                mime_type='image/webp'
-            )
+        # Use simple Part without per-part media_resolution (relies on global config)
+        # This applies to all models now (Gemini 2.x and Gemini 3)
+        image_part = types.Part.from_bytes(
+            data=image_data, 
+            mime_type='image/webp'
+        )
         
         response = self.client.models.generate_content(
             model=ocr_model_api_name,
