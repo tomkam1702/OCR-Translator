@@ -304,7 +304,7 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
 
 """
                 # Write to main log file
-                with open(self.main_log_file, 'a', encoding='utf-8') as f:
+                with open(self.main_log_file, 'a', encoding='utf-8-sig') as f:
                     f.write(log_entry)
                 
                 # Write to short log
@@ -348,7 +348,7 @@ Result:
 --------------------------------------------------
 
 """
-            with open(self.short_log_file, 'a', encoding='utf-8') as f:
+            with open(self.short_log_file, 'a', encoding='utf-8-sig') as f:
                 f.write(log_entry)
                 
         except Exception as e:
@@ -370,7 +370,7 @@ Result:
         cost_regex = re.compile(r"^\s*-\s*Total OCR Cost \(so far\):\s*\$([0-9.]+)")
         
         try:
-            with open(self.main_log_file, 'r', encoding='utf-8') as f:
+            with open(self.main_log_file, 'r', encoding='utf-8-sig') as f:
                 for line in f:
                     if m := input_token_regex.match(line):
                         total_input = int(m.group(1))

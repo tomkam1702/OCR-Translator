@@ -53,7 +53,7 @@ class CacheManager:
 
         try:
             if os.path.exists(cache_file_path):
-                with open(cache_file_path, 'r', encoding='utf-8') as f:
+                with open(cache_file_path, 'r', encoding='utf-8-sig') as f:
                     for line in f:
                         line = line.strip()
                         # Universal key-value separator
@@ -149,7 +149,7 @@ class CacheManager:
             # Check if an entry with the same source text already exists
             if os.path.exists(cache_file_path):
                 try:
-                    with open(cache_file_path, 'r', encoding='utf-8') as f:
+                    with open(cache_file_path, 'r', encoding='utf-8-sig') as f:
                         for line in f:
                             line = line.strip()
                             if not line or line.startswith('#') or ':==:' not in line:
@@ -196,7 +196,7 @@ class CacheManager:
             formatted_cache_key = f"{service_name}({lang_pair},{timestamp}):{original_text}"
             
             # Append new entry only if no duplicate was found
-            with open(cache_file_path, 'a', encoding='utf-8') as f:
+            with open(cache_file_path, 'a', encoding='utf-8-sig') as f:
                 f.write(f"{formatted_cache_key}:==:{translated_text}\n")
             
             # Update the timestamp since we just modified the file
@@ -264,7 +264,7 @@ class CacheManager:
                     # Define a header for each file
                     header = f"# {cache_type.capitalize()} Cache File\n"
                     header += f"# Format: {cache_type.capitalize()}(SOURCE-TARGET,TIMESTAMP):text:==:translation\n"
-                    with open(cache_file_path, 'w', encoding='utf-8') as f:
+                    with open(cache_file_path, 'w', encoding='utf-8-sig') as f:
                         f.write(header)
                 
                 # Reset the timestamp for this cache

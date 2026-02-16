@@ -106,13 +106,13 @@ Format: Each entry shows complete message content sent to and received from {sel
         plus exact token counts and costs for the individual call and the session.
 
 """
-                with open(self.main_log_file, 'w', encoding='utf-8') as f:
+                with open(self.main_log_file, 'w', encoding='utf-8-sig') as f:
                     f.write(header)
                 log_debug(f"{self.provider_name.title()} OCR API logging initialized: {self.main_log_file}")
             else:
                 # Append a session start separator to existing log
                 session_start_msg = f"\n\n--- NEW LOGGING SESSION STARTED: {timestamp} ---\n"
-                with open(self.main_log_file, 'a', encoding='utf-8') as f:
+                with open(self.main_log_file, 'a', encoding='utf-8-sig') as f:
                     f.write(session_start_msg)
                 log_debug(f"{self.provider_name.title()} OCR API logging continues in existing file: {self.main_log_file}")
 
@@ -135,12 +135,12 @@ Session Started: {timestamp}
 Purpose: Concise {self.provider_name} OCR call results and statistics
 
 """
-                with open(self.short_log_file, 'w', encoding='utf-8') as f:
+                with open(self.short_log_file, 'w', encoding='utf-8-sig') as f:
                     f.write(ocr_header)
                 log_debug(f"{self.provider_name.title()} OCR short log initialized: {self.short_log_file}")
             else:
                 # Append session separator
-                with open(self.short_log_file, 'a', encoding='utf-8') as f:
+                with open(self.short_log_file, 'a', encoding='utf-8-sig') as f:
                     f.write(f"\n--- SESSION: {timestamp} ---\n")
 
         except Exception as e:
@@ -152,7 +152,7 @@ Purpose: Concise {self.provider_name} OCR call results and statistics
             # Read OCR log to find highest session number
             highest_ocr_session = 0
             if os.path.exists(self.short_log_file):
-                with open(self.short_log_file, 'r', encoding='utf-8') as f:
+                with open(self.short_log_file, 'r', encoding='utf-8-sig') as f:
                     for line in f:
                         if line.startswith("SESSION ") and " STARTED " in line:
                             try:
@@ -179,7 +179,7 @@ Purpose: Concise {self.provider_name} OCR call results and statistics
         if not self.current_ocr_session_active:
             timestamp = self._get_precise_timestamp()
             try:
-                with open(self.short_log_file, 'a', encoding='utf-8') as f:
+                with open(self.short_log_file, 'a', encoding='utf-8-sig') as f:
                     f.write(f"\nSESSION {self.ocr_session_counter} STARTED {timestamp}\n")
                 self.current_ocr_session_active = True
                 log_debug(f"{self.provider_name.title()} OCR Session {self.ocr_session_counter} started")
@@ -210,7 +210,7 @@ Purpose: Concise {self.provider_name} OCR call results and statistics
             timestamp = self._get_precise_timestamp()
             try:
                 end_reason = "(FORCED - APP CLOSING)" if force else ""
-                with open(self.short_log_file, 'a', encoding='utf-8') as f:
+                with open(self.short_log_file, 'a', encoding='utf-8-sig') as f:
                     f.write(f"SESSION {self.ocr_session_counter} ENDED {timestamp} {end_reason}\n".strip() + "\n")
                 self.current_ocr_session_active = False
                 self._ocr_session_should_end = False

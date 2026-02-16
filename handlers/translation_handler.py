@@ -229,7 +229,7 @@ class TranslationHandler:
         """Initialize DeepL translation log file with header if it doesn't exist."""
         try:
             if not os.path.exists(self.deepl_log_file):
-                with open(self.deepl_log_file, 'w', encoding='utf-8') as f:
+                with open(self.deepl_log_file, 'w', encoding='utf-8-sig') as f:
                     f.write("=== DEEPL TRANSLATION API CALL LOG ===\n")
                     f.write(f"Log initialized: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
                     f.write("=" * 50 + "\n\n")
@@ -301,7 +301,7 @@ Call Duration: {call_duration:.3f} seconds
 """
                 
                 # Write to log file
-                with open(self.deepl_log_file, 'a', encoding='utf-8') as f:
+                with open(self.deepl_log_file, 'a', encoding='utf-8-sig') as f:
                     f.write(log_entry)
                 
                 log_debug(f"DeepL translation call logged: {source_lang}->{target_lang}, Duration={call_duration:.3f}s")

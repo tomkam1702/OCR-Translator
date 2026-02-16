@@ -35,7 +35,7 @@ class StatisticsHandler:
         
         sessions = []
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, 'r', encoding='utf-8-sig') as f:
                 content = f.read()
             
             session_blocks = re.split(r'SESSION \d+ STARTED', content)

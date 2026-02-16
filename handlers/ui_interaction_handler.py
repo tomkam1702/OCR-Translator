@@ -1069,7 +1069,7 @@ class UIInteractionHandler:
             log_file = 'translator_debug.log'
             if os.path.exists(log_file):
                 try:
-                    with open(log_file, 'r', encoding='utf-8') as f: log_lines = f.readlines()
+                    with open(log_file, 'r', encoding='utf-8-sig') as f: log_lines = f.readlines()
                     start_index = max(0, len(log_lines) - 200)
                     for line in log_lines[start_index:]: self.app.log_text.insert(tk.END, line)
                     self.app.log_text.see(tk.END)
@@ -1311,7 +1311,7 @@ class UIInteractionHandler:
     def clear_debug_log(self):
         try:
             log_filename = 'translator_debug.log' 
-            with open(log_filename, 'w', encoding='utf-8') as f:
+            with open(log_filename, 'w', encoding='utf-8-sig') as f:
                 f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')}: Debug log cleared by user.\n")
             self.refresh_debug_log()
             if hasattr(self.app, 'status_label') and self.app.status_label.winfo_exists():
