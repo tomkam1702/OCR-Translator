@@ -20,7 +20,7 @@ def log_debug(message):
         
     try:
         # Log filename
-        with open('translator_debug.log', 'a', encoding='utf-8') as f:
+        with open('translator_debug.log', 'a', encoding='utf-8-sig') as f:
             f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')}: {message}\n")
     except Exception as e:
         print(f"Error writing to log file: {e}") # Fallback to console if log fails
