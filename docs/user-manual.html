@@ -40,9 +40,16 @@
       /* Left-aligned with bottom margin */
     }
 
-    /* Set main screenshot to 75% of browser window width */
-    img[src="screenshots/screenshot2_eng_deepl.jpg"] {
-      width: 75vw;
+    /* Set main screenshots to 75% width */
+    img[src="screenshots/screenshot2_eng_deepl.jpg"],
+    img[src="screenshots/custom_prompt.png"] {
+      width: 75%;
+      height: auto;
+    }
+
+    /* Set prompt screenshot to 50% width */
+    img[src="screenshots/Prompt_en.png"] {
+      width: 50%;
       height: auto;
     }
 
@@ -255,7 +262,7 @@
   </div>
   <h1 id="game-changing-translator-user-manual">Game-Changing Translator User Manual</h1>
   <p>Copyright © 2025-2026 Tomasz Kamiński<br>
-    <em>Last Updated: 11 February 2026</em>
+    <em>Last Updated: 19 February 2026</em>
   </p>
   <p>
     <img src="screenshots/screenshot2_eng_deepl.jpg" alt="Game-Changing Translator Main Interface" class="logo-image" />
@@ -342,7 +349,7 @@
       at any time.</li>
   </ol>
   <h2 id="main-interface">Main Interface</h2>
-  <p>The main interface is organised into five tabs:</p>
+  <p>The main interface is organised into six tabs:</p>
   <h3 id="main-tab">Home Tab</h3>
   <p>
     <img src="screenshots/Home_en.png" alt="Home Tab" />
@@ -465,6 +472,43 @@
   <p>This preview window is particularly useful for fine-tuning OCR settings and understanding why certain text might
     not be recognised properly. It can be moved and resized independently of the <strong>main application
       window</strong>.</p>
+  <h3 id="custom-prompt-tab">Custom Prompt Tab</h3>
+  <p>
+    <img src="screenshots/Prompt_en.png" alt="Custom Prompt Tab" />
+  </p>
+  <p>This tab allows you to define a <strong>custom instruction</strong> that will be added to every translation
+    request sent to <strong>Gemini</strong>, <strong>OpenAI</strong>, and <strong>DeepL</strong> models. It is particularly useful for:</p>
+  <ol>
+    <li>
+      <strong>Defining Style</strong> – Instructing the AI to use a specific tone (e.g., "Use very informal language"
+      or "Translate in the style of a pirate").
+    </li>
+    <li>
+      <strong>Contextual Hints</strong> – Providing information about the source material (e.g., "This is a prompt for
+      a medieval fantasy game" or "This text comes from a technical manual").
+    </li>
+    <li>
+      <strong>Consistency</strong> – Ensuring specific terminology is always translated in a particular way.
+    </li>
+  </ol>
+  <p><strong>Example of prompt injection into the API call:</strong></p>
+  <p>
+    <img src="screenshots/custom_prompt.png" alt="Custom Prompt Injection" />
+  </p>
+  <p><strong>Key recommendations for custom prompts:</strong></p>
+  <ul>
+    <li>
+      <strong>Use English</strong> – AI models follow instructions best when they are written in English.
+    </li>
+    <li>
+      <strong>Be Concise</strong> – The custom prompt text is added to <strong>EVERY</strong> API call. Shorter
+      prompts use fewer tokens and help keep your costs down.
+    </li>
+    <li>
+      <strong>Persistence</strong> – Once you click <strong>Save</strong>, the prompt is stored in a file and will be
+      applied automatically every time you use a compatible AI model until you change or clear it.
+    </li>
+  </ul>
   <h3 id="api-usage-tab">API Usage Tab</h3>
   <p>
     <img src="screenshots/API_Stats_en.png" alt="API Usage Tab" />

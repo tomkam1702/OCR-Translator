@@ -40,9 +40,16 @@
       /* Left-aligned with bottom margin */
     }
 
-    /* Set main screenshot to 75% of browser window width */
-    img[src="screenshots/screenshot2_pol_deepl.jpg"] {
-      width: 75vw;
+    /* Set main screenshots to 75% width */
+    img[src="screenshots/screenshot2_pol_deepl.jpg"],
+    img[src="screenshots/custom_prompt.png"] {
+      width: 75%;
+      height: auto;
+    }
+
+    /* Set prompt screenshot to 50% width */
+    img[src="screenshots/Prompt_pl.png"] {
+      width: 50%;
       height: auto;
     }
 
@@ -255,7 +262,7 @@
   </div>
   <h1 id="game-changing-translator-user-manual">Instrukcja obsługi programu Game-Changing Translator</h1>
   <p>Copyright © 2025-2026 Tomasz Kamiński<br>
-    <em>Ostatnia aktualizacja: 11 lutego 2026 r.</em>
+    <em>Ostatnia aktualizacja: 19 lutego 2026 r.</em>
   </p>
   <p>
     <img src="screenshots/screenshot2_pol_deepl.jpg" alt="Główny interfejs Game-Changing Translator"
@@ -346,7 +353,7 @@
     </li>
   </ol>
   <h2 id="main-interface">Interfejs główny</h2>
-  <p>Interfejs główny jest podzielony na pięć zakładek:</p>
+  <p>Interfejs główny jest podzielony na sześć zakładek:</p>
   <h3 id="main-tab">Zakładka Start</h3>
   <p>
     <img src="screenshots/Home_pl.png" alt="Zakładka Start" />
@@ -473,6 +480,44 @@
     niektóre teksty mogą nie być rozpoznawane prawidłowo. Można je przesuwać i zmieniać jego rozmiar niezależnie od
     <strong>głównego okna aplikacji</strong>.
   </p>
+  <h3 id="custom-prompt-tab">Karta Własne polecenie</h3>
+  <p>
+    <img src="screenshots/Prompt_pl.png" alt="Karta Własne polecenie" />
+  </p>
+  <p>Ta karta umożliwia zdefiniowanie <strong>własnego polecenia</strong> (tzw. promptu), które będzie dodawane do
+    każdego żądania tłumaczenia wysyłanego do modeli <strong>Gemini</strong>, <strong>OpenAI</strong> i <strong>DeepL</strong>. Funkcja ta ułatwia:</p>
+  <ol>
+    <li>
+      <strong>określenie stylu</strong> – poinstruowanie modelu AI, aby używał określonego tonu (np. „Używaj bardzo
+      potocznego języka” lub „Tłumacz w stylu pirata”);
+    </li>
+    <li>
+      <strong>przekazanie wskazówek kontekstowych</strong> – przekazanie informacji o materiale źródłowym (np. „To jest tekst z
+      gry fantasy w realiach średniowiecza” lub „Ten tekst pochodzi z instrukcji technicznej”);
+    </li>
+    <li>
+      <strong>zachowanie spójności</strong> – zadbanie o jednakowe tłumaczenie określonych terminów.
+    </li>
+  </ol>
+  <p><strong>Przykładowe własne polecenie w wywołaniu API:</strong></p>
+  <p>
+    <img src="screenshots/custom_prompt.png" alt="Przykład wstawienia polecenia" />
+  </p>
+  <p><strong>Kluczowe zalecenia dotyczące własnych poleceń:</strong></p>
+  <ul>
+    <li>
+      <strong>Używaj języka angielskiego</strong> – modele AI (nawet podczas tłumaczenia między innymi językami)
+      najlepiej wykonują instrukcje napisane w języku angielskim.
+    </li>
+    <li>
+      <strong>Bądź zwięzły</strong> – tekst własnego polecenia jest dodawany do <strong>KAŻDEGO</strong> wywołania API.
+      Krótsze polecenia zużywają mniej tokenów i generują niższe koszty.
+    </li>
+    <li>
+      <strong>Trwałość</strong> – po kliknięciu przycisku <strong>Zapisz</strong> polecenie jest zapisywane w pliku i będzie
+      automatycznie stosowane przy każdym użyciu kompatybilnego modelu AI, dopóki nie zostanie zmienione lub usunięte.
+    </li>
+  </ul>
   <h3 id="api-usage-tab">Zakładka Zużycie API</h3>
   <p>
     <img src="screenshots/API_Stats_pl.png" alt="Zakładka Zużycie API" />
