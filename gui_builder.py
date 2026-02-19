@@ -1501,3 +1501,66 @@ def create_debug_tab(app):
     app.log_text.pack(fill="both", expand=True, padx=5, pady=5)
     
     app.refresh_debug_log()
+
+def create_custom_prompt_tab(app):
+    # Create a scrollable tab content frame
+    scrollable_content = create_scrollable_tab(app.tab_control, app.ui_lang.get_label("custom_prompt_tab_title", "Custom Prompt"))
+    app.tab_custom_prompt = scrollable_content
+    
+    # Create the main frame inside the scrollable area
+    frame = ttk.LabelFrame(scrollable_content, text=app.ui_lang.get_label("custom_prompt_tab_title", "Custom Prompt"))
+    frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+    # Info label
+    info_text = app.ui_lang.get_label("custom_prompt_info", "This text will be added at the beginning of the translation instruction for Gemini and OpenAI models.")
+    info_label = ttk.Label(frame, text=info_text, wraplength=550)
+    info_label.pack(fill="x", padx=5, pady=5)
+
+    # Text area
+    text_frame = ttk.Frame(frame)
+    text_frame.pack(fill="both", expand=True, padx=5, pady=5)
+    
+    app.custom_prompt_text_widget = tk.Text(text_frame, wrap=tk.WORD, height=15)
+    scrollbar = ttk.Scrollbar(text_frame, command=app.custom_prompt_text_widget.yview)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    app.custom_prompt_text_widget.pack(side=tk.LEFT, fill="both", expand=True)
+    app.custom_prompt_text_widget.config(yscrollcommand=scrollbar.set)
+    
+    # Load initial text
+    if hasattr(app, "custom_prompt_text"):
+        app.custom_prompt_text_widget.insert("1.0", app.custom_prompt_text)
+
+    # Buttons
+    button_frame = ttk.Frame(frame)
+    button_frame.pack(fill="x", padx=5, pady=10)
+
+    def save_prompt():
+        text = app.custom_prompt_text_widget.get("1.0", "end-1c")
+        if not app.save_custom_prompt(text):
+            messagebox.showerror(app.ui_lang.get_label("error_title", "Error"), 
+                                 app.ui_lang.get_label("custom_prompt_save_error", "Failed to save custom prompt."))
+
+    def reload_prompt():
+        app.load_custom_prompt()
+        app.custom_prompt_text_widget.delete("1.0", tk.END)
+        app.custom_prompt_text_widget.insert("1.0", app.custom_prompt_text)
+
+    app.save_custom_prompt_btn = ttk.Button(button_frame, text=app.ui_lang.get_label("save_btn", "Save"), command=save_prompt)
+    app.save_custom_prompt_btn.pack(side=tk.LEFT, padx=5)
+
+    app.reload_custom_prompt_btn = ttk.Button(button_frame, text=app.ui_lang.get_label("reload_btn", "Reload"), command=reload_prompt)
+    app.reload_custom_prompt_btn.pack(side=tk.LEFT, padx=5)
+    
+    # Function to update labels on language change
+    def update_custom_prompt_labels_for_language():
+        if hasattr(app, 'tab_custom_prompt') and app.tab_custom_prompt.winfo_exists():
+            try:
+                frame.config(text=app.ui_lang.get_label("custom_prompt_tab_title", "Custom Prompt"))
+                info_label.config(text=app.ui_lang.get_label("custom_prompt_info", "This text will be added at the beginning of the translation instruction for Gemini and OpenAI models."))
+                app.save_custom_prompt_btn.config(text=app.ui_lang.get_label("save_btn", "Save"))
+                app.reload_custom_prompt_btn.config(text=app.ui_lang.get_label("reload_btn", "Reload"))
+            except Exception as e:
+                log_debug(f"Error updating custom prompt UI language: {e}")
+                
+    app.update_custom_prompt_labels_for_language = update_custom_prompt_labels_for_language
+

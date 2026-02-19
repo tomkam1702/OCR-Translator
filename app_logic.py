@@ -23,7 +23,7 @@ from logger import log_debug, set_debug_logging_enabled, is_debug_logging_enable
 from resource_handler import get_resource_path
 from marian_mt_translator import MarianMTTranslator, MARIANMT_AVAILABLE as MARIANMT_LIB_AVAILABLE
 from config_manager import load_app_config, save_app_config, load_ocr_preview_geometry, save_ocr_preview_geometry
-from gui_builder import create_main_tab, create_settings_tab, create_api_usage_tab, create_debug_tab
+from gui_builder import create_main_tab, create_settings_tab, create_custom_prompt_tab, create_api_usage_tab, create_debug_tab
 from ui_elements import create_scrollable_tab
 from overlay_manager import (
     select_source_area_om, select_target_area_om,
@@ -89,8 +89,8 @@ class GameChangingTranslator:
     def __init__(self, root):
         self.root = root
         self.root.title("Game-Changing Translator")
-        self.root.geometry("600x480") 
-        self.root.minsize(500, 430)
+        self.root.geometry("750x480") 
+        self.root.minsize(650, 430)
         self.root.resizable(True, True)
         
         self._fully_initialized = False # Flag for settings save callback
@@ -505,7 +505,11 @@ class GameChangingTranslator:
         self.deepl_cache_file = os.path.join(base_dir, "deepl_cache.txt")
         self.gemini_cache_file = os.path.join(base_dir, "gemini_cache.txt")
         self.openai_cache_file = os.path.join(base_dir, "openai_cache.txt")
+        self.custom_prompt_file = os.path.join(base_dir, "custom_prompt.txt")
         log_debug(f"Cache file paths: Google: {self.google_cache_file}, DeepL: {self.deepl_cache_file}, Gemini: {self.gemini_cache_file}, OpenAI: {self.openai_cache_file}")
+        
+        self.custom_prompt_text = ""
+        self.load_custom_prompt()
         
         self.google_file_cache = {}
         self.deepl_file_cache = {}
@@ -573,6 +577,7 @@ class GameChangingTranslator:
         # We'll temporarily set them to None
         self.tab_main = None
         self.tab_settings = None
+        self.tab_custom_prompt = None
         self.tab_debug = None
         self.tab_about = None
         
@@ -615,6 +620,7 @@ class GameChangingTranslator:
         # Create the main tabs
         create_main_tab(self)
         create_settings_tab(self)
+        create_custom_prompt_tab(self)
         create_api_usage_tab(self)
         create_debug_tab(self)
         
@@ -2826,12 +2832,13 @@ For more information, see the user manual."""
             self.tab_about = None
             
             # Recreate all tabs with the new language
-            from gui_builder import create_main_tab, create_settings_tab, create_api_usage_tab, create_debug_tab
+            from gui_builder import create_main_tab, create_settings_tab, create_custom_prompt_tab, create_api_usage_tab, create_debug_tab
             from ui_elements import create_scrollable_tab
             
             # Rebuild all tabs with the new language
             create_main_tab(self)
             create_settings_tab(self)
+            create_custom_prompt_tab(self)
             create_api_usage_tab(self)
             create_debug_tab(self)
             
@@ -3127,3 +3134,28 @@ For more information, see the user manual."""
         except Exception as e_drw:
              log_debug(f"Error destroying root window: {e_drw}")
         log_debug("Application shutdown sequence complete.")
+
+    def load_custom_prompt(self):
+        """Loads the custom prompt text from file."""
+        try:
+            if os.path.exists(self.custom_prompt_file):
+                with open(self.custom_prompt_file, 'r', encoding='utf-8') as f:
+                    self.custom_prompt_text = f.read()
+                log_debug(f"Loaded custom prompt ({len(self.custom_prompt_text)} characters)")
+            else:
+                self.custom_prompt_text = ""
+        except Exception as e:
+            log_debug(f"Error loading custom prompt: {e}")
+            self.custom_prompt_text = ""
+
+    def save_custom_prompt(self, text):
+        """Saves the custom prompt text to file."""
+        try:
+            self.custom_prompt_text = text
+            with open(self.custom_prompt_file, 'w', encoding='utf-8') as f:
+                f.write(text)
+            log_debug(f"Saved custom prompt ({len(text)} characters)")
+            return True
+        except Exception as e:
+            log_debug(f"Error saving custom prompt: {e}")
+            return False

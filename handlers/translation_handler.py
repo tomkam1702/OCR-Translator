@@ -522,6 +522,14 @@ Call Duration: {call_duration:.3f} seconds
         # Build context string (source language only)
         context_string = self._build_deepl_context(context_size)
         
+        # Add custom prompt prefix if available
+        custom_prompt = getattr(self.app, 'custom_prompt_text', '').strip()
+        if custom_prompt:
+            if context_string:
+                context_string = f"{custom_prompt}\n{context_string}"
+            else:
+                context_string = f"{custom_prompt}\n"
+        
         model_type = self.app.deepl_model_type_var.get()
         log_debug(f"DeepL API call for: {text_to_translate_dl} using model_type={model_type}")
         
