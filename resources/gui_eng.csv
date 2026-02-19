@@ -268,7 +268,7 @@ stats_text_combined_header_openai,💰 Combined OpenAI Statistics
 stats_text_deepl_header,📈 DeepL Usage Monitor
 stats_report_generated,Report generated:
 custom_prompt_tab_title,Custom Prompt
-custom_prompt_info,"This text will be added at the beginning of the translation instruction for Gemini and OpenAI models."
+custom_prompt_info,"This text will be added at the beginning of the translation instruction for Gemini, OpenAI and DeepL translations. It will be used for EVERY API call. Make it as short as possible to save costs. Use English for best results."
 custom_prompt_saved,Custom prompt saved successfully!
 custom_prompt_save_error,Failed to save custom prompt.
 save_btn,Save

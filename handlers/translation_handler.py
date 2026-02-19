@@ -195,13 +195,8 @@ class TranslationHandler:
         # Get last N source texts
         context_texts = self.deepl_context_window[-context_size:]
         
-        # Simple concatenation with period separation
-        # DeepL expects natural text in source language
-        context_string = ". ".join(context_texts)
-        
-        # Ensure proper ending
-        if context_string and not context_string.endswith('.'):
-            context_string += '.'
+        # Join subtitles with linebreaks
+        context_string = "\n".join(context_texts)
         
         return context_string
     
@@ -243,7 +238,7 @@ class TranslationHandler:
         return True
     
     def _log_deepl_translation_call(self, original_text, source_lang, target_lang, 
-                                   context_size, translated_text, model_type, 
+                                   context_string, context_size, translated_text, model_type, 
                                    call_start_time, call_duration):
         """Log DeepL translation API call with context information."""
         if not self._is_deepl_logging_enabled():
@@ -269,19 +264,13 @@ MESSAGE SENT TO DEEPL:
 """
                 
                 # Add context section if context was used
-                if context_size > 0 and self.deepl_context_window:
-                    # Get the actual subtitles that were used as context
-                    context_subtitles = self.deepl_context_window[-context_size:]
-                    context_count = len(context_subtitles)
-                    
+                if context_string:
+                    subtitle_count = min(context_size, len(self.deepl_context_window))
+                    count_text = f" ({subtitle_count} subtitle{'s' if subtitle_count != 1 else ''})" if context_size > 0 and subtitle_count > 0 else ""
                     log_entry += f"""
-CONTEXT ({context_count} subtitle{'s' if context_count != 1 else ''}):
+CONTEXT{count_text}:
+{context_string}
 """
-                    # Add each subtitle on its own line
-                    for subtitle in context_subtitles:
-                        if subtitle.strip():
-                            log_entry += f"{subtitle}\n"
-                
                 # Add text to translate
                 log_entry += f"""
 TEXT TO TRANSLATE:
@@ -526,9 +515,9 @@ Call Duration: {call_duration:.3f} seconds
         custom_prompt = getattr(self.app, 'custom_prompt_text', '').strip()
         if custom_prompt:
             if context_string:
-                context_string = f"{custom_prompt}\n{context_string}"
+                context_string = f"[{custom_prompt}]\n{context_string}"
             else:
-                context_string = f"{custom_prompt}\n"
+                context_string = f"[{custom_prompt}]\n"
         
         model_type = self.app.deepl_model_type_var.get()
         log_debug(f"DeepL API call for: {text_to_translate_dl} using model_type={model_type}")
@@ -591,6 +580,7 @@ Call Duration: {call_duration:.3f} seconds
                         original_text=text_to_translate_dl,
                         source_lang=source_lang_dl,
                         target_lang=target_lang_dl,
+                        context_string=context_string,
                         context_size=context_size,
                         translated_text=translated_text,
                         model_type=model_type,
@@ -647,6 +637,7 @@ Call Duration: {call_duration:.3f} seconds
                             original_text=text_to_translate_dl,
                             source_lang=source_lang_dl,
                             target_lang=target_lang_dl,
+                            context_string=context_string,
                             context_size=context_size,
                             translated_text=translated_text,
                             model_type="latency_optimized",

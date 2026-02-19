@@ -3139,7 +3139,7 @@ For more information, see the user manual."""
         """Loads the custom prompt text from file."""
         try:
             if os.path.exists(self.custom_prompt_file):
-                with open(self.custom_prompt_file, 'r', encoding='utf-8') as f:
+                with open(self.custom_prompt_file, 'r', encoding='utf-8-sig') as f:
                     self.custom_prompt_text = f.read()
                 log_debug(f"Loaded custom prompt ({len(self.custom_prompt_text)} characters)")
             else:
@@ -3152,7 +3152,7 @@ For more information, see the user manual."""
         """Saves the custom prompt text to file."""
         try:
             self.custom_prompt_text = text
-            with open(self.custom_prompt_file, 'w', encoding='utf-8') as f:
+            with open(self.custom_prompt_file, 'w', encoding='utf-8-sig') as f:
                 f.write(text)
             log_debug(f"Saved custom prompt ({len(text)} characters)")
             return True

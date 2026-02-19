@@ -267,9 +267,9 @@ stats_text_trans_header_openai,🔄 Statystyki tłumaczenia OpenAI
 stats_text_combined_header_openai,💰 Łączne statystyki OpenAI
 stats_text_deepl_header,📈 Monitor użycia DeepL
 stats_report_generated,Raport wygenerowany:
-custom_prompt_tab_title,Własny prompt
-custom_prompt_info,"Ten tekst zostanie dodany na początku instrukcji do tłumaczenia dla modeli Gemini oraz OpenAI."
-custom_prompt_saved,Własny prompt został pomyślnie zapisany!
-custom_prompt_save_error,Nie udało się zapisać własnego promptu.
+custom_prompt_tab_title,Własne polecenie
+custom_prompt_info,"Ten tekst trafi na początek instrukcji tłumaczenia dla modeli Gemini, OpenAI i DeepL. Będzie dołączany do KAŻDEGO wywołania API. Ze względu na koszty powinien być jak najkrótszy. Najlepiej po angielsku."
+custom_prompt_saved,Własne polecenie zostało zapisane!
+custom_prompt_save_error,Nie udało się zapisać własnego polecenia.
 save_btn,Zapisz
 reload_btn,Odśwież
