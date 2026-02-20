@@ -5,6 +5,23 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.5] - 2026-02-19
+
+### Added
+- **Custom Prompt Support**: New feature allowing users to define specific instructions (prompts) for Gemini, OpenAI, and DeepL translation services.
+  - Enhances translation quality by providing style, persona, and contextual hints.
+  - Useful for maintaining terminology consistency and narrative tone.
+  - New "Custom Prompt" tab in the GUI for easy management.
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
 ## [3.9.0] - 2026-02-11
 
 ### Added

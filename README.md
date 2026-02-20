@@ -70,6 +70,30 @@ This application was developed or rather vibe-coded with the support of the foll
 
 ## Key Features
 
+### 🚀 NEW in Version 3.9.5
+**Release Date: 19 February 2026**
+
+#### 💡 Custom Prompt Support - Personalize Your Translations
+We've added a highly requested feature: **Custom Prompt** support for **Gemini**, **OpenAI**, and **DeepL** translations! This allows you to define specific instructions that are sent with every single translation request.
+
+> [!IMPORTANT]
+> **Cost Warning**: Your custom prompt is included in **EVERY** API call. This increases the token count and overall cost. Be cautious and keep your instructions as concise as possible to save costs!
+
+- **🎭 Persona & Style**: Tell the AI to use a specific tone, like "Translate in the style of a medieval peasant" or "Use very informal language."
+- **🧠 Contextual Knowledge**: Provide background information about what you're translating, such as "This is a prompt for a sci-fi RPG set on Mars."
+- **🎯 Terminology Consistency**: Ensure specialized terms are always translated exactly how you want them.
+
+> [!TIP]
+> For best results, write your custom prompts in English, as AI models follow instructions most accurately in this language.
+> For more details, see the **[Custom Prompt Tab](https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html#custom-prompt-tab)** in the User Manual.
+
+**Custom Prompt in Action:**
+*Instructing the AI to use colloquial language for a medieval game:*
+
+<p align="center">
+<img src="docs/screenshots/custom_prompt_example.jpg" width="70%" alt="Custom Prompt Usage Example">
+</p>
+
 ### 🚀 NEW in Version 3.9.0
 **Release Date: 11 February 2026**
 
