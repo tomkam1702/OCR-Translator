@@ -155,6 +155,7 @@ ocr-translator/
 ├── googletrans_cache.txt          # Cached translations from Google Translate API
 ├── gemini_cache.txt               # Cached translations from Gemini API
 ├── openai_cache.txt               # Cached translations from OpenAI API
+├── custom_prompt.txt              # User-defined custom prompt prefix *[NEW]*
 ├── Gemini_API_call_logs.txt       # Detailed Gemini API call logging with cost tracking
 ├── OpenAI_API_call_logs.txt       # Detailed OpenAI API call logging with cost tracking
 ├── GEMINI_API_OCR_short_log.txt   # Short log for Gemini OCR API usage statistics *[NEW]*
@@ -239,6 +240,7 @@ The `AbstractOCRProvider` class contains all common functionality shared across 
 - Uses Google's Gen AI library with advanced AI-powered text recognition
 - Superior accuracy for challenging subtitle scenarios
 - Supports multiple Gemini models (Gemini 3 Flash, 2.5 Flash-Lite, etc.)
+- **Media Resolution Support**: Configurable image resolution (LOW, MEDIUM) via `gemini_models.csv` to optimize performance/cost
 - Comprehensive debugging with image saving capabilities
 - Integrated with `GeminiModelsManager` for dynamic model configuration
 
@@ -369,6 +371,7 @@ The `AbstractLLMProvider` class contains all common functionality shared across 
 **Context Window Management:**
 - Sliding context window with configurable size (0-2 previous subtitles)
 - Unified context string building with identical format across providers
+- **Custom Prompt Support**: Capability to inject user-defined instructions (`custom_prompt.txt`) as a prefix to the system prompt
 - Language-aware context updates with duplicate detection
 
 **Comprehensive Logging System:**
@@ -390,8 +393,10 @@ The `AbstractLLMProvider` class contains all common functionality shared across 
 #### Provider-Specific Implementations
 
 **GeminiProvider (`gemini_provider.py`):**
-- Uses Google's Gen AI library with client-based approach
-- Supports both thinking and non-thinking modes via `thinking_budget` configuration
+- Uses Google's Gen AI library (`google-genai`) with fallback support for `google-generativeai`
+- **Dual Thinking Configuration**:
+    - **Gemini 2.x**: Uses `thinking_budget` (configured to 0 for standard translation)
+    - **Gemini 3.x**: Uses `thinking_level` (configured to `MINIMAL` for standard translation)
 - Handles multiple response formats and model types
 - Integrated with `GeminiModelsManager` for dynamic model configuration
 
