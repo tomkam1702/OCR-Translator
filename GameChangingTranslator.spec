@@ -27,6 +27,8 @@ a = Analysis(
         ('resources', 'resources'),
         # Copy entire docs directory to root level (same folder as .exe)
         ('docs', 'docs'),
+        # Qt configuration for DPI awareness
+        ('qt.conf', '.'),
         # Essential documentation
         ('README.md', '.'),
         ('LICENSE', '.'),
@@ -76,6 +78,8 @@ a = Analysis(
         'tkinter.colorchooser',
         '_tkinter',
         # PySide6 for RTL translation overlays with native Qt support
+        # NOTE: Must use PySide6==6.7.3 — Qt 6.8+ breaks frameless window resizing on Windows.
+        # See requirements.txt for details.
         'PySide6',
         'PySide6.QtCore',
         'PySide6.QtWidgets',
