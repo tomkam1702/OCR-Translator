@@ -24,7 +24,6 @@ a = Analysis(
     datas=[
         ('resources', 'resources'),
         ('docs', 'docs'),
-        ('qt.conf', '.'),
         ('README.md', '.'),
         ('LICENSE', '.'),
         # MarianMT conversion script for English-to-Polish models

@@ -27,8 +27,6 @@ a = Analysis(
         ('resources', 'resources'),
         # Copy entire docs directory to root level (same folder as .exe)
         ('docs', 'docs'),
-        # Qt configuration for DPI awareness
-        ('qt.conf', '.'),
         # Essential documentation
         ('README.md', '.'),
         ('LICENSE', '.'),
