@@ -273,3 +273,5 @@ custom_prompt_saved,Własne polecenie zostało zapisane!
 custom_prompt_save_error,Nie udało się zapisać własnego polecenia.
 save_btn,Zapisz
 reload_btn,Odśwież
+about_other_tool_header,Inny program autora:
+about_other_tool_desc,OHLC Forge – specjalistyczne narzędzie do rekonstrukcji historycznych danych dziennych dla kontraktów Binance i Bybit z możliwością ustawienia własnej godziny zamknięcia sesji.

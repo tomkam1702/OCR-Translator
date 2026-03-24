@@ -263,7 +263,7 @@
   </div>
   <h1 id="game-changing-translator-user-manual">Instrukcja obsługi programu Game-Changing Translator</h1>
   <p>Copyright © 2025-2026 Tomasz Kamiński<br>
-    <em>Ostatnia aktualizacja: 19 lutego 2026 r.</em>
+    <em>Ostatnia aktualizacja: 24 marca 2026 r.</em>
   </p>
   <p>
     <img src="screenshots/screenshot2_pol_deepl.jpg" alt="Główny interfejs Game-Changing Translator"
@@ -882,14 +882,11 @@
   <div class="disclaimer-note">
     <div class="disclaimer-note-icon">⚠️</div>
     <div class="disclaimer-note-content">
-      <strong>Informacja o wycofaniu modeli:</strong> Modele Gemini 2.0 zostaną wycofane w lutym/marcu 2026 r.
-      Aktualnie zalecaną kombinacją jest <strong>Gemini 2.5 Flash-Lite do OCR</strong> oraz <strong>Gemini 3 Flash
-        do tłumaczeń</strong> — taka konfiguracja zapewnia najlepszy stosunek jakości do ceny. Aby uzyskać najwyższą
-      jakość, można użyć modelu <strong>Gemini 3 Flash zarówno do OCR, jak i do tłumaczeń</strong>, ale wówczas
-      koszt będzie znacznie wyższy, ponieważ OCR zużywa większość tokenów.<br><br>
-      <strong>Aktualne ceny na 30 grudnia 2025 r. (za 1 milion tokenów):</strong><br>
-      • <strong>Gemini 2.5 Flash-Lite:</strong> 0,10 $ (tokeny wejściowe) / 0,40 $ (tokeny wyjściowe)<br>
-      • <strong>Gemini 3 Flash:</strong> 0,50 $ (tokeny wejściowe) / 3,00 $ (tokeny wyjściowe)
+      <strong>Informacja o wycofaniu modeli:</strong> Modele Gemini 2.0 są uznawane za przestarzałe (stan na marzec 2026 r.).
+      Aktualnie zalecaną kombinacją zapewniającą najlepszy stosunek jakości do ceny jest <strong>Gemini 3.1 Flash-Lite (Low) do OCR</strong> oraz <strong>Gemini 3 Flash do tłumaczeń</strong> (jakość premium) lub <strong>Gemini 3.1 Flash-Lite do tłumaczeń</strong> (wysoka wydajność).<br><br>
+      <strong>Aktualne ceny na marzec 2026 r. (za 1 milion tokenów):</strong><br>
+      • <strong>Gemini 3.1 Flash-Lite:</strong> 0,25 $ (wejście) / 1,50 $ (wyjście)<br>
+      • <strong>Gemini 3 Flash:</strong> 0,50 $ (wejście) / 3,00 $ (wyjście)
     </div>
   </div>
 
@@ -907,15 +904,9 @@
 
     <p><strong>Zalecany wybór modelu:</strong></p>
     <ul>
-      <li><strong>Najlepszy stosunek jakości do ceny:</strong> Gemini 2.5 Flash-Lite do OCR w połączeniu
-        z Gemini 3 Flash do tłumaczenia – ta kombinacja zapewnia doskonałe idiomatyczne tłumaczenia w rozsądnej
-        cenie.</li>
-      <li><strong>Najwyższa jakość:</strong> Gemini 3 Flash do OCR i tłumaczenia – doskonała adaptacja kulturowa
-        i idiomatyczna, choć znacznie droższa, ponieważ OCR zużywa większość tokenów.</li>
-      <li><strong>Szybko zmieniające się napisy (czas wyświetlania poniżej sekundy):</strong> Gemini 2.5 Flash-Lite
-        do OCR i tłumaczenia – model zoptymalizowany pod kątem szybkości przy zachowaniu doskonałej jakości.</li>
-      <li><strong>Niższy koszt z Gemini 3 OCR:</strong> Jeśli używasz Gemini 3 do OCR, wariant Low zmniejsza zużycie
-        tokenów w porównaniu z wariantem Medium, zachowując dobrą dokładność.</li>
+      <li><strong>Złoty standard (najlepszy balans):</strong> Gemini 3.1 Flash-Lite (Low) do OCR w połączeniu
+        z Gemini 3 Flash do tłumaczenia – ta kombinacja zapewnia najwyższą, profesjonalną jakość tłumaczeń przy bardzo niskich kosztach OCR.</li>
+      <li><strong>Wysoka wydajność:</strong> Gemini 3.1 Flash-Lite (Low) do OCR w połączeniu z Gemini 3.1 Flash-Lite do tłumaczenia – nowoczesna jakość obu operacji przy kosztach o połowę niższych niż w konfiguracji premium.</li>
     </ul>
 
     <p><strong>Zaawansowana konfiguracja:</strong> dostępność modeli, koszty i ustawienia rozdzielczości można
@@ -959,42 +950,35 @@
       inteligentnemu wyborowi modeli. Aplikacja zapewnia dostęp do wielu modeli Gemini, każdy zoptymalizowany pod kątem
       różnych scenariuszy:</p>
 
-    <p><strong>Modele Gemini 3 – najwyższa jakość tłumaczeń:</strong></p>
+    <p><strong>Modele Gemini 3 – profesjonalna jakość tłumaczeń (Premium):</strong></p>
     <ul>
-      <li>Najnowsza generacja modeli Google z doskonałą adaptacją kulturową i idiomatyczną.</li>
-      <li>Idealny do tłumaczenia zniuansowanych dialogów z właściwą lokalizacją (np. odpowiednie dopasowanie
-        idiomów i odniesień kulturowych do języka docelowego).</li>
-      <li>Dostępny w dwóch wariantach OCR: <strong>Gemini 3 Flash (Medium)</strong> dla zrównoważonej jakości oraz
-        <strong>Gemini 3 Flash (Low)</strong> dla zmniejszonego zużycia tokenów.</li>
-      <li>Używa konfiguracji <code>thinking_level="MINIMAL"</code> dla szybkich, dokładnych odpowiedzi.</li>
-      <li>Wyższy koszt niż modele Gemini 2.x (0,50/3,00 USD za 1 mln tokenów wejściowych/wyjściowych), ale zapewnia
-        najlepszą dostępną jakość tłumaczeń.</li>
+      <li>Flagowe modele Google o najwyższym poziomie adaptacji kulturowej i idiomatycznej.</li>
+      <li>Idealne do tłumaczenia zniuansowanych dialogów, gdzie liczy się właściwa lokalizacja (np. gry RPG z bogatym językiem).</li>
+      <li>Dostępne w dwóch wariantach OCR: <strong>Gemini 3 Flash (Medium)</strong> dla zrównoważonej jakości oraz
+        <strong>Gemini 3 Flash (Low)</strong> dla oszczędnego zużycia tokenów.</li>
+      <li>Używają konfiguracji <code>thinking_level="MINIMAL"</code> dla szybkich, precyzyjnych odpowiedzi.</li>
+      <li>Wyższy koszt (0,50/3,00 USD za 1 mln tokenów), ale gwarantują najlepszą dostępną jakość tłumaczeń literackich.</li>
     </ul>
 
-    <p><strong>Modele Gemini 2.5 – zoptymalizowane pod kątem szybkości:</strong></p>
+    <p><strong>Modele Gemini 3.1 – wysoka wydajność i nowoczesna jakość:</strong></p>
     <ul>
-      <li>Zoptymalizowane do szybko zmieniających się treści, gdzie szybkość jest kluczowa.</li>
-      <li>Zalecane do napisów, które zmieniają się szybko (mniej niż 1 sekunda wyświetlania).</li>
-      <li>Doskonały stosunek wydajności do ceny w szybkich operacjach OCR (0,10/0,40 USD za 1 mln tokenów wejściowych/wyjściowych).</li>
-      <li>Najlepiej w połączeniu z Gemini 3 Flash do tłumaczenia, aby uzyskać zarówno szybkość, jak i jakość.</li>
+      <li>Najnowsze modele oferujące idealny balans między jakością premium a kosztami.</li>
+      <li>Model <strong>Gemini 3.1 Flash-Lite</strong> zapewnia jakość tłumaczenia niemal identyczną z wersją Gemini 3 Flash, ale przy kosztach niższych o 50% (0,25/1,50 USD).</li>
+      <li>Wysoce zalecany do OCR w wariancie <strong>Gemini 3.1 Flash-Lite (Low)</strong>, który oferuje doskonałą precyzję przy minimalnym zużyciu tokenów.</li>
+      <li>Idealny wybór do codziennego grania bez kompromisów w jakości AI.</li>
     </ul>
 
-    <p><strong>Modele Gemini 2.0 – starsze (wycofanie w lutym/marcu 2026):</strong></p>
+    <p><strong>Modele archiwalne (Gemini 2.x):</strong></p>
     <ul>
-      <li>Sprawdzona doskonała dokładność OCR w kompleksowych testach w wielu językach.</li>
-      <li>Idiomatyczne, naturalne tłumaczenia przy takich samych kosztach jak Gemini 2.5 Flash-Lite.</li>
-      <li>Idealne do gier, gdzie dokładność napisów ma priorytet nad szybkością przetwarzania.</li>
-      <li><strong>Uwaga:</strong> Te modele zostaną wycofane w lutym/marcu 2026 r. Rozważ migrację do
-        Gemini 2.5 Flash-Lite do OCR i Gemini 3 Flash do tłumaczenia.</li>
+      <li><strong>Gemini 2.5 Flash-Lite:</strong> Opcja ultra-budżetowa (0,10/0,40 USD) do bardzo szybko zmieniających się treści, gdzie priorytetem jest szybkość, a nie najnowsza jakość serii 3.x.</li>
+      <li><strong>Gemini 2.0 Flash:</strong> Modele legacy, których wycofanie planowane jest na marzec 2026 r. Nadal dostępne dla zachowania kompatybilności, ale zalecamy migrację na Gemini 3.1 Flash-Lite.</li>
     </ul>
 
     <p><strong>Wydajność i koszty:</strong></p>
     <ul>
       <li>Wywołania OCR zwykle trwają 0,8–1,5 sekundy.</li>
       <li>Wywołania tłumaczenia wymagają dodatkowych 0,3 sekundy.</li>
-      <li>Oczekiwany koszt: około 0,25–0,30 USD za godzinę lub 2,5–3,0 USD za 10 godzin przy interwale skanowania 0,5 s.
-      </li>
-      <li>Rzeczywiste koszty mogą się różnić w zależności od konkretnego zastosowania i złożoności napisów.</li>
+      <li>Oczekiwany koszt: około 0,25–0,35 USD za godzinę przy interwale skanowania 0,5 s z użyciem Gemini 3.1 Flash-Lite (Low).</li>
     </ul>
 
     <h4>Doskonały stosunek jakości do ceny</h4>
@@ -1004,20 +988,18 @@
       konkretnego zastosowania przy zachowaniu doskonałej wydajności w porównaniu z bezpłatnymi i płatnymi rozwiązaniami
       OCR.</p>
 
-    <p><strong>Porównanie kosztów (na podstawie cen Gemini 2.5 Flash-Lite):</strong></p>
+    <p><strong>Porównanie kosztów (na podstawie cen Gemini 3.1 Flash-Lite (Low)):</strong></p>
     <ul>
-      <li><strong>Gemini 2.5 Flash-Lite / 2.0 Flash:</strong> ok. 0,00004 USD za zrzut ekranu napisów.</li>
+      <li><strong>Gemini 3.1 Flash-Lite (Low):</strong> ok. 0,00012 USD za zrzut ekranu napisów.</li>
       <li><strong>Google Cloud Vision API:</strong> 0,0015 USD za zrzut ekranu napisów.</li>
-      <li><strong>Różnica:</strong> modele Gemini są ok. 37,5 razy tańsze (0,04 USD wobec 1,5 USD za 1000 wywołań API).
+      <li><strong>Różnica:</strong> modele Gemini są ok. 12,5 razy tańsze (0,12 USD wobec 1,5 USD za 1000 wywołań API).
       </li>
     </ul>
 
     <h4>Najlepsze praktyki z Gemini OCR</h4>
     <ul>
-      <li><strong>Wybór modelu:</strong> Aby uzyskać najlepszy stosunek jakości do ceny, użyj Gemini 2.5 Flash-Lite
-        do OCR w połączeniu z Gemini 3 Flash do tłumaczenia. Do szybko zmieniających się napisów Gemini 2.5 Flash-Lite
-        do obu operacji zapewnia doskonałą szybkość. Jeśli wolisz Gemini 3 do OCR, rozważ wariant Low, aby zmniejszyć
-        zużycie tokenów w porównaniu z wariantem Medium.</li>
+      <li><strong>Wybór modelu:</strong> Aby uzyskać najlepszy stosunek jakości do ceny, użyj <strong>Gemini 3.1 Flash-Lite (Low)</strong>
+        do OCR w połączeniu z <strong>Gemini 3 Flash</strong> do tłumaczenia. W konfiguracji wysokiej wydajności użyj modelu <strong>Gemini 3.1 Flash-Lite</strong> do obu operacji (pamiętając o ustawieniu wariantu Low dla OCR).</li>
       <li><strong>Minimalny interwał skanowania:</strong> używaj co najmniej 500 ms interwału skanowania, co
         wystarcza w większości przypadków.</li>
       <li><strong>Dłuższe interwały dla długich treści:</strong> w grach z długimi napisami (np. seria Wiedźmin)
@@ -1106,13 +1088,7 @@
       powielania błędów OCR w zwracanym tłumaczeniu.</p>
 
     <p><strong>Elastyczna konfiguracja modeli</strong></p>
-    <p>Aplikacja obsługuje wiele modeli Gemini do operacji OCR i tłumaczenia. Można wybrać różne modele w zależności
-      od konkretnych potrzeb: Gemini 3 Flash zapewnia najwyższą jakość tłumaczeń z doskonałą adaptacją kulturową,
-      Gemini 2.5 Flash-Lite umożliwia zoptymalizowany pod kątem szybkości OCR do szybko zmieniających się treści, a
-      starsze modele Gemini 2.0 pozostają dostępne do czasu ich wycofania na początku 2026 r. Do OCR, Gemini 3 Flash
-      jest dostępny w wariantach Medium i Low, co pozwala zrównoważyć jakość ze zużyciem tokenów. Wybór modeli, ceny
-      i ustawienia rozdzielczości można dostosować, edytując plik <code>gemini_models.csv</code> w katalogu
-      <strong>resources</strong>.
+    <p>Aplikacja obsługuje wiele modeli Gemini zarówno do operacji OCR, jak i tłumaczenia. Możesz wybierać różne modele w zależności od swoich potrzeb: <strong>Gemini 3 Flash</strong> zapewnia najwyższą jakość tłumaczeń z doskonałą adaptacją kulturową, podczas gdy <strong>Gemini 3.1 Flash-Lite</strong> stanowi nowoczesną i opłacalną alternatywę. W przypadku OCR modele te są dostępne w wariantach Medium i Low, co pozwala na idealne zbalansowanie precyzji względem zużycia tokenów. Wybór modeli, ich ceny oraz ustawienia rozdzielczości można w pełni dostosować, edytując plik <code>gemini_models.csv</code> w katalogu <strong>resources</strong>.
     </p>
 
     <p><strong>Przykład: korekta błędów OCR</strong></p>
@@ -1149,7 +1125,7 @@
 
     <p><strong>Analiza kosztów w praktyce</strong></p>
     <p>Gemini API zapewnia ogromne korzyści w dużych projektach tłumaczeniowych. Nawet bardzo rozbudowane gry, takie jak
-      Wiedźmin 3, z setkami godzin dialogów i napisów, można przetłumaczyć za łączną kwotę kilku dolarów. I to nawet
+      Wiedźmin 3, z setkami godzin dialogów i napisów, można przetłumaczyć za łączną kwotę poniżej 10 dolarów przy użyciu nowoczesnych modeli 3.1. I to nawet
       przy uwzględnieniu:</p>
     <ul>
       <li>wielu wersji OCR z powodu różnic w rozpoznanym tekście;</li>
@@ -1159,7 +1135,7 @@
     </ul>
 
     <p><strong>Szacowanie kosztów: tłumaczenie Wiedźmina 3</strong></p>
-    <p>Oto szczegółowa analiza kosztów tłumaczenia napisów do gry Wiedźmin 3 za pomocą DeepL i Gemini 2.5 Flash-Lite:
+    <p>Oto szczegółowa analiza kosztów tłumaczenia napisów do gry Wiedźmin 3 za pomocą DeepL i Gemini 3.1 Flash-Lite:
     </p>
 
     <p><strong>Założenia:</strong></p>
@@ -1171,7 +1147,7 @@
       <li><strong>Kontekst Gemini:</strong> założono, że każda wiadomość wejściowa jest 4 razy dłuższa niż sam napis.
       </li>
       <li><strong>Koszt DeepL API Pro:</strong> 20,00 € za 1 milion znaków.</li>
-      <li><strong>Koszt Gemini 2.5 Flash-Lite:</strong> 0,10 $ za 1 milion tokenów wejściowych i 0,40 $ za 1 milion
+      <li><strong>Koszt Gemini 3.1 Flash-Lite:</strong> 0,25 $ za 1 milion tokenów wejściowych i 1,50 $ za 1 milion
         tokenów wyjściowych.</li>
       <li><strong>Kurs EUR do USD:</strong> 1,08.</li>
     </ul>
@@ -1186,15 +1162,15 @@
       <li><strong>Szacowany koszt (USD):</strong> 135,00 € × 1,08 = <strong>145,80 $</strong>.</li>
     </ul>
 
-    <p><strong>Gemini 2.5 Flash-Lite:</strong></p>
+    <p><strong>Gemini 3.1 Flash-Lite:</strong></p>
     <ul>
       <li><strong>Całkowita liczba tokenów:</strong> 450 000 słów × 2 tokeny/słowo = 900 000 tokenów.</li>
       <li><strong>Całkowita liczba tokenów z niedokładnością OCR:</strong> 900 000 × 3 = 2 700 000 tokenów.</li>
       <li><strong>Tokeny wejściowe:</strong> 2 700 000 × 4 = 10 800 000 tokenów.</li>
-      <li><strong>Koszt wejściowy:</strong> (10 800 000 ÷ 1 000 000) × 0,10 $ = <strong>1,08 $</strong>.</li>
+      <li><strong>Koszt wejściowy:</strong> (10 800 000 ÷ 1 000 000) × 0,25 $ = <strong>2,70 $</strong>.</li>
       <li><strong>Tokeny wyjściowe:</strong> 2 700 000 tokenów.</li>
-      <li><strong>Koszt wyjściowy:</strong> (2 700 000 ÷ 1 000 000) × 0,40 $ = <strong>1,08 $</strong>.</li>
-      <li><strong>Całkowity szacowany koszt (USD):</strong> 1,08 $ (wejście) + 1,08 $ (wyjście) = <strong>2,16
+      <li><strong>Koszt wyjściowy:</strong> (2 700 000 ÷ 1 000 000) × 1,50 $ = <strong>4,05 $</strong>.</li>
+      <li><strong>Całkowity szacowany koszt (USD):</strong> 2,70 $ (wejście) + 4,05 $ (wyjście) = <strong>6,75
           $</strong>.</li>
     </ul>
 
@@ -1213,9 +1189,9 @@
           <td>145,80 $</td>
         </tr>
         <tr>
-          <td><strong>Gemini 2.5 Flash-Lite</strong></td>
+          <td><strong>Gemini 3.1 Flash-Lite</strong></td>
           <td>—</td>
-          <td>2,16 $</td>
+          <td>6,75 $</td>
         </tr>
       </tbody>
     </table>
@@ -1315,7 +1291,7 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
       <li><strong>Konfiguracja klucza API</strong> – wymaga konta Google AI Studio lub Google Cloud z dostępem do Gemini
         API. Przejdź do Google AI Studio i kliknij przycisk „Get API key”, aby skonfigurować klucz API dla modeli
         Gemini.</li>
-      <li><strong>Wybór modelu</strong> – Gemini 2.5 Flash-Lite zapewnia doskonałą jakość w atrakcyjnej cenie.</li>
+      <li><strong>Wybór modelu</strong> – Gemini 3.1 Flash-Lite zapewnia optymalny balans jakości do ceny.</li>
       <li><strong>Okno kontekstu</strong> – wybierz między:
         <ul>
           <li><strong>0 (brak)</strong> – szybkie tłumaczenie bez kontekstu.</li>
@@ -1423,51 +1399,6 @@ CUMULATIVE TOTALS (INCLUDING THIS CALL, FROM LOG START):
       wykorzystać mocne strony każdego z modeli, zapewniając wysokiej jakości rozpoznawanie tekstu i doskonałe, świadome
       kontekstu tłumaczenie.
     </p>
-
-    <h4>Porównanie wydajności i kosztów: OpenAI kontra Gemini</h4>
-    <p>Chociaż modele OpenAI są bardzo zaawansowane, warto zauważyć, że w testach modele Gemini – w szczególności Gemini
-      2.0 Flash – spisują się lepiej przy niższych kosztach zarówno w zadaniach tłumaczenia, jak i OCR.</p>
-
-    <p>Całkowity koszt konfiguracji Gemini był ponad dwa razy niższy niż w przypadku kombinacji OpenAI. Wyższy koszt
-      OpenAI wynika z dwóch czynników. Po pierwsze, model OCR (<code>GPT 4.1 Nano</code>) zużywa ponad dwukrotnie więcej
-      tokenów do przetworzenia tych samych obrazów co <code>Gemini 2.0 Flash</code>. Po drugie, koszt tłumaczenia jest
-      również znacznie wyższy, ponieważ jedyny model OpenAI zapewniający doskonałą jakość tłumaczenia z uwzględnieniem
-      kontekstu, <code>GPT 4.1 Mini</code>, ma cenę za token cztery razy wyższą niż <code>Gemini 2.0 Flash</code>. Jeśli
-      chodzi o model <code>GPT-5 Nano</code>, ma on doskonałe zdolności rozumowania. Jednakże, gdy parametr
-      <code>effort</code> jest ustawiony na <code>minimal</code>, jakość tłumaczenia i OCR jest zaledwie przeciętna. Co
-      więcej, zwiększenie tego parametru nawet do <code>low</code> powoduje, że zużycie tokenów, koszt i opóźnienia
-      stają się zbyt wysokie, aby umożliwić tłumaczenie w czasie rzeczywistym. To wszystko sprawia, że Gemini jest
-      bardziej opłacalnym wyborem przy dłuższym użytkowaniu.
-    </p>
-
-    <p>Oto wyniki testu tłumaczenia tego samego fragmentu gry z interwałem skanowania 500 ms:</p>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Wskaźnik</th>
-          <th>Gemini 2.0 Flash (OCR i tłumaczenie)</th>
-          <th>Kombinacja OpenAI (GPT 4.1 Nano OCR + GPT 4.1 Mini tłumaczenie)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Koszt OCR na godzinę</td>
-          <td>~0,29 $ / godz.</td>
-          <td>~0,60 $ / godz.</td>
-        </tr>
-        <tr>
-          <td>Koszt tłumaczenia na godzinę</td>
-          <td>~0,02 $ / godz.</td>
-          <td>~0,07 $ / godz.</td>
-        </tr>
-        <tr>
-          <td><strong>Łączny koszt na godzinę</strong></td>
-          <td><strong>~0,31 $ / godz.</strong></td>
-          <td><strong>~0,68 $ / godz.</strong></td>
-        </tr>
-      </tbody>
-    </table>
 
     <p>Ogólnie rzecz biorąc, modele OpenAI należy traktować jako solidną opcję zapasową lub alternatywę, jeśli z
       jakiegoś powodu nie można używać modeli Gemini. Całe zużycie API OpenAI można śledzić w zakładce <strong>Zużycie

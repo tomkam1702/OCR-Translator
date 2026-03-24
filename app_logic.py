@@ -18,6 +18,7 @@ import traceback
 import io
 import base64
 import concurrent.futures
+import webbrowser
 
 from logger import log_debug, set_debug_logging_enabled, is_debug_logging_enabled
 from resource_handler import get_resource_path
@@ -2753,7 +2754,7 @@ Copyright © 2025-2026 Tomasz Kamiński
 
 Game-Changing Translator to program komputerowy, który automatycznie przechwytuje tekst z dowolnego fragmentu ekranu, przeprowadza optyczne rozpoznawanie znaków (OCR) i tłumaczy tekst w czasie rzeczywistym. Może służyć do tłumaczenia napisów w grach lub dowolnego innego tekstu, którego nie można łatwo skopiować.
 
-Program został napisany w języku Python przy użyciu następujących modeli sztucznej inteligencji: Claude 3.7 Sonnet, Claude Sonnet 4, Claude Sonnet 4.5 i Claude Opus 4.5; Gemini 2.5 Pro i Gemini 3 Pro oraz Google Antigravity IDE.
+This application was developed in Python using the following AI models: Claude 3.7 Sonnet, Claude Sonnet 4, Claude Sonnet 4.5 and Claude Opus 4.5; Gemini 2.5 Pro and Gemini 3 Pro, and following tools: Google Antigravity IDE and Gemini CLI.
 
 Więcej informacji zawiera instrukcja obsługi."""
         else:
@@ -2763,7 +2764,7 @@ Copyright © 2025-2026 Tomasz Kamiński
 
 Game-Changing Translator is a desktop application that automatically captures text from any area of your screen, performs optical character recognition (OCR), and translates the text in real-time. You can use it for translating video game subtitles or any other text that you can't easily copy.
 
-This application was developed in Python using the following AI models: Claude 3.7 Sonnet, Claude Sonnet 4, Claude Sonnet 4.5 and Claude Opus 4.5; Gemini 2.5 Pro and Gemini 3 Pro as well as Google Antigravity IDE.
+This application was developed in Python using the following AI models: Claude 3.7 Sonnet, Claude Sonnet 4, Claude Sonnet 4.5 and Claude Opus 4.5; Gemini 2.5 Pro and Gemini 3 Pro, and following tools: Google Antigravity IDE and Gemini CLI.
 
 For more information, see the user manual."""
         
@@ -2771,7 +2772,32 @@ For more information, see the user manual."""
         about_text_widget = tk.Text(about_frame, wrap=tk.WORD, relief="flat", 
                                    borderwidth=0, highlightthickness=0)
         about_text_widget.pack(fill="both", expand=True, padx=20, pady=20)
+        
+        # Configure tags for hyperlink
+        about_text_widget.tag_configure("hyperlink", foreground="#0366d6", underline=True)
+        about_text_widget.tag_bind("hyperlink", "<Button-1>", lambda e: webbrowser.open("https://github.com/tomkam1702/OHLC-Forge"))
+        about_text_widget.tag_bind("hyperlink", "<Enter>", lambda e: about_text_widget.config(cursor="hand2"))
+        about_text_widget.tag_bind("hyperlink", "<Leave>", lambda e: about_text_widget.config(cursor=""))
+        
+        # Insert main about text
         about_text_widget.insert(tk.END, about_text)
+        
+        # Insert promotional tool info from localized CSVs
+        other_tool_header = self.ui_lang.get_label("about_other_tool_header", "Check my other tool:")
+        other_tool_desc = self.ui_lang.get_label("about_other_tool_desc", "OHLC Forge – Historical daily data reconstruction for Binance and Bybit perpetuals with custom session close times.")
+        
+        about_text_widget.insert(tk.END, f"\n\n{other_tool_header}\n\n")
+        
+        # Find the product name in description to make it a link
+        product_name = "OHLC Forge"
+        if product_name in other_tool_desc:
+            parts = other_tool_desc.split(product_name, 1)
+            about_text_widget.insert(tk.END, parts[0])
+            about_text_widget.insert(tk.END, product_name, "hyperlink")
+            about_text_widget.insert(tk.END, parts[1])
+        else:
+            about_text_widget.insert(tk.END, other_tool_desc)
+            
         about_text_widget.config(state=tk.DISABLED)  # Make it read-only
         
         # Add Check for Updates button and checkbox

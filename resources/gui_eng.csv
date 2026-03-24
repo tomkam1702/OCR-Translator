@@ -273,3 +273,5 @@ custom_prompt_saved,Custom prompt saved successfully!
 custom_prompt_save_error,Failed to save custom prompt.
 save_btn,Save
 reload_btn,Reload
+about_other_tool_header,Check my other tool:
+about_other_tool_desc,OHLC Forge – Historical daily data reconstruction for Binance and Bybit perpetuals with custom session close times.
