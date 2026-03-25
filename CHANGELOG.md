@@ -5,6 +5,23 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.6] - 2026-03-25
+
+### Added
+- **Gemini 3.1 Flash-Lite Support**: Integrated Google's newest, highly efficient models for both OCR and translation.
+  - Recommended **Gold Standard** setup: Gemini 3.1 Flash-Lite (Low) for OCR combined with Gemini 3 Flash for premium translation quality.
+  - Recommended **High Efficiency** setup: Gemini 3.1 Flash-Lite for both OCR (Low variant) and translation to achieve excellent modern quality at half the cost of premium models.
+  - Replaces the legacy Gemini 2.0 models, offering exceptional speed and an unbeatable quality-to-cost ratio.
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
 ## [3.9.5] - 2026-02-19
 
 ### Added

@@ -71,6 +71,26 @@ This application was developed or rather vibe-coded with the support of the foll
 
 ## Key Features
 
+### 🚀 NEW in Version 3.9.6
+**Release Date: 25 March 2026**
+
+#### 🚀 Gemini 3.1 Flash-Lite Support - The New Standard for AI Translation
+We've integrated Google's latest **Gemini 3.1 Flash-Lite** models, setting a new benchmark for AI-powered translation and OCR!
+
+- **🥇 Gold Standard (Best Balance)**: Combine **Gemini 3.1 Flash-Lite (Low) for OCR** with **Gemini 3 Flash for Translation** to get the highest premium translation quality with very efficient OCR costs.
+- **⚡ High Efficiency**: Use **Gemini 3.1 Flash-Lite (Low) for OCR** and **Gemini 3.1 Flash-Lite for Translation** for excellent modern quality at a significantly lower cost.
+- **💰 Unbeatable Value**: Gemini 3.1 Flash-Lite provides modern AI capabilities at half the cost of premium models, making it the perfect choice for translating massive gaming projects.
+
+> [!WARNING]
+> **Gemini 2.0 Models Deprecated**: Gemini 2.0 models are now considered legacy. We highly recommend migrating to the new Gemini 3.1 Flash-Lite models for the best performance and value.
+
+**See the New Models in Action:**
+*Experience lightning-fast and highly accurate OCR and translation with Gemini 3.1 Flash-Lite:*
+
+<p align="center">
+<img src="docs/screenshots/31_flash_lite.png" width="70%" alt="Gemini 3.1 Flash-Lite Support">
+</p>
+
 ### 🚀 NEW in Version 3.9.5
 **Release Date: 19 February 2026**
 
