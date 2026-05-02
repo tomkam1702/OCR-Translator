@@ -1,17 +1,18 @@
+from PySide6.QtCore import QTimer, QMetaObject, Qt
+from PySide6.QtWidgets import QApplication, QWidget, QFrame, QLabel
+import qt_dialogs as messagebox
+import qt_dialogs as filedialog
 # --- Configuration ---
-ENABLE_PROCESS_CPU_AFFINITY = False  # Set to False to disable process-level CPU core limiting
 
-import tkinter as tk
-from tkinter import ttk, messagebox
 import numpy as np
 import cv2
-import pytesseract
 import threading
 import time
 import queue
 import sys
-from PIL import Image, ImageTk
+from PIL import Image
 import os
+import nuitka_compat
 import re
 import gc
 import traceback
@@ -22,12 +23,8 @@ import webbrowser
 
 from logger import log_debug, set_debug_logging_enabled, is_debug_logging_enabled
 from resource_handler import get_resource_path
-from marian_mt_translator import MarianMTTranslator, MARIANMT_AVAILABLE as MARIANMT_LIB_AVAILABLE
-from config_manager import load_app_config, save_app_config, load_ocr_preview_geometry, save_ocr_preview_geometry
-from gui_builder import create_main_tab, create_settings_tab, create_custom_prompt_tab, create_api_usage_tab, create_debug_tab
-from ui_elements import create_scrollable_tab
+from config_manager import load_app_config, save_app_config, SIMPLE_CONFIG_SETTINGS
 from overlay_manager import (
-    select_source_area_om, select_target_area_om,
     create_source_overlay_om, create_target_overlay_om,
     toggle_source_visibility_om, toggle_target_visibility_om, load_areas_from_config_om
 )
@@ -36,7 +33,6 @@ from language_manager import LanguageManager
 from language_ui import UILanguageManager
 
 from constants import APP_VERSION, APP_RELEASE_DATE, APP_RELEASE_DATE_POLISH
-from update_checker import UpdateChecker
 from handlers import (
     CacheManager, 
     ConfigurationHandler, 
@@ -47,7 +43,6 @@ from handlers import (
     UIInteractionHandler
 )
 from handlers.gemini_models_manager import GeminiModelsManager
-from handlers.openai_models_manager import OpenAIModelsManager
 
 KEYBOARD_AVAILABLE = False
 try:
@@ -56,53 +51,33 @@ try:
 except ImportError:
     pass 
 
-GOOGLE_TRANSLATE_API_AVAILABLE = False
-try:
-    from google.cloud import translate_v2 as google_translate
-    GOOGLE_TRANSLATE_API_AVAILABLE = True
-except ImportError:
-    pass
-
-DEEPL_API_AVAILABLE = False
-try:
-    import deepl
-    DEEPL_API_AVAILABLE = True
-except ImportError:
-    pass
+DEEPL_API_AVAILABLE = False  # DeepL disabled in open-source edition
 
 GEMINI_API_AVAILABLE = False
 try:
-    import google.generativeai as genai
+    from google import genai
     GEMINI_API_AVAILABLE = True
-except ImportError:
-    pass
+except ImportError as e:
+    log_debug(f"Gemini API libraries not available: {e}")
+except Exception as e:
+    log_debug(f"Unexpected error importing Gemini API libraries: {e}")
 
-OPENAI_API_AVAILABLE = False
-try:
-    import openai
-    OPENAI_API_AVAILABLE = True
-except ImportError:
-    pass
 
-MARIANMT_AVAILABLE = MARIANMT_LIB_AVAILABLE
 
 class GameChangingTranslator:
-    def __init__(self, root):
+    def __init__(self, root=None):
         self.root = root
-        self.root.title("Game-Changing Translator")
-        self.root.geometry("750x480") 
-        self.root.minsize(650, 430)
-        self.root.resizable(True, True)
+        
+         
+        
+        
         
         self._fully_initialized = False # Flag for settings save callback
         self.toggle_in_progress = False
 
         self.KEYBOARD_AVAILABLE = KEYBOARD_AVAILABLE
-        self.GOOGLE_TRANSLATE_API_AVAILABLE = GOOGLE_TRANSLATE_API_AVAILABLE
         self.DEEPL_API_AVAILABLE = DEEPL_API_AVAILABLE
         self.GEMINI_API_AVAILABLE = GEMINI_API_AVAILABLE
-        self.OPENAI_API_AVAILABLE = OPENAI_API_AVAILABLE
-        self.MARIANMT_AVAILABLE = MARIANMT_AVAILABLE
         
         # Debug: Log execution environment information
         import sys
@@ -119,44 +94,15 @@ class GameChangingTranslator:
         log_debug(f"Library availability check:")
         if not KEYBOARD_AVAILABLE: log_debug("  Keyboard library not available. Hotkeys disabled.")
         else: log_debug("  Keyboard library: available")
-        if not GOOGLE_TRANSLATE_API_AVAILABLE: log_debug("  Google Translate API libraries not available.")
-        else: log_debug("  Google Translate API libraries: available")
         if not DEEPL_API_AVAILABLE: log_debug("  DeepL API libraries not available.")
         else: log_debug("  DeepL API libraries: available")
         if not GEMINI_API_AVAILABLE: log_debug("  Gemini API libraries not available.")
         else: log_debug("  Gemini API libraries: available")
-        if not OPENAI_API_AVAILABLE: log_debug("  OpenAI API libraries not available.")
-        else: log_debug("  OpenAI API libraries: available")
-        if not MARIANMT_AVAILABLE: log_debug("  MarianMT libraries not available.")
-        else: log_debug("  MarianMT libraries: available")
-
-        # Process-Level CPU Affinity: Limit application to exactly 3 cores
-        if ENABLE_PROCESS_CPU_AFFINITY:
-            try:
-                import psutil
-                cpu_count = os.cpu_count() or 2
-                if cpu_count >= 3:  # Only limit if system has 3+ cores
-                    # Use exactly 3 cores: [0, 1, 2]
-                    available_cores = [0, 1, 2]
-                    psutil.Process().cpu_affinity(available_cores)
-                    
-                    # Also set environment variable for OpenMP (Tesseract) thread limiting
-                    os.environ['OMP_NUM_THREADS'] = '3'
-                    
-                    log_debug(f"Limited application to exactly 3 CPU cores: {available_cores} (out of {cpu_count} total)")
-                    log_debug(f"Set OMP_NUM_THREADS=3 for Tesseract thread limiting")
-                else:
-                    log_debug(f"System has {cpu_count} cores - no CPU limiting applied (need 3+ cores)")
-            except ImportError:
-                log_debug("psutil not available - CPU affinity not set. Install psutil for CPU core limiting.")
-            except Exception as e_cpu:
-                log_debug(f"Error setting CPU affinity: {e_cpu}")
-        else:
-            log_debug("Process-level CPU affinity DISABLED via configuration flag")
 
         self.source_area = None 
         self.target_area = None 
         self.is_running = False 
+        self.is_photo_mode_active = False  # Screenshot freeze flag for capture thread
         self.threads = [] 
         self.last_image_hash = None 
         self.source_overlay = None
@@ -173,7 +119,7 @@ class GameChangingTranslator:
         self.batch_sequence_counter = 0  # Track batch sequence numbers
         self.clear_timeout_timer_start = None  # Timer for clear translation timeout
         self.active_ocr_calls = set()  # Track active async OCR calls
-        self.max_concurrent_ocr_calls = 8  # Limit concurrent OCR API calls (8 for Gemini)
+        self.max_concurrent_ocr_calls = 3 # 3 is plenty for Regional mode
         
         # Gemini OCR Simple Management (No Queue for Gemini)
         self.last_displayed_batch_sequence = 0  # Track chronological order
@@ -217,163 +163,123 @@ class GameChangingTranslator:
                 self.ui_lang.load_language(lang_code)
                 log_debug(f"Loaded UI language from config: {lang_code}")
 
-        self.root.bind('<Configure>', self.on_window_configure)
         self._save_timer = None
         self._save_settings_timer = None
 
-        # Initialize Tkinter Variables FIRST ---
-        self.source_colour_var = tk.StringVar(value=self.config['Settings'].get('source_area_colour', '#FFFF99'))
-        self.target_colour_var = tk.StringVar(value=self.config['Settings'].get('target_area_colour', '#663399'))
-        self.target_text_colour_var = tk.StringVar(value=self.config['Settings'].get('target_text_colour', '#FFFFFF'))
-        self.remove_trailing_garbage_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'remove_trailing_garbage', fallback=False))
-        self.debug_logging_enabled_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'debug_logging_enabled', fallback=True))
-        self.gui_language_var = tk.StringVar(value=self.config['Settings'].get('gui_language', 'English'))
-        self.check_for_updates_on_startup_var = tk.BooleanVar(value=self.config['Settings'].get('check_for_updates_on_startup', 'yes') == 'yes')
-        self.keep_linebreaks_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'keep_linebreaks', fallback=False))
+        # Initialize Variables FIRST ---
+        self.source_colour = self.config['Settings'].get('source_area_colour', '#FFFF99')
+        self.target_colour = self.config['Settings'].get('target_area_colour', '#663399')
+        self.target_text_colour = self.config['Settings'].get('target_text_colour', '#FFFFFF')
+        self.gui_language = self.config['Settings'].get('gui_language', 'English')
+        self.check_for_updates_on_startup = self.config['Settings'].get('check_for_updates_on_startup', 'yes') == 'yes'
+        self.keep_linebreaks = self.config.getboolean('Settings', 'keep_linebreaks', fallback=False)
+        self.auto_detect_enabled = self.config.getboolean('Settings', 'auto_detect_enabled', fallback=False)
+        self.target_on_source_enabled = self.config.getboolean('Settings', 'target_on_source_enabled', fallback=False)
+        self.capture_padding_enabled = self.config.getboolean('Settings', 'capture_padding_enabled', fallback=True)
+        self.capture_padding = self.config.getint('Settings', 'capture_padding', fallback=100)
+        self.discovery_timeout = self.config.getint('Settings', 'discovery_timeout', fallback=120)
+        self.debug_logging_enabled = self.config.getboolean('Settings', 'debug_logging_enabled', fallback=False)
+        self.config_mode = self.config['Settings'].get('config_mode', 'Advanced')
+        self.ui_visibility_mode = self.config['Settings'].get('ui_visibility_mode', 'Show')
+        self.top_visibility_mode = self.config['Settings'].get('top_visibility_mode', 'Show')
+        
+        # Detection results and stabilization
+        self.detected_source_area_x1 = 0
+        self.detected_source_area_y1 = 0
+        self.detected_source_area_x2 = 0
+        self.detected_source_area_y2 = 0
+        self.detection_samples = [] # List of [x1, y1, x2, y2] normalized samples
+        self.discovery_start_time = 0
+        self.is_finishing_discovery = False
+        self.restart_after_shutdown = False
         
         # OCR Model Selection (Phase 1 - Gemini OCR)
-        self.ocr_model_var = tk.StringVar(value=self.config['Settings'].get('ocr_model', 'tesseract'))
+        self.ocr_model = self.config['Settings'].get('ocr_model', 'gemini')
         
-        self.google_api_key_var = tk.StringVar(value=self.config['Settings'].get('google_translate_api_key', ''))
-        self.deepl_api_key_var = tk.StringVar(value=self.config['Settings'].get('deepl_api_key', ''))
-        self.gemini_api_key_var = tk.StringVar(value=self.config['Settings'].get('gemini_api_key', ''))
-        self.deepl_model_type_var = tk.StringVar(value=self.config['Settings'].get('deepl_model_type', 'latency_optimized'))
-        self.deepl_usage_var = tk.StringVar(value="Loading...")
+        self.deepl_api_key = self.config['Settings'].get('deepl_api_key', '')
+        self.deepl_api_client = None
+        self.gemini_api_key = self.config['Settings'].get('gemini_api_key', '')
+        self.deepl_usage = "Loading..."
         
         translation_model_val = self.config['Settings'].get('translation_model', 'gemini_api')
         # Fallback logic if configured model's library is not available
-        if translation_model_val == 'gemini_api' and not self.GEMINI_API_AVAILABLE:
-            log_debug("Configured Gemini API but library not available. Falling back...")
-            if self.GOOGLE_TRANSLATE_API_AVAILABLE: translation_model_val = 'google_api'
-            elif self.DEEPL_API_AVAILABLE: translation_model_val = 'deepl_api'
-            elif self.MARIANMT_AVAILABLE: translation_model_val = 'marianmt'
-            else: log_debug("No other translation libraries available for Gemini API fallback.")
-        elif translation_model_val == 'marianmt' and not self.MARIANMT_AVAILABLE:
-            log_debug("Configured MarianMT but library not available. Falling back...")
-            if self.GEMINI_API_AVAILABLE: translation_model_val = 'gemini_api'
-            elif self.GOOGLE_TRANSLATE_API_AVAILABLE: translation_model_val = 'google_api'
-            elif self.DEEPL_API_AVAILABLE: translation_model_val = 'deepl_api'
-            else: log_debug("No other translation libraries available, MarianMT will show error if selected.")
-        elif translation_model_val == 'google_api' and not self.GOOGLE_TRANSLATE_API_AVAILABLE:
-            log_debug("Configured Google API but library not available. Falling back...")
-            if self.GEMINI_API_AVAILABLE: translation_model_val = 'gemini_api'
-            elif self.DEEPL_API_AVAILABLE: translation_model_val = 'deepl_api'
-            elif self.MARIANMT_AVAILABLE: translation_model_val = 'marianmt'
-            else: log_debug("No other translation libraries available for Google API fallback.")
-        elif translation_model_val == 'deepl_api' and not self.DEEPL_API_AVAILABLE:
-            log_debug("Configured DeepL API but library not available. Falling back...")
-            if self.GEMINI_API_AVAILABLE: translation_model_val = 'gemini_api'
-            elif self.GOOGLE_TRANSLATE_API_AVAILABLE: translation_model_val = 'google_api'
-            elif self.MARIANMT_AVAILABLE: translation_model_val = 'marianmt'
-            else: log_debug("No other translation libraries available for DeepL API fallback.")
-        self.translation_model_var = tk.StringVar(value=translation_model_val)
+
+
+
+
+        self.translation_model = translation_model_val
 
         # Define translation model names and values earlier
         # Initialize with default values, will be updated with localized versions
         self.translation_model_names = {
             'gemini_api': 'Gemini 2.5 Flash-Lite',
-            'google_api': 'Google Translate API',
             'deepl_api': 'DeepL API',
-            'marianmt': 'MarianMT (offline and free)'
         }
         
         # Initialize Gemini Models Manager before updating model names
         self.gemini_models_manager = GeminiModelsManager()
         
-        # Initialize OpenAI Models Manager
-        self.openai_models_manager = OpenAIModelsManager()
+
         
         # Update with localized names after UI language is loaded
         self.update_translation_model_names()
         self.translation_model_values = {v: k for k, v in self.translation_model_names.items()}
 
-        self.models_file_var = tk.StringVar(value=self.config['Settings'].get('marian_models_file'))
-        self.num_beams_var = tk.IntVar(value=int(self.config['Settings'].get('num_beams', '2')))
-        self.marian_model_var = tk.StringVar(value=self.config['Settings'].get('marian_model', '')) # Stores path
-        
-        self.google_file_cache_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'google_file_cache', fallback=True))
-        self.deepl_file_cache_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'deepl_file_cache', fallback=True))
-        self.deepl_context_window_var = tk.IntVar(value=int(self.config['Settings'].get('deepl_context_window', '2')))
-        self.gemini_file_cache_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'gemini_file_cache', fallback=True))
-        self.gemini_context_window_var = tk.IntVar(value=int(self.config['Settings'].get('gemini_context_window', '1')))
-        self.gemini_api_log_enabled_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'gemini_api_log_enabled', fallback=True))
-        
-        # OpenAI API variables
-        self.openai_file_cache_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'openai_file_cache', fallback=True))
-        self.openai_context_window_var = tk.IntVar(value=int(self.config['Settings'].get('openai_context_window', '2')))
-        self.openai_api_log_enabled_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'openai_api_log_enabled', fallback=True))
-        self.openai_api_key_var = tk.StringVar(value=self.config['Settings'].get('openai_api_key', ''))
+        self.deepl_cache_enabled = self.config.getboolean('Settings', 'deepl_file_cache', fallback=True)
+        self.deepl_context_window = int(self.config['Settings'].get('deepl_context_window', '2'))
+        self.gemini_cache_enabled = self.config.getboolean('Settings', 'gemini_file_cache', fallback=True)
+        self.gemini_context_window = int(self.config['Settings'].get('gemini_context_window', '1'))
+        self.gemini_api_log_enabled = self.config.getboolean('Settings', 'gemini_api_log_enabled', fallback=True)
+        self.custom_prompt_enabled = self.config.getboolean('Settings', 'custom_prompt_enabled', fallback=True)
+        self.custom_ocr_prompt_enabled = self.config.getboolean('Settings', 'custom_ocr_prompt_enabled', fallback=True)
         
         # Separate Gemini model selection for OCR and Translation
-        self.gemini_translation_model_var = tk.StringVar(value=self.config['Settings'].get('gemini_translation_model', 'Gemini 2.5 Flash-Lite'))
-        self.gemini_ocr_model_var = tk.StringVar(value=self.config['Settings'].get('gemini_ocr_model', 'Gemini 2.5 Flash-Lite'))
-        
-        # OpenAI model selection for OCR and Translation
-        self.openai_translation_model_var = tk.StringVar(value=self.config['Settings'].get('openai_translation_model', 'GPT-4o Mini'))
-        self.openai_ocr_model_var = tk.StringVar(value=self.config['Settings'].get('openai_ocr_model', 'GPT-4o'))
+        self.gemini_translation_model = self.config['Settings'].get('gemini_translation_model', 'Gemini 2.5 Flash-Lite')
+        self.gemini_ocr_model = self.config['Settings'].get('gemini_ocr_model', 'Gemini 2.5 Flash-Lite')
         
         # Gemini statistics variables (initialized by GUI builder)
-        self.gemini_total_words_var = None
-        self.gemini_total_cost_var = None
-        
-        # OpenAI statistics variables (initialized by GUI builder)
-        self.openai_total_words_var = None
-        self.openai_total_cost_var = None
+        self.gemini_total_words = ""
+        self.gemini_total_cost = ""
 
-        tesseract_path_from_config = self.config['Settings'].get('tesseract_path', r'C:\Program Files\Tesseract-OCR\tesseract.exe')
-        self.tesseract_path_var = tk.StringVar(value=tesseract_path_from_config)
-
-        self.scan_interval_var = tk.IntVar(value=int(self.config['Settings'].get('scan_interval', '100')))
+        self.scan_interval = int(self.config['Settings'].get('scan_interval', '100'))
         
         # Initialize adaptive scan interval values from user configuration
-        initial_scan_interval = self.scan_interval_var.get()
+        initial_scan_interval = self.scan_interval
         self.base_scan_interval = initial_scan_interval  # Update with user's actual setting
         self.current_scan_interval = initial_scan_interval  # Start with user's setting
         log_debug(f"Initialized adaptive scan interval: base={self.base_scan_interval}ms, current={self.current_scan_interval}ms")
         
-        self.clear_translation_timeout_var = tk.IntVar(value=int(self.config['Settings'].get('clear_translation_timeout', '3')))
-        self.stability_var = tk.IntVar(value=int(self.config['Settings'].get('stability_threshold', '2')))
-        self.confidence_var = tk.IntVar(value=int(self.config['Settings'].get('confidence_threshold', '60')))
-        self.preprocessing_mode_var = tk.StringVar(value=self.config['Settings'].get('image_preprocessing_mode', 'none'))
+        self.clear_translation_timeout = int(float(self.config['Settings'].get('clear_translation_timeout', '3')))
         
-        # Adaptive thresholding parameters
-        self.adaptive_block_size_var = tk.IntVar(value=int(self.config['Settings'].get('adaptive_block_size', '41')))
-        self.adaptive_c_var = tk.IntVar(value=int(self.config['Settings'].get('adaptive_c', '-60')))
-        
-        # Create a translated display variable for preprocessing mode
-        self.preprocessing_display_var = tk.StringVar()
-        
-        self.ocr_debugging_var = tk.BooleanVar(value=self.config.getboolean('Settings', 'ocr_debugging', fallback=False))
-        self.target_font_size_var = tk.IntVar(value=int(self.config['Settings'].get('target_font_size', '12')))
-        self.target_font_type_var = tk.StringVar(value=self.config['Settings'].get('target_font_type', 'Arial'))
-        self.target_opacity_var = tk.DoubleVar(value=float(self.config['Settings'].get('target_opacity', '0.15')))
-        self.target_text_opacity_var = tk.DoubleVar(value=float(self.config['Settings'].get('target_text_opacity', '1.0')))
+        self.target_font_size = int(float(self.config['Settings'].get('target_font_size', '12')))
+        self.target_font_type = self.config['Settings'].get('target_font_type', 'Arial')
+        self.target_opacity = float(self.config['Settings'].get('target_opacity', '0.15'))
+        self.target_text_opacity = float(self.config['Settings'].get('target_text_opacity', '1.0'))
+
+        self.deepl_source_lang = self.config['Settings'].get('deepl_source_lang', 'auto')
+        self.deepl_target_lang = self.config['Settings'].get('deepl_target_lang', 'EN-GB')
+        self.gemini_source_lang = self.config['Settings'].get('gemini_source_lang', 'en')
+        self.gemini_target_lang = self.config['Settings'].get('gemini_target_lang', 'pl')
+
+        # Apply Simple mode overrides if applicable (after all ini values are loaded)
+        self.apply_simple_overrides()
+        self.apply_pro_overrides()
 
         # Initialize OCR model display variable here to ensure it persists across UI rebuilds
-        self.ocr_model_display_var = tk.StringVar()
-        initial_ocr_model_code = self.ocr_model_var.get()
+        self.ocr_model_display = ""
+        initial_ocr_model_code = self.ocr_model
         initial_ocr_display_name = ""
-        if initial_ocr_model_code == 'tesseract':
-            initial_ocr_display_name = self.ui_lang.get_label("ocr_model_tesseract", "Tesseract (offline)")
-        elif self.is_gemini_model(initial_ocr_model_code):
+        if self.is_gemini_model(initial_ocr_model_code):
             saved_gemini_ocr_model = self.config['Settings'].get('gemini_ocr_model', '')
             if saved_gemini_ocr_model and self.GEMINI_API_AVAILABLE and saved_gemini_ocr_model in self.gemini_models_manager.get_ocr_model_names():
                 initial_ocr_display_name = saved_gemini_ocr_model
-        elif self.is_openai_model(initial_ocr_model_code):
-            saved_openai_ocr_model = self.config['Settings'].get('openai_ocr_model', '')
-            if saved_openai_ocr_model and self.OPENAI_API_AVAILABLE and saved_openai_ocr_model in self.openai_models_manager.get_ocr_model_names():
-                initial_ocr_display_name = saved_openai_ocr_model
+
         
         # Fallback if no specific display name was found
         if not initial_ocr_display_name:
-            if self.GEMINI_API_AVAILABLE and self.gemini_models_manager.get_ocr_model_names():
-                initial_ocr_display_name = self.gemini_models_manager.get_ocr_model_names()[0]
-            elif self.OPENAI_API_AVAILABLE and self.openai_models_manager.get_ocr_model_names():
-                initial_ocr_display_name = self.openai_models_manager.get_ocr_model_names()[0]
-            else:
-                initial_ocr_display_name = self.ui_lang.get_label("ocr_model_tesseract", "Tesseract (offline)")
+            initial_ocr_display_name = "Gemini 2.5 Flash-Lite"
 
-        self.ocr_model_display_var.set(initial_ocr_display_name)
+        self.ocr_model_display = initial_ocr_display_name
         
         # Initialize Handlers
         # self.cache_manager = CacheManager(self)
@@ -383,37 +289,38 @@ class GameChangingTranslator:
         self.statistics_handler = StatisticsHandler(self)
         self.translation_handler = TranslationHandler(self)
         self.ui_interaction_handler = UIInteractionHandler(self) # Needs self.translation_model_names
+        
+        # Bind window configuration after handlers are initialized to avoid AttributeErrors
 
         # Pre-initialize Gemini model for optimal performance (especially for compiled version)
         self._pre_initialize_gemini_model()
 
         # Initialize trace suppression mechanism and UI update detection
-        self._suppress_traces = False
-        self._ui_update_in_progress = False
+        
         
         def _settings_changed_callback_internal(*args, **kwargs):
             if self._fully_initialized and not self._suppress_traces and not self._ui_update_in_progress:
                 self.save_settings()
             elif self._suppress_traces:
-                log_debug("StringVar trace suppressed during UI update")
+                log_debug("UI setting change trace suppressed during update")
             elif self._ui_update_in_progress:
-                log_debug("StringVar trace suppressed during UI update operation")
+                log_debug("UI setting change trace suppressed during update operation")
 
-        self.settings_changed_callback = _settings_changed_callback_internal
+        
 
         # Scan interval validation callback for Gemini OCR minimum
         def _scan_interval_changed_callback(*args, **kwargs):
             if self._fully_initialized and not self._suppress_traces and not self._ui_update_in_progress:
                 # Validate minimum scan interval for Gemini OCR
                 if self.get_ocr_model_setting() == 'gemini':
-                    current_value = self.scan_interval_var.get()
+                    current_value = self.scan_interval
                     if current_value < 500:
                         log_debug(f"Scan interval {current_value}ms too low for Gemini OCR, setting to 500ms minimum")
-                        self.scan_interval_var.set(500)
+                        self.scan_interval = 500
                         return  # Skip save_settings since we just changed the value
                 
                 # Update adaptive scan interval when user changes scan interval
-                new_scan_interval = self.scan_interval_var.get()
+                new_scan_interval = self.scan_interval
                 if hasattr(self, 'base_scan_interval') and new_scan_interval != self.base_scan_interval:
                     self.base_scan_interval = new_scan_interval
                     # Reset to new base if not currently overloaded, or update overloaded value
@@ -426,49 +333,15 @@ class GameChangingTranslator:
                 
                 self.save_settings()
             elif self._suppress_traces:
-                log_debug("Scan interval trace suppressed during UI update")
+                log_debug("Scan interval trace suppressed during update")
             elif self._ui_update_in_progress:
-                log_debug("Scan interval trace suppressed during UI update operation")
+                log_debug("Scan interval trace suppressed during update operation")
 
-        self.scan_interval_changed_callback = _scan_interval_changed_callback
+        
 
         # Add traces
-        self.source_colour_var.trace_add("write", self.settings_changed_callback)
-        self.target_colour_var.trace_add("write", self.settings_changed_callback)
-        self.target_text_colour_var.trace_add("write", self.settings_changed_callback)
-        self.remove_trailing_garbage_var.trace_add("write", self.settings_changed_callback)
-        self.debug_logging_enabled_var.trace_add("write", self.settings_changed_callback)
-        self.check_for_updates_on_startup_var.trace_add("write", self.settings_changed_callback)
-        self.keep_linebreaks_var.trace_add("write", self.settings_changed_callback)
-        self.google_api_key_var.trace_add("write", self.settings_changed_callback)
-        self.deepl_api_key_var.trace_add("write", self.settings_changed_callback)
-        self.deepl_model_type_var.trace_add("write", self.settings_changed_callback)
-        self.models_file_var.trace_add("write", self.settings_changed_callback)
-        self.google_file_cache_var.trace_add("write", self.settings_changed_callback)
-        self.deepl_file_cache_var.trace_add("write", self.settings_changed_callback)
-        self.deepl_context_window_var.trace_add("write", self.settings_changed_callback)
-        self.preprocessing_mode_var.trace_add("write", self.settings_changed_callback)
-        self.preprocessing_mode_var.trace_add("write", self.on_ocr_parameter_change)
-        self.adaptive_block_size_var.trace_add("write", self.settings_changed_callback)
-        self.adaptive_block_size_var.trace_add("write", self.on_ocr_parameter_change)
-        self.adaptive_c_var.trace_add("write", self.settings_changed_callback)
-        self.adaptive_c_var.trace_add("write", self.on_ocr_parameter_change)
-        self.ocr_debugging_var.trace_add("write", self.settings_changed_callback)
-        self.tesseract_path_var.trace_add("write", self.settings_changed_callback)
-        self.scan_interval_var.trace_add("write", self.scan_interval_changed_callback)  # Special validation callback
-        self.clear_translation_timeout_var.trace_add("write", self.settings_changed_callback)
-        self.stability_var.trace_add("write", self.settings_changed_callback)
-        self.confidence_var.trace_add("write", self.settings_changed_callback)
-        self.target_font_size_var.trace_add("write", self.settings_changed_callback)
-        self.target_font_type_var.trace_add("write", self.settings_changed_callback)
-        self.target_opacity_var.trace_add("write", self.settings_changed_callback)
-        self.target_text_opacity_var.trace_add("write", self.settings_changed_callback)
-        self.num_beams_var.trace_add("write", self.settings_changed_callback)
-        self.marian_model_var.trace_add("write", self.settings_changed_callback) 
-        self.gui_language_var.trace_add("write", self.settings_changed_callback)
-        self.ocr_model_var.trace_add("write", self.settings_changed_callback)
-        self.ocr_model_var.trace_add("write", self.on_ocr_model_change)
-
+                                  # Special validation callback
+                                                                                                                                
         # Other instance variables
         # Increased queue sizes from 4/3 to 8/6 to reduce queue management overhead
         self.ocr_queue = queue.Queue(maxsize=8)  # Increased from 4 for better buffering
@@ -476,217 +349,140 @@ class GameChangingTranslator:
         self.last_successful_translation_time = 0.0
         self.min_translation_interval = 0.3
         self.last_translation_time = time.monotonic()
-        self.google_api_client = None
-        self.deepl_api_client = None
-        self.google_api_key_visible = False
         self.deepl_api_key_visible = False
         self.gemini_api_key_visible = False
-        self.openai_api_key_visible = False
-        self.marian_translator = None
-        self.marian_source_lang = None 
-        self.marian_target_lang = None 
         
-        self.google_source_lang = self.config['Settings'].get('google_source_lang', 'auto')
-        self.google_target_lang = self.config['Settings'].get('google_target_lang', 'en')
-        self.deepl_source_lang = self.config['Settings'].get('deepl_source_lang', 'auto')
-        self.deepl_target_lang = self.config['Settings'].get('deepl_target_lang', 'EN-GB')
-        self.gemini_source_lang = self.config['Settings'].get('gemini_source_lang', 'en')
-        self.gemini_target_lang = self.config['Settings'].get('gemini_target_lang', 'pl')
+
+        base_dir = nuitka_compat.get_base_dir()
         
-        # OpenAI language settings
-        self.openai_source_lang = self.config['Settings'].get('openai_source_lang', 'en')
-        self.openai_target_lang = self.config['Settings'].get('openai_target_lang', 'pl')
-        
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            base_dir = os.path.dirname(sys.executable)
-        else:
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        self.google_cache_file = os.path.join(base_dir, "googletrans_cache.txt")
         self.deepl_cache_file = os.path.join(base_dir, "deepl_cache.txt")
         self.gemini_cache_file = os.path.join(base_dir, "gemini_cache.txt")
-        self.openai_cache_file = os.path.join(base_dir, "openai_cache.txt")
         self.custom_prompt_file = os.path.join(base_dir, "custom_prompt.txt")
-        log_debug(f"Cache file paths: Google: {self.google_cache_file}, DeepL: {self.deepl_cache_file}, Gemini: {self.gemini_cache_file}, OpenAI: {self.openai_cache_file}")
+        self.custom_ocr_prompt_file = os.path.join(base_dir, "custom_ocr_prompt.txt")
+        log_debug(f"Cache file paths: DeepL: {self.deepl_cache_file}, Gemini: {self.gemini_cache_file}")
         
         self.custom_prompt_text = ""
+        self.custom_ocr_prompt_text = ""
         self.load_custom_prompt()
         
-        self.google_file_cache = {}
-        self.deepl_file_cache = {}
-        self.gemini_file_cache = {}
-        self.openai_file_cache = {}
+        self.deepl_cache_dict = {}
+        self.gemini_cache_dict = {}
         self.translation_cache = {}
         
         self.cache_manager = CacheManager(self)
         
         # Initialize Update Checker
-        self.update_checker = UpdateChecker()
+        
 
-        # Only set Tesseract path when actually using Tesseract OCR
-        if self.ocr_model_var.get() == 'tesseract':
-            pytesseract.pytesseract.tesseract_cmd = self.tesseract_path_var.get()
-            log_debug(f"Tesseract path set to: {self.tesseract_path_var.get()}")
-        else:
-            log_debug(f"Skipping Tesseract path initialization - using OCR model: {self.ocr_model_var.get()}")
 
-        self.stable_threshold = self.stability_var.get()
-        self.confidence_threshold = self.confidence_var.get()
-        self.clear_translation_timeout = self.clear_translation_timeout_var.get()
 
-        if not self.google_source_lang: self.google_source_lang = 'auto'
-        if not self.google_target_lang: self.google_target_lang = 'en'
+        self.clear_translation_timeout = self.clear_translation_timeout
+
         if not self.deepl_source_lang: self.deepl_source_lang = 'auto'
         if not self.deepl_target_lang: self.deepl_target_lang = 'EN-GB'
 
         self.cache_manager.load_file_caches()
         
         # Initialize debug logging state
-        set_debug_logging_enabled(self.debug_logging_enabled_var.get())
-        
-        self.marian_models_dict, self.marian_models_list = self.configuration_handler.load_marian_models(localize_names=True)
-        self.configuration_handler.load_window_geometry()
+        set_debug_logging_enabled(self.debug_logging_enabled)
 
-        # Initialize UI display StringVars here so they exist before create_settings_tab
-        self.source_display_var = tk.StringVar() 
-        self.target_display_var = tk.StringVar()
+        # Initialize UI display strings here so they exist before create_settings_tab
+        self.source_display = "" 
+        self.target_display = ""
         
-        configured_marian_path = self.marian_model_var.get() 
-        initial_marian_display_name = ""
-        if configured_marian_path:
-            for display_name_iter, path_iter in self.marian_models_dict.items():
-                if path_iter == configured_marian_path:
-                    initial_marian_display_name = display_name_iter
-                    break
-        if not initial_marian_display_name and self.marian_models_list: 
-            initial_marian_display_name = self.marian_models_list[0]
-            fallback_path = self.marian_models_dict.get(initial_marian_display_name, "")
-            if self.marian_model_var.get() != fallback_path : 
-                 self.marian_model_var.set(fallback_path) 
-        self.marian_model_display_var = tk.StringVar(value=initial_marian_display_name)
-
         # This uses self.translation_model_names, so it must be after its definition
-        initial_model_code_for_display = self.translation_model_var.get()
-        initial_display_name_for_model_combo = self.translation_model_names.get(initial_model_code_for_display, list(self.translation_model_names.values())[0])
-        self.translation_model_display_var = tk.StringVar(value=initial_display_name_for_model_combo)
-
-
-        self.tab_control = ttk.Notebook(root)
-        self.tab_control.pack(expand=True, fill="both", padx=5, pady=5)
+        initial_model_code_for_display = self.translation_model
+        initial_display_name_for_model_combo = ""
         
-        # The tab frames will be created and assigned in the create_*_tab functions
-        # We'll temporarily set them to None
-        self.tab_main = None
-        self.tab_settings = None
-        self.tab_custom_prompt = None
-        self.tab_debug = None
-        self.tab_about = None
+        if initial_model_code_for_display == 'gemini_api':
+            initial_display_name_for_model_combo = self.gemini_translation_model
+        else:
+            initial_display_name_for_model_combo = self.translation_model_names.get(initial_model_code_for_display, 'DeepL API')
+            
+        self.translation_model_display = initial_display_name_for_model_combo
         
-        active_model_for_init = self.translation_model_var.get()
+        active_model_for_init = self.translation_model
         initial_source_val, initial_target_val = 'auto', 'en' 
 
-        if active_model_for_init == 'google_api':
-            initial_source_val = self.google_source_lang
-            initial_target_val = self.google_target_lang
-        elif active_model_for_init == 'deepl_api':
-            initial_source_val = self.deepl_source_lang
-            initial_target_val = self.deepl_target_lang
+        if active_model_for_init == 'deepl_api':
+            initial_source_val = self.deepl_source_lang if hasattr(self, 'deepl_source_lang') else 'auto'
+            initial_target_val = self.deepl_target_lang if hasattr(self, 'deepl_target_lang') else 'en'
         elif active_model_for_init == 'gemini_api':
-            initial_source_val = self.gemini_source_lang
-            initial_target_val = self.gemini_target_lang
-        elif self.is_openai_model(active_model_for_init):
-            initial_source_val = self.openai_source_lang
-            initial_target_val = self.openai_target_lang
-        elif active_model_for_init == 'marianmt':
-            if self.marian_model_display_var.get(): 
-                # ui_interaction_handler is now defined
-                parsed_marian_langs_init = self.ui_interaction_handler.parse_marian_model_for_langs(self.marian_model_display_var.get()) or \
-                                           self.ui_interaction_handler.parse_marian_model_for_langs(self.marian_model_var.get()) 
-                if parsed_marian_langs_init:
-                    initial_source_val = parsed_marian_langs_init[0]
-                    initial_target_val = parsed_marian_langs_init[1]
-                    self.marian_source_lang = initial_source_val 
-                    self.marian_target_lang = initial_target_val
-                else:
-                    initial_source_val, initial_target_val = '', ''
-            else:
-                 initial_source_val, initial_target_val = '', ''
+            initial_source_val = self.gemini_source_lang if hasattr(self, 'gemini_source_lang') else 'auto'
+            initial_target_val = self.gemini_target_lang if hasattr(self, 'gemini_target_lang') else 'en'
+        else:
+            # Fallback to Gemini if nothing else works or unknown model
+            initial_source_val = 'auto'
+            initial_target_val = 'en'
+            self.translation_model = 'gemini_api'
 
 
-        self.source_lang_var = tk.StringVar(value=initial_source_val) 
-        self.target_lang_var = tk.StringVar(value=initial_target_val)
+        self.source_lang = initial_source_val 
+        self.target_lang = initial_target_val
         
         self.lang_code_to_name = self.language_manager 
 
-        # Create the main tabs
-        create_main_tab(self)
-        create_settings_tab(self)
-        create_custom_prompt_tab(self)
-        create_api_usage_tab(self)
-        create_debug_tab(self)
+        # Create the main tabs (Handled by PySide GUI)
         
-        # Create About tab using the centralized function
-        self.create_about_tab()
-        # Handle tab change events to set focus appropriately
-        def on_tab_changed(event):
-            selected_tab_index = self.tab_control.index(self.tab_control.select())
-            if selected_tab_index == 0 and hasattr(self, 'main_tab_start_button') and self.main_tab_start_button.winfo_exists():
-                self.main_tab_start_button.focus_set()
-            elif selected_tab_index == 1 and hasattr(self, 'settings_tab_save_button') and self.settings_tab_save_button.winfo_exists():
-                self.settings_tab_save_button.focus_set()
-            elif selected_tab_index == 2 and hasattr(self, 'refresh_api_statistics'):
-                # API Usage tab - refresh statistics when accessed
-                self.root.after(100, self.refresh_api_statistics)
         
-        self.tab_control.bind("<<NotebookTabChanged>>", on_tab_changed)
-        
-        self.ui_interaction_handler.on_translation_model_selection_changed(initial_setup=True)
         
         # Initialize localized dropdowns after everything is set up
-        self.root.after(50, self.ui_interaction_handler.update_all_dropdowns_for_language_change)
+        QTimer.singleShot(50, self.ui_interaction_handler.update_all_dropdowns_for_language_change)
 
-        self.root.after(100, self.load_initial_overlay_areas)
-        self.root.after(200, self.ensure_window_visible)
+        QTimer.singleShot(100, self.load_initial_overlay_areas)
+        QTimer.singleShot(200, self.ensure_window_visible)
         self.hotkey_handler.setup_hotkeys()
         
         # Add periodic network cleanup
         self.setup_network_cleanup()
         
-        log_debug(f"Application initialized. Stability: {self.stable_threshold}, Confidence: {self.confidence_threshold}")
-        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-        
+        log_debug("Application initialized sequence complete.")
         self._fully_initialized = True
         log_debug("GameChangingTranslator fully initialized.")
         
-        # Automatic update check for compiled version
-        import sys
-        is_compiled = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
-        if is_compiled and self.check_for_updates_on_startup_var.get():
-            log_debug("Compiled version detected with automatic update check enabled - scheduling automatic update check")
-            # Schedule the automatic update check to run after UI is fully loaded
-            self.root.after(1000, lambda: self.check_for_updates(auto_check=True))
-        elif is_compiled:
-            log_debug("Compiled version detected but automatic update check is disabled")
-        else:
-            log_debug("Source code version detected - no automatic update check")
+        # Start overlay movement polling for PySide6 (save to INI)
+        self._start_pyside_move_polling()
+        
+        # Initialise and connect Qt signals (replaces legacy root.after polling)
+        try:
+            from signals import WorkerSignals
+            import worker_threads
+            self.signals = WorkerSignals()
+            
+            # Connect signals, passing 'self' as the first argument (app)
+            self.signals.ocr_response.connect(
+                lambda *args: worker_threads.process_api_ocr_response(self, *args)
+            )
+            self.signals.translation_response.connect(
+                lambda *args: worker_threads.process_translation_response(self, *args)
+            )
+            
+            log_debug("WorkerSignals initialized and connected successfully.")
+        except Exception as e_sig:
+            log_debug(f"Failed to initialize WorkerSignals: {e_sig}")
+
+
+        
+        # Open-source version: no auto-updates on startup
+        log_debug("App started (Open-Source Edition)")
         
         # Ensure OCR model UI is correctly set up on initial load
         if hasattr(self, 'ui_interaction_handler'):
             self.ui_interaction_handler.update_ocr_model_ui()
         
         # Update usage statistics for selected models - use after_idle to ensure GUI is ready
-        if hasattr(self, 'translation_model_var'):
-            selected_model = self.translation_model_var.get()
+        if hasattr(self, 'translation_model'):
+            selected_model = self.translation_model
             if selected_model == 'gemini_api':
-                self.root.after_idle(lambda: self._delayed_gemini_stats_update())
+                QTimer.singleShot(0, lambda: self._delayed_gemini_stats_update())
             elif selected_model == 'deepl_api':
-                self.root.after_idle(lambda: self._delayed_deepl_usage_update())
+                QTimer.singleShot(0, lambda: self._delayed_deepl_usage_update())
         
         # Always update DeepL usage since it's now always visible in API Usage tab
-        self.root.after_idle(lambda: self._delayed_deepl_usage_update())
+        QTimer.singleShot(0, lambda: self._delayed_deepl_usage_update())
         
         # Refresh API statistics for the new API Usage tab
-        self.root.after_idle(lambda: self._delayed_api_stats_refresh())
+        QTimer.singleShot(0, lambda: self._delayed_api_stats_refresh())
 
     def _delayed_api_stats_refresh(self):
         """Delayed API statistics refresh to ensure GUI is fully ready."""
@@ -695,77 +491,17 @@ class GameChangingTranslator:
         except Exception as e:
             log_debug(f"Error in delayed API statistics refresh: {e}")
 
-    def update_api_usage_tab_for_language(self):
-        """Update API Usage tab labels when language changes."""
-        try:
-            # Update section labels
-            if hasattr(self, 'tab_api_usage'):
-                # Refresh the entire tab content since section labels are hard to update individually
-                # The next time the user clicks on the tab, the labels will be updated
-                log_debug("API Usage tab language update requested - will update on next tab access")
-            
-            # Update button labels if they exist
-            if hasattr(self, 'refresh_stats_button') and self.refresh_stats_button.winfo_exists():
-                self.refresh_stats_button.config(text=self.ui_lang.get_label("api_usage_refresh_btn", "Refresh Statistics"))
-            if hasattr(self, 'export_csv_button') and self.export_csv_button.winfo_exists():
-                self.export_csv_button.config(text=self.ui_lang.get_label("api_usage_export_csv_btn", "Export to CSV"))
-            if hasattr(self, 'export_text_button') and self.export_text_button.winfo_exists():
-                self.export_text_button.config(text=self.ui_lang.get_label("api_usage_export_text_btn", "Export to Text"))
-            if hasattr(self, 'copy_stats_button') and self.copy_stats_button.winfo_exists():
-                self.copy_stats_button.config(text=self.ui_lang.get_label("api_usage_copy_btn", "Copy"))
-            
-            # Update statistic labels if they exist
-            if hasattr(self, 'ocr_stat_labels'):
-                ocr_labels = [
-                    ("api_usage_total_ocr_calls", "Total OCR Calls:"),
-                    ("api_usage_avg_cost_per_call", "Average Cost per Call:"),
-                    ("api_usage_avg_cost_per_minute", "Average Cost per Minute:"),
-                    ("api_usage_avg_cost_per_hour", "Average Cost per Hour:"),
-                    ("api_usage_total_ocr_cost", "Total OCR Cost:")
-                ]
-                for label_key, fallback_text in ocr_labels:
-                    if label_key in self.ocr_stat_labels and self.ocr_stat_labels[label_key].winfo_exists():
-                        self.ocr_stat_labels[label_key].config(text=self.ui_lang.get_label(label_key, fallback_text))
-            
-            if hasattr(self, 'translation_stat_labels'):
-                translation_labels = [
-                    ("api_usage_total_translation_calls", "Total Translation Calls:"),
-                    ("api_usage_total_words_translated", "Total Words Translated:"),
-                    ("api_usage_words_per_minute", "Average Words per Minute:"),
-                    ("api_usage_avg_cost_per_word", "Average Cost per Word:"),
-                    ("api_usage_avg_cost_per_call", "Average Cost per Call:"),
-                    ("api_usage_avg_cost_per_minute", "Average Cost per Minute:"),
-                    ("api_usage_avg_cost_per_hour", "Average Cost per Hour:"),
-                    ("api_usage_total_translation_cost", "Total Translation Cost:")
-                ]
-                for label_key, fallback_text in translation_labels:
-                    if label_key in self.translation_stat_labels and self.translation_stat_labels[label_key].winfo_exists():
-                        self.translation_stat_labels[label_key].config(text=self.ui_lang.get_label(label_key, fallback_text))
-            
-            if hasattr(self, 'combined_stat_labels'):
-                combined_labels = [
-                    ("api_usage_combined_cost_per_minute", "Combined Cost per Minute:"),
-                    ("api_usage_combined_cost_per_hour", "Combined Cost per Hour:"),
-                    ("api_usage_total_api_cost", "Total API Cost:")
-                ]
-                for label_key, fallback_text in combined_labels:
-                    if label_key in self.combined_stat_labels and self.combined_stat_labels[label_key].winfo_exists():
-                        self.combined_stat_labels[label_key].config(text=self.ui_lang.get_label(label_key, fallback_text))
-            
-            # Update API usage info label
-            if hasattr(self, 'update_api_usage_info_for_language'):
-                self.update_api_usage_info_for_language()
-            
-            log_debug("Updated API Usage tab labels for language change")
-        except Exception as e:
-            log_debug(f"Error updating API Usage tab for language change: {e}")
-
     def ensure_window_visible(self):
         """Ensure the main window is visible after all initialization is complete."""
+        # Suppress during discovery transition to prevent taskbar popup
+        if getattr(self, 'is_finishing_discovery', False):
+            log_debug("Discovery transition in progress, skipping main window liftoff")
+            return
+
         try:
-            if self.root.winfo_exists():
-                self.root.deiconify()
-                self.root.lift()
+            if self.root != None:
+                self.deiconify()
+                self.lift()
                 log_debug("Main window visibility ensured after initialization")
         except Exception as e:
             log_debug(f"Error ensuring window visibility: {e}")
@@ -774,15 +510,15 @@ class GameChangingTranslator:
         """Called when OCR parameters change to refresh preview if it's open."""
         if self.ocr_preview_window is not None:
             try:
-                if self.ocr_preview_window.winfo_exists():
+                if self.ocr_preview_window != None:
                     # Delay the refresh slightly to avoid too frequent updates
                     if hasattr(self, '_preview_refresh_timer'):
-                        self.root.after_cancel(self._preview_refresh_timer)
-                    self._preview_refresh_timer = self.root.after(200, self.refresh_ocr_preview)
+                        pass
+                    self._preview_refresh_timer = QTimer.singleShot(200, self.refresh_ocr_preview)
                 else:
                     # Window was destroyed but reference wasn't cleared
                     self.ocr_preview_window = None
-            except tk.TclError:
+            except Exception:
                 # Window was destroyed
                 self.ocr_preview_window = None
 
@@ -799,34 +535,30 @@ class GameChangingTranslator:
                 self.get_ocr_model_setting() == 'gemini'):
                 self.translation_handler.start_ocr_session()
             
-            # Update UI to show/hide Tesseract-specific fields
+
             if hasattr(self, 'ui_interaction_handler'):
                 self.ui_interaction_handler.update_ocr_model_ui()
             
-            # Update adaptive fields visibility based on new OCR model
-            if hasattr(self, 'update_adaptive_fields_visibility'):
-                self.update_adaptive_fields_visibility()
-            
             # Validate scan interval when switching to Gemini OCR
             if self.get_ocr_model_setting() == 'gemini':
-                current_value = self.scan_interval_var.get()
+                current_value = self.scan_interval
                 if current_value < 500:
                     log_debug(f"OCR model changed to Gemini: updating scan interval from {current_value}ms to 500ms minimum")
-                    self.scan_interval_var.set(500)
+                    self.scan_interval = 500
             
             # Refresh OCR preview if it's open to use the new OCR model
             if self.ocr_preview_window is not None:
                 try:
-                    if self.ocr_preview_window.winfo_exists():
+                    if self.ocr_preview_window != None:
                         if hasattr(self, '_preview_refresh_timer'):
-                            self.root.after_cancel(self._preview_refresh_timer)
-                        self._preview_refresh_timer = self.root.after(200, self.refresh_ocr_preview)
+                            pass
+                        self._preview_refresh_timer = QTimer.singleShot(200, self.refresh_ocr_preview)
                     else:
                         self.ocr_preview_window = None
-                except tk.TclError:
+                except Exception:
                     self.ocr_preview_window = None
                     
-            log_debug(f"OCR model changed to: {self.ocr_model_var.get()}")
+            log_debug(f"OCR model changed to: {self.ocr_model}")
         except Exception as e:
             log_debug(f"Error in OCR model change callback: {e}")
 
@@ -836,47 +568,196 @@ class GameChangingTranslator:
         log_debug("Attempted to save settings before full initialization.")
         return False
 
-    def suppress_traces(self):
-        """Suppress StringVar traces during UI updates to prevent cascading saves"""
-        self._suppress_traces = True
-        log_debug("StringVar traces suppressed")
+    def perform_marketing_screenshot(self):
+        """Phase 1: Freeze overlays and yield to Qt event loop for DWM re-composition."""
+        log_debug("Screenshot: Starting freeze sequence...")
 
-    def restore_traces(self):
-        """Restore StringVar traces after UI updates complete"""
-        self._suppress_traces = False
-        log_debug("StringVar traces restored")
+        # 1. Pause the capture thread immediately
+        self.is_photo_mode_active = True
+
+        # 2. Freeze both overlays (block text updates + reveal to system capture)
+        if self.target_overlay:
+            self.target_overlay.freeze_for_screenshot()
+        if self.source_overlay and self.source_overlay.isVisible():
+            self.source_overlay.freeze_for_screenshot()
+
+        # 3. Yield to the Qt event loop for ~150ms so DWM can re-composite
+        #    the revealed windows into the screen buffer.
+        #    NEVER use time.sleep() on the main thread — it blocks Qt's event processing.
+        from PySide6.QtCore import QTimer
+        QTimer.singleShot(150, self._execute_screenshot_capture)
+
+    def _execute_screenshot_capture(self):
+        """Phase 2: Capture the screen, save PNG, unfreeze, and notify user."""
+        import mss
+        import nuitka_compat
+        from datetime import datetime
+        from PIL import Image
+
+        saved_filename = None
+        try:
+            # 4. Prepare output directory (next to the application executable)
+            screenshots_dir = os.path.join(nuitka_compat.get_base_dir(), "Screenshots")
+            os.makedirs(screenshots_dir, exist_ok=True)
+
+            # 5. Capture the PRIMARY monitor (index [1] in mss; [0] is all monitors combined)
+            with mss.mss() as sct:
+                monitor = sct.monitors[1]  # Primary monitor only
+                sct_img = sct.grab(monitor)
+
+                # Convert to PIL using the same pattern as worker_threads.py (line 104)
+                img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
+
+                saved_filename = f"GCT_screenshot_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
+                filepath = os.path.join(screenshots_dir, saved_filename)
+                img.save(filepath, "PNG")
+
+                log_debug(f"Screenshot saved: {filepath}")
+
+        except Exception as e:
+            log_debug(f"Screenshot ERROR: {type(e).__name__} - {e}")
+
+        finally:
+            # 6. Unfreeze target overlay and replay any deferred text
+            if self.target_overlay:
+                self.target_overlay.unfreeze_after_screenshot()
+                if self.target_overlay.pending_text_update is not None:
+                    deferred = self.target_overlay.pending_text_update
+                    self.target_overlay.pending_text_update = None
+                    log_debug(f"Screenshot: Replaying deferred text update ({len(deferred)} chars)")
+                    self.update_translation_text(deferred)
+
+            # 7. Unfreeze source overlay (if it was frozen)
+            if self.source_overlay and getattr(self.source_overlay, 'is_frozen', False):
+                self.source_overlay.unfreeze_after_screenshot()
+
+            # 8. Resume capture thread
+            self.is_photo_mode_active = False
+            log_debug("Screenshot: Sequence complete.")
+
+            # 9. Show toast notification to user
+            if saved_filename and hasattr(self, 'gui') and self.gui:
+                self.gui.show_screenshot_toast(saved_filename)
+
+    def apply_simple_overrides(self):
+        """Override instance attributes with SIMPLE_CONFIG_SETTINGS values.
         
-    def start_ui_update(self):
-        """Mark the start of a UI update operation to suppress all saves"""
-        self._ui_update_in_progress = True
-        self.suppress_traces()
-        log_debug("UI update operation started - all saves suppressed")
+        Called on startup (if config_mode is 'Simple') and when switching
+        from Advanced to Simple mode. Does NOT write to the ini file.
+        """
+        if self.config_mode != 'Simple':
+            return
         
-    def end_ui_update(self):
-        """Mark the end of a UI update operation and restore normal save behavior"""
-        self._ui_update_in_progress = False
-        self.restore_traces()
-        log_debug("UI update operation ended - saves restored")
+        log_debug("Applying Simple mode overrides to instance attributes")
+        
+        self.scan_interval = int(SIMPLE_CONFIG_SETTINGS['scan_interval'])
+        self.clear_translation_timeout = int(SIMPLE_CONFIG_SETTINGS['clear_translation_timeout'])
+        self.source_colour = SIMPLE_CONFIG_SETTINGS['source_area_colour']
+        self.target_colour = SIMPLE_CONFIG_SETTINGS['target_area_colour']
+        self.target_text_colour = SIMPLE_CONFIG_SETTINGS['target_text_colour']
+        self.target_font_size = int(SIMPLE_CONFIG_SETTINGS['target_font_size'])
+        self.target_font_type = SIMPLE_CONFIG_SETTINGS['target_font_type']
+        self.translation_model = SIMPLE_CONFIG_SETTINGS['translation_model']
+        self.ocr_model = SIMPLE_CONFIG_SETTINGS['ocr_model']
+        self.gemini_translation_model = SIMPLE_CONFIG_SETTINGS['gemini_translation_model']
+        self.gemini_ocr_model = SIMPLE_CONFIG_SETTINGS['gemini_ocr_model']
+        self.keep_linebreaks = SIMPLE_CONFIG_SETTINGS['keep_linebreaks'] == 'True'
+        self.auto_detect_enabled = SIMPLE_CONFIG_SETTINGS['auto_detect_enabled'] == 'True'
+        self.target_on_source_enabled = SIMPLE_CONFIG_SETTINGS['target_on_source_enabled'] == 'True'
+        self.capture_padding_enabled = SIMPLE_CONFIG_SETTINGS['capture_padding_enabled'] == 'True'
+        self.capture_padding = int(SIMPLE_CONFIG_SETTINGS['capture_padding'])
+        self.target_opacity = float(SIMPLE_CONFIG_SETTINGS['target_opacity'])
+        self.target_text_opacity = float(SIMPLE_CONFIG_SETTINGS['target_text_opacity'])
+        self.gemini_context_window = int(SIMPLE_CONFIG_SETTINGS['gemini_context_window'])
+        self.deepl_cache_enabled = SIMPLE_CONFIG_SETTINGS['deepl_file_cache'] == 'True'
+        self.gemini_cache_enabled = SIMPLE_CONFIG_SETTINGS['gemini_file_cache'] == 'True'
+        self.debug_logging_enabled = SIMPLE_CONFIG_SETTINGS['debug_logging_enabled'] == 'True'
+        self.gemini_api_log_enabled = SIMPLE_CONFIG_SETTINGS['gemini_api_log_enabled'] == 'True'
+        self.custom_prompt_enabled = SIMPLE_CONFIG_SETTINGS['custom_prompt_enabled'] == 'True'
+        self.custom_ocr_prompt_enabled = SIMPLE_CONFIG_SETTINGS['custom_ocr_prompt_enabled'] == 'True'
+        
+        # New: lock source language to auto
+        self.gemini_source_lang = SIMPLE_CONFIG_SETTINGS['gemini_source_lang']
+        self.deepl_source_lang = SIMPLE_CONFIG_SETTINGS['deepl_source_lang']
+        
+        # Update adaptive scan interval
+        self.base_scan_interval = self.scan_interval
+        self.current_scan_interval = self.scan_interval
+        
+        log_debug("Simple mode overrides applied successfully")
 
-    def on_window_configure(self, event):
-        self.configuration_handler.on_window_configure(event)
+    def apply_pro_overrides(self):
+        """Apply PRO overrides — open-source edition always locks PRO features.
 
-    def save_current_window_geometry(self):
-        self.configuration_handler.save_current_window_geometry()
+        Keys locked:
+        - source_area_colour, target_area_colour, target_text_colour
+        - translation_model (forced to gemini_api, blocks DeepL)
+        - auto_detect_enabled (Find Subtitles)
+        - target_on_source_enabled (Target on Source)
+        - capture_padding_enabled (Scan Wider)
+        - custom_ocr_prompt_enabled (OCR Prompt)
+        """
+        log_debug("Applying PRO overrides (open-source edition) to instance attributes")
 
-    def get_tesseract_lang_code(self):
-        api_source_code = self.source_lang_var.get()
-        current_model = self.translation_model_var.get()
-        if current_model == 'marianmt' and self.marian_source_lang:
-            api_source_code = self.marian_source_lang
-            
-        return self.language_manager.get_tesseract_code(api_source_code, current_model)
+        self.source_colour = SIMPLE_CONFIG_SETTINGS['source_area_colour']
+        self.target_colour = SIMPLE_CONFIG_SETTINGS['target_area_colour']
+        self.target_text_colour = SIMPLE_CONFIG_SETTINGS['target_text_colour']
+        self.translation_model = SIMPLE_CONFIG_SETTINGS['translation_model']
+        self.auto_detect_enabled = SIMPLE_CONFIG_SETTINGS['auto_detect_enabled'] == 'True'
+        self.target_on_source_enabled = SIMPLE_CONFIG_SETTINGS['target_on_source_enabled'] == 'True'
+        self.capture_padding_enabled = SIMPLE_CONFIG_SETTINGS['capture_padding_enabled'] == 'True'
+        self.custom_ocr_prompt_enabled = SIMPLE_CONFIG_SETTINGS['custom_ocr_prompt_enabled'] == 'True'
 
-    def browse_tesseract(self):
-        self.configuration_handler.browse_tesseract()
+        log_debug("PRO overrides applied - PRO features locked to defaults")
 
-    def browse_marian_models_file(self):
-        self.configuration_handler.browse_marian_models_file()
+    def reload_from_ini(self):
+        """Reload user settings from ini file (restores 'Advanced' mode state)."""
+        log_debug("Reloading user settings from INI (Advanced mode)")
+        cfg = self.config['Settings']
+        
+        # In Advanced mode, we restore to Show visibility by default
+        self.ui_visibility_mode = 'Show'
+        
+        self.scan_interval = int(cfg.get('scan_interval', '100'))
+        self.clear_translation_timeout = int(float(cfg.get('clear_translation_timeout', '3')))
+        self.source_colour = cfg.get('source_area_colour', '#FFFF99')
+        self.target_colour = cfg.get('target_area_colour', '#162c43')
+        self.target_text_colour = cfg.get('target_text_colour', '#FFFFFF')
+        self.target_font_size = int(float(cfg.get('target_font_size', '18')))
+        self.target_font_type = cfg.get('target_font_type', 'Arial')
+        self.translation_model = cfg.get('translation_model', 'gemini_api')
+        self.ocr_model = cfg.get('ocr_model', 'gemini')
+        self.gemini_translation_model = cfg.get('gemini_translation_model', 'Gemini 2.5 Flash-Lite')
+        self.gemini_ocr_model = cfg.get('gemini_ocr_model', 'Gemini 2.5 Flash-Lite')
+        
+        self.deepl_source_lang = cfg.get('deepl_source_lang', 'auto')
+        self.deepl_target_lang = cfg.get('deepl_target_lang', 'EN-GB')
+        self.gemini_source_lang = cfg.get('gemini_source_lang', 'auto')
+        self.gemini_target_lang = cfg.get('gemini_target_lang', 'pl')
+        
+        self.keep_linebreaks = cfg.get('keep_linebreaks', 'False') == 'True'
+        self.auto_detect_enabled = cfg.get('auto_detect_enabled', 'False') == 'True'
+        self.target_on_source_enabled = cfg.get('target_on_source_enabled', 'False') == 'True'
+        self.capture_padding_enabled = cfg.get('capture_padding_enabled', 'True') == 'True'
+        self.capture_padding = int(cfg.get('capture_padding', '100'))
+        self.target_opacity = float(cfg.get('target_opacity', '0.85'))
+        self.target_text_opacity = float(cfg.get('target_text_opacity', '1.0'))
+        self.gemini_context_window = int(cfg.get('gemini_context_window', '1'))
+        self.deepl_cache_enabled = cfg.get('deepl_file_cache', 'True') == 'True'
+        self.gemini_cache_enabled = cfg.get('gemini_file_cache', 'True') == 'True'
+        self.debug_logging_enabled = cfg.get('debug_logging_enabled', 'False') == 'True'
+        self.gemini_api_log_enabled = cfg.get('gemini_api_log_enabled', 'True') == 'True'
+        self.custom_prompt_enabled = cfg.get('custom_prompt_enabled', 'True') == 'True'
+        self.custom_ocr_prompt_enabled = cfg.get('custom_ocr_prompt_enabled', 'True') == 'True'
+        
+        # Update adaptive scan interval
+        self.base_scan_interval = self.scan_interval
+        self.current_scan_interval = self.scan_interval
+        
+        self.apply_pro_overrides()
+        log_debug("Advanced settings reloaded from ini")
+
+
 
     def update_translation_text(self, text_to_display):
         self.display_manager.update_translation_text(text_to_display)
@@ -885,24 +766,24 @@ class GameChangingTranslator:
         self.display_manager.update_debug_display(original_img_pil, processed_img_cv, ocr_text_content)
 
     def _widget_exists_safely(self, widget):
-        """Safely check if a widget exists - works with both tkinter and PySide widgets"""
+        """Safely check if a PySide widget exists and is accessible."""
         if not widget:
             return False
         try:
-            # Try tkinter method first
-            if hasattr(widget, 'winfo_exists'):
-                return widget.winfo_exists()
-            # For PySide widgets, check if they're accessible
-            elif hasattr(widget, 'isVisible'):
-                return True  # PySide widgets exist until destroyed
-            else:
-                return True  # Assume widget exists if we can't check
-        except Exception as e:
-            log_debug(f"Error checking widget existence: {e}")
+            # Check if the reference is valid and the widget has not been destroyed.
+            return widget is not None
+        except Exception:
             return False
 
     def convert_to_webp_for_api(self, pil_image):
-        """Convert PIL image to lossless WebP bytes for API calls."""
+        """Convert PIL image to optimized WebP bytes for API calls.
+        
+        Performance optimizations (v4):
+        - Downscales images wider than 960px before encoding (Gemini uses media_resolution:LOW = 280 tokens, 
+          so high-res input is wasted CPU and bandwidth)
+        - Uses lossy compression (quality=65) instead of lossless for ~10x faster encoding
+        - Preserves aspect ratio during downscaling
+        """
         try:
             # Optimize image for OCR if needed
             if pil_image.mode in ('RGBA', 'LA'):
@@ -913,16 +794,27 @@ class GameChangingTranslator:
                     rgb_img.paste(pil_image)
                 pil_image = rgb_img
             
+            # Downscale large images to max 960px width (preserving aspect ratio)
+            # This drastically reduces WebP encoding time and upload size
+            # while maintaining sufficient quality for OCR (Gemini at LOW = 280 tokens)
+            MAX_WIDTH_FOR_API = 1920
+            original_width, original_height = pil_image.size
+            if original_width > MAX_WIDTH_FOR_API:
+                scale_factor = MAX_WIDTH_FOR_API / original_width
+                new_height = int(original_height * scale_factor)
+                pil_image = pil_image.resize((MAX_WIDTH_FOR_API, new_height), Image.LANCZOS)
+                log_debug(f"Downscaled image for API: {original_width}x{original_height} -> {MAX_WIDTH_FOR_API}x{new_height}")
+            
             # Create memory buffer
             buffer = io.BytesIO()
             
-            # Save as WebP lossless in memory
+            # Save as WebP with lossy compression for fast encoding and small file size
+            # quality=65 is optimal for OCR: readable text with minimal encoding overhead
             pil_image.save(
                 buffer, 
                 format='WebP', 
-                lossless=True, 
+                quality=65,
                 method=0,
-                exact=True
             )
             
             # Get bytes
@@ -935,21 +827,20 @@ class GameChangingTranslator:
             log_debug(f"Error converting image to WebP for API: {e}")
             return None
 
+
     def _pre_initialize_gemini_model(self):
         """Pre-configure Gemini API at startup to avoid thread initialization delays."""
         try:
             if not self.GEMINI_API_AVAILABLE:
                 return
             
-            gemini_api_key = self.gemini_api_key_var.get().strip()
+            gemini_api_key = self.gemini_api_key.strip()
             if not gemini_api_key:
                 return
             
-            # This is the only part that's still useful - it sets the global API key.
-            # The client itself will be created by the provider when needed.
-            import google.generativeai as genai
-            genai.configure(api_key=gemini_api_key)
-            log_debug("Gemini API pre-configured")
+            # The client and key configuration is now handled by individual providers
+            # during initialization.
+            log_debug("Gemini API configured (per-provider)")
                     
         except Exception as e:
             log_debug(f"Error in Gemini model pre-configuration: {e}")
@@ -957,7 +848,7 @@ class GameChangingTranslator:
     # Gemini OCR Batch Processing Methods (Phase 1)
     def get_ocr_model_setting(self):
         """Get the current OCR model setting."""
-        return self.ocr_model_var.get()
+        return self.ocr_model
     
     def update_adaptive_scan_interval(self):
         """Adjust scan interval based on current OCR API load to prevent bottlenecks."""
@@ -977,7 +868,7 @@ class GameChangingTranslator:
         log_debug(f"ADAPTIVE: Checking OCR load - Active calls: {active_ocr_count}/{max_ocr_calls}, Current interval: {self.current_scan_interval}ms, Overload detected: {self.overload_detected}")
         
         # Get user's preferred base interval
-        base_interval = self.scan_interval_var.get()  # User's setting in milliseconds
+        base_interval = self.scan_interval  # User's setting in milliseconds
         
         # Update base_scan_interval to track user changes
         self.base_scan_interval = base_interval
@@ -1014,7 +905,7 @@ class GameChangingTranslator:
         current_time = time.monotonic()
         
         # Only start timeout if we have a timeout value configured
-        if self.clear_translation_timeout_var.get() <= 0:
+        if self.clear_translation_timeout <= 0:
             return  # Timeout disabled, do nothing
         
         if self.clear_timeout_timer_start is None:
@@ -1024,7 +915,7 @@ class GameChangingTranslator:
         else:
             # Check if timeout period exceeded
             elapsed = current_time - self.clear_timeout_timer_start
-            timeout_seconds = self.clear_translation_timeout_var.get()
+            timeout_seconds = self.clear_translation_timeout
             
             if elapsed >= timeout_seconds:
                 # Clear the translation display
@@ -1050,6 +941,172 @@ class GameChangingTranslator:
         self.clear_timeout_timer_start = None
         log_debug("Clear timeout timer reset - text detected")
     
+    def _get_physical_screen_resolution(self):
+        """Returns the physical screen resolution (width, height) in pixels.
+        Uses Windows API for accuracy, falls back to PySide6 primary screen.
+        """
+        try:
+            if sys.platform == "win32":
+                import ctypes
+                user32 = ctypes.windll.user32
+                hdc = user32.GetDC(0)
+                sw = ctypes.windll.gdi32.GetDeviceCaps(hdc, 118)  # HORZRES
+                sh = ctypes.windll.gdi32.GetDeviceCaps(hdc, 117)  # VERTRES
+                user32.ReleaseDC(0, hdc)
+                if sw > 0 and sh > 0:
+                    return sw, sh
+        except Exception:
+            pass
+        # Fallback to PySide6 (may return logical pixels on some configs)
+        try:
+            return QApplication.primaryScreen().geometry().width(), QApplication.primaryScreen().geometry().height()
+        except Exception:
+            return 2560, 1440  # Last resort fallback
+
+    def handle_auto_detection_result(self, ocr_result):
+        """No-op in open-source edition (Find Subtitles is PRO)."""
+        pass
+
+    def _check_discovery_timer(self):
+        """No-op in open-source edition."""
+        pass
+
+    def apply_discovery_to_target_overlay(self):
+        """No-op in open-source edition."""
+        pass
+
+    def update_auto_detect_btn_text(self):
+        """Syncs the Auto Detection checkbox state across the UI."""
+        if hasattr(self, 'gui') and self.gui:
+            try:
+                # Use thread-safe way or direct access if in main thread
+                if hasattr(self.gui, 'auto_detect_check') and self.gui.auto_detect_check:
+                    # Block signals to prevent recursion
+                    self.gui.auto_detect_check.blockSignals(True)
+                    self.gui.auto_detect_check.setChecked(self.auto_detect_enabled)
+                    self.gui.auto_detect_check.blockSignals(False)
+                    
+                    # Update the accompanying text label (ON/OFF)
+                    if hasattr(self.gui, 'update_auto_detect_label'):
+                        self.gui.update_auto_detect_label()
+            except Exception as e:
+                log_debug(f"Error updating auto-detect checkbox in GUI: {e}")
+
+    def update_target_on_source_btn_text(self):
+        """Syncs the Target on Source checkbox state across the UI."""
+        if hasattr(self, 'gui') and self.gui:
+            try:
+                if hasattr(self.gui, 'target_on_source_check') and self.gui.target_on_source_check:
+                    # Block signals to prevent recursion
+                    self.gui.target_on_source_check.blockSignals(True)
+                    self.gui.target_on_source_check.setChecked(self.target_on_source_enabled)
+                    self.gui.target_on_source_check.blockSignals(False)
+                    
+                    # Update label text (ON/OFF)
+                    if hasattr(self.gui, 'update_target_on_source_label'):
+                        self.gui.update_target_on_source_label()
+            except Exception as e:
+                log_debug(f"Error updating target-on-source checkbox in GUI: {e}")
+
+    def finish_discovery_phase(self):
+        """No-op in open-source edition (Find Subtitles is PRO)."""
+        pass
+
+    def _align_target_to_source(self):
+        """No-op in open-source edition (Target on Source is PRO)."""
+        pass
+
+    def handle_source_manual_move(self):
+        """Called from main thread context — saves source overlay position to .ini."""
+        if self.source_overlay:
+            # 1. Normalized coordinates for config saving
+            src_geom = self.source_overlay.get_geometry()
+            if src_geom and len(src_geom) == 4:
+                self.source_area_x1, self.source_area_y1, self.source_area_x2, self.source_area_y2 = src_geom
+                self.source_area = src_geom
+                
+                # 2. Physical pixels for internal AI state synchronization
+                # (Prevents North-West jump when Auto-Detection is ON)
+                phys_area = self.source_overlay.get_physical_pixels()
+                self.detected_source_area_x1, self.detected_source_area_y1, \
+                self.detected_source_area_x2, self.detected_source_area_y2 = phys_area
+                    
+        self.save_settings()
+        log_debug(f"MANUAL: Source overlay manually moved/resized. Saved to .ini: {getattr(self, 'source_area', 'None')}")
+
+    def _start_pyside_move_polling(self):
+        """Starts a polling loop that checks PySide overlay's _user_moved_flag.
+        This is a safe way to bridge PySide native events to the backend,
+        ensuring thread safety for file operations."""
+        if getattr(self, '_pyside_polling_active', False):
+            return  # Already polling
+        self._pyside_polling_active = True
+        self._poll_pyside_overlay_move()
+
+    def _poll_pyside_overlay_move(self):
+        """Polls PySide target overlay for the manual move flag every 300ms."""
+        try:
+            if (self.target_overlay and
+                hasattr(self.target_overlay, '_user_moved_flag') and
+                self.target_overlay._user_moved_flag):
+                self.target_overlay._user_moved_flag = False
+                self._process_target_manual_move()
+                
+            if (self.source_overlay and
+                hasattr(self.source_overlay, '_user_moved_flag') and
+                self.source_overlay._user_moved_flag):
+                self.source_overlay._user_moved_flag = False
+                self._process_source_manual_move()
+        except Exception:
+            pass
+        # Continue polling as long as the app is alive
+        if hasattr(self, '_fully_initialized') and self._fully_initialized:
+            try:
+                from PySide6.QtCore import QTimer
+                QTimer.singleShot(300, self._poll_pyside_overlay_move)
+            except Exception:
+                self._pyside_polling_active = False
+
+    def _process_source_manual_move(self):
+        """Processes a detected manual move of the source overlay (runs in main thread context)."""
+        if self.source_overlay:
+            # 1. Normalized coordinates for config saving
+            src_geom = self.source_overlay.get_geometry()
+            if src_geom and len(src_geom) == 4:
+                self.source_area_x1, self.source_area_y1, self.source_area_x2, self.source_area_y2 = src_geom
+                self.source_area = src_geom
+                
+                # 2. Physical pixels for internal AI state synchronization 
+                # (Prevents North-West jump when Auto-Detection is ON)
+                phys_area = self.source_overlay.get_physical_pixels()
+                self.detected_source_area_x1, self.detected_source_area_y1, \
+                self.detected_source_area_x2, self.detected_source_area_y2 = phys_area
+                    
+        self.save_settings()
+        log_debug(f"MANUAL: Source overlay manually moved/resized. Saved to .ini: {getattr(self, 'source_area', 'None')}")
+
+    def _process_target_manual_move(self):
+        """Processes a detected manual move of the target overlay (runs in main thread context)."""
+        if self.target_overlay:
+            tgt_geom = self.target_overlay.get_geometry()
+            if tgt_geom and len(tgt_geom) == 4:
+                self.target_area_x1, self.target_area_y1, self.target_area_x2, self.target_area_y2 = tgt_geom
+                self.target_area = tgt_geom
+        
+        # Target on Source disabled in open-source edition
+        pass
+                
+        self.save_settings()
+        log_debug(f"MANUAL: Target overlay manually moved/resized. Saved to .ini: {getattr(self, 'target_area', 'None')}")
+
+    def show_discovery_notification(self):
+        """No-op in open-source edition."""
+        pass
+
+    def _parse_discovery_coordinates(self, result_str):
+        """No-op in open-source edition."""
+        return None
+
     def initialize_async_translation_infrastructure(self):
         """Initialize async translation infrastructure if not already present."""
         if not hasattr(self, 'translation_sequence_counter'):
@@ -1073,12 +1130,12 @@ class GameChangingTranslator:
         if self.clear_timeout_timer_start is None:
             return False
             
-        if self.clear_translation_timeout_var.get() <= 0:
+        if self.clear_translation_timeout <= 0:
             return False  # Timeout disabled
             
         current_time = time.monotonic()
         elapsed = current_time - self.clear_timeout_timer_start
-        timeout_seconds = self.clear_translation_timeout_var.get()
+        timeout_seconds = self.clear_translation_timeout
         
         return elapsed >= timeout_seconds
 
@@ -1091,17 +1148,10 @@ class GameChangingTranslator:
     def calculate_text_similarity(self, text1, text2):
         return self.translation_handler.calculate_text_similarity(text1, text2)
 
-    def update_marian_active_model(self, model_name, source_lang=None, target_lang=None):
-        return self.translation_handler.update_marian_active_model(model_name, source_lang, target_lang)
 
-    def update_marian_beam_value(self):
-        self.translation_handler.update_marian_beam_value()
 
     def choose_color_for_settings(self, color_type):
         self.ui_interaction_handler.choose_color_for_settings(color_type)
-
-    def update_stability_from_spinbox(self):
-        self.ui_interaction_handler.update_stability_from_spinbox()
 
     def update_target_font_size(self):
         self.ui_interaction_handler.update_target_font_size()
@@ -1127,16 +1177,10 @@ class GameChangingTranslator:
     def update_translation_model_ui(self): 
         self.ui_interaction_handler.update_translation_model_ui()
 
-    def on_marian_model_selection_changed(self, event=None, preload=False, initial_setup=False):
-        self.ui_interaction_handler.on_marian_model_selection_changed(event, preload, initial_setup)
-        if not initial_setup and self._fully_initialized : 
-             self.save_settings()
-
-
     def on_translation_model_selection_changed(self, event=None, initial_setup=False):
         # Handle session management for translation method changes
         if (hasattr(self, 'translation_handler') and self.is_running and not initial_setup):
-            current_model = self.translation_model_var.get()
+            current_model = self.translation_model
             
             # End translation session if switching away from Gemini
             if current_model != 'gemini_api':
@@ -1144,14 +1188,10 @@ class GameChangingTranslator:
             
             # Start translation session if switching to Gemini
             if current_model == 'gemini_api':
+                self.translation_handler.request_start_translation_session()
                 self.translation_handler.start_translation_session()
             
-            # Handle OpenAI session management if needed
-            if current_model == 'openai_api':
-                # OpenAI doesn't require special session management like Gemini
-                # But we could add any OpenAI-specific initialization here if needed
-                pass
-                self.translation_handler.start_translation_session()
+
         
         self.ui_interaction_handler.on_translation_model_selection_changed(event, initial_setup)
         if not initial_setup and self._fully_initialized: 
@@ -1202,116 +1242,7 @@ class GameChangingTranslator:
                 f"{self.ui_lang.get_label('gemini_reset_error_failed', 'Failed to reset Gemini API log:')} {str(e)}"
             )
 
-    def update_openai_stats(self):
-        """Update the OpenAI statistics fields by reading the log file."""
-        try:
-            # Check if all required components are available
-            if not hasattr(self, 'openai_total_words_var') or self.openai_total_words_var is None:
-                log_debug("OpenAI stats variables not initialized yet")
-                return
-                
-            if not hasattr(self, 'openai_total_cost_var') or self.openai_total_cost_var is None:
-                log_debug("OpenAI total cost variable not initialized yet")
-                return
-            
-            # Get cumulative totals from OpenAI log file
-            total_words, total_cost = self._get_cumulative_openai_totals()
-            
-            # Update GUI fields
-            self.openai_total_words_var.set(self.format_number_with_separators(total_words))
-            self.openai_total_cost_var.set(self.format_cost_for_display(total_cost))
-            
-            log_debug(f"Updated OpenAI stats: {total_words} words, ${total_cost:.8f}")
-        except Exception as e:
-            log_debug(f"Error updating OpenAI stats: {e}")
-            # Set default values if there's an error
-            if hasattr(self, 'openai_total_words_var') and self.openai_total_words_var is not None:
-                self.openai_total_words_var.set(self.format_number_with_separators(0))
-            if hasattr(self, 'openai_total_cost_var') and self.openai_total_cost_var is not None:
-                self.openai_total_cost_var.set(self.format_cost_for_display(0.0))
 
-    def _get_cumulative_openai_totals(self):
-        """Read the cumulative totals from the OpenAI API log file."""
-        try:
-            # Get the log file path
-            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-                base_dir = os.path.dirname(sys.executable)
-            else:
-                base_dir = os.path.dirname(os.path.abspath(__file__))
-            
-            openai_log_file = os.path.join(base_dir, "OpenAI_API_call_logs.txt")
-            
-            if not os.path.exists(openai_log_file):
-                log_debug(f"OpenAI log file does not exist: {openai_log_file}")
-                return 0, 0.0
-            
-            # Read the most recent cumulative cost and words from the log
-            cumulative_cost = 0.0
-            cumulative_words = 0
-            
-            with open(openai_log_file, 'r', encoding='utf-8') as f:
-                content = f.read()
-                
-                # Find all instances of cumulative totals
-                cost_matches = re.findall(r'Cumulative Log Cost: \$([0-9.]+)', content)
-                word_matches = re.findall(r'Total Translated Words \(so far\): ([0-9,]+)', content)
-                
-                if cost_matches:
-                    cumulative_cost = float(cost_matches[-1])  # Get the last (most recent) value
-                
-                if word_matches:
-                    # Remove commas from word count and convert to int
-                    word_str = word_matches[-1].replace(',', '')
-                    cumulative_words = int(word_str)
-            
-            log_debug(f"OpenAI cumulative totals: {cumulative_words} words, ${cumulative_cost:.8f}")
-            return cumulative_words, cumulative_cost
-            
-        except Exception as e:
-            log_debug(f"Error reading OpenAI cumulative totals: {e}")
-            return 0, 0.0
-
-    def reset_openai_api_log(self):
-        """Reset/clear the OpenAI API call log file."""
-        try:
-            if hasattr(self.translation_handler, 'openai_log_file'):
-                log_file_path = self.translation_handler.openai_log_file
-                
-                # Clear the file by truncating it
-                if os.path.exists(log_file_path):
-                    with open(log_file_path, 'w', encoding='utf-8') as f:
-                        f.write('')  # Clear the file
-                    log_debug(f"OpenAI API log file cleared: {log_file_path}")
-                    
-                    # Reinitialize the log with header
-                    if hasattr(self.translation_handler, '_initialize_openai_log'):
-                        self.translation_handler._initialize_openai_log()
-                    
-                    # Update the GUI fields
-                    self.update_openai_stats()
-                    
-                    messagebox.showinfo(
-                        self.ui_lang.get_label("openai_reset_success_title", "Success"), 
-                        self.ui_lang.get_label("openai_reset_success_msg", "OpenAI API log has been reset.")
-                    )
-                else:
-                    log_debug(f"OpenAI API log file does not exist: {log_file_path}")
-                    messagebox.showwarning(
-                        self.ui_lang.get_label("openai_reset_warning_title", "Warning"), 
-                        self.ui_lang.get_label("openai_reset_warning_msg", "OpenAI API log file does not exist.")
-                    )
-            else:
-                log_debug("OpenAI log file path not available")
-                messagebox.showerror(
-                    self.ui_lang.get_label("openai_reset_error_title", "Error"), 
-                    self.ui_lang.get_label("openai_reset_error_msg", "Could not access OpenAI log file.")
-                )
-        except Exception as e:
-            log_debug(f"Error resetting OpenAI API log: {e}")
-            messagebox.showerror(
-                self.ui_lang.get_label("openai_reset_error_title", "Error"), 
-                f"{self.ui_lang.get_label('openai_reset_error_failed', 'Failed to reset OpenAI API log:')} {str(e)}"
-            )
 
     def format_currency_for_display(self, amount, unit_suffix=""):
         """Format currency amount according to current UI language."""
@@ -1351,8 +1282,12 @@ class GameChangingTranslator:
                 return f"{amount_str}{unit_suffix}"
             else:
                 # English format: "$0.04941340/min"
-                prefix = "$" if not unit_suffix else "$"
-                return f"{prefix}{amount:.8f}{unit_suffix}"
+                prefix = "$" 
+                # Add thousand separators to integer part for English too
+                int_part = int(amount)
+                decimal_part = f"{amount - int_part:.8f}"[2:] # Get 8 decimal places
+                return f"{prefix}{int_part:,}.{decimal_part}{unit_suffix}"
+
         except Exception as e:
             log_debug(f"Error formatting currency: {e}")
             return f"${amount:.8f}{unit_suffix}"  # Fallback to English format
@@ -1388,15 +1323,15 @@ class GameChangingTranslator:
 
     def update_gemini_stats(self):
         """Update the Gemini statistics fields by reading the log file."""
-        return # Temporarily disable until StatisticsHandler is refactored
         try:
+
             # Check if all required components are available
             if not hasattr(self.translation_handler, '_get_cumulative_totals'):
                 log_debug("TranslationHandler._get_cumulative_totals method not available")
                 return
                 
-            if not (hasattr(self, 'gemini_total_words_var') and 
-                    hasattr(self, 'gemini_total_cost_var') and
+            if not (hasattr(self, 'gemini_total_words') and 
+                    hasattr(self, 'gemini_total_cost') and
                     self.gemini_total_words_var is not None and 
                     self.gemini_total_cost_var is not None):
                 log_debug("Gemini stats variables not initialized yet")
@@ -1409,27 +1344,24 @@ class GameChangingTranslator:
             total_cost = self._get_cumulative_cost_from_log()
             
             # Update GUI fields
-            self.gemini_total_words_var.set(self.format_number_with_separators(total_words))
-            self.gemini_total_cost_var.set(self.format_cost_for_display(total_cost))
+            self.gemini_total_words = self.format_number_with_separators(total_words)
+            self.gemini_total_cost = self.format_cost_for_display(total_cost)
             
             log_debug(f"Updated Gemini stats: {total_words} words, ${total_cost:.8f}")
         except Exception as e:
             log_debug(f"Error updating Gemini stats: {e}")
             # Set default values if there's an error
-            if hasattr(self, 'gemini_total_words_var') and self.gemini_total_words_var is not None:
-                self.gemini_total_words_var.set(self.format_number_with_separators(0))
-            if hasattr(self, 'gemini_total_cost_var') and self.gemini_total_cost_var is not None:
-                self.gemini_total_cost_var.set(self.format_cost_for_display(0.0))
+            if hasattr(self, 'gemini_total_words') and self.gemini_total_words_var is not None:
+                self.gemini_total_words = self.format_number_with_separators(0)
+            if hasattr(self, 'gemini_total_cost') and self.gemini_total_cost_var is not None:
+                self.gemini_total_cost = self.format_cost_for_display(0.0)
 
     def _get_cumulative_cost_from_log(self):
         """Read the cumulative cost from the Gemini API log file."""
-        return 0.0 # Temporarily disable until StatisticsHandler is refactored
         try:
+
             # Get the log file path
-            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-                base_dir = os.path.dirname(sys.executable)
-            else:
-                base_dir = os.path.dirname(os.path.abspath(__file__))
+            base_dir = nuitka_compat.get_base_dir()
             
             gemini_log_file = os.path.join(base_dir, "Gemini_API_call_logs.txt")
             
@@ -1462,51 +1394,49 @@ class GameChangingTranslator:
     def update_deepl_usage(self):
         """Update the DeepL usage display by calling the usage API."""
         try:
-            # Check if all required components are available
-            if not hasattr(self, 'deepl_usage_var') or self.deepl_usage_var is None:
-                log_debug("DeepL usage variable not initialized yet")
-                return
+            if not hasattr(self, 'deepl_usage'): self.deepl_usage = ""
             
             # Only check usage if DeepL is available and we have translation handler
             if not hasattr(self, 'translation_handler') or not hasattr(self.translation_handler, 'get_deepl_usage'):
                 log_debug("DeepL usage checking not available")
-                self.deepl_usage_var.set("N/A")
-                return
-            
-            usage_data = self.translation_handler.get_deepl_usage()
-            
-            if usage_data and isinstance(usage_data, dict):
-                character_count = usage_data.get('character_count', 0)
-                character_limit = usage_data.get('character_limit', 0)
-                
-                # Calculate usage percentage
-                if character_limit > 0:
-                    usage_percentage = (character_count / character_limit) * 100
-                else:
-                    usage_percentage = 0
-                
-                # Format according to UI language
-                if self.ui_lang.current_lang == 'pol':
-                    # Polish format: "Darmowy limit: 1 445 / 500 000 znaków (0,3%)"
-                    used_formatted = f"{character_count:,}".replace(',', ' ')
-                    limit_formatted = f"{character_limit:,}".replace(',', ' ')
-                    percentage_formatted = f"{usage_percentage:.1f}".replace('.', ',')
-                    usage_text = f"{used_formatted} / {limit_formatted} znaków ({percentage_formatted}%)"
-                else:
-                    # English format: "Free usage: 1,445 / 500,000 characters (0.3%)"
-                    usage_text = f"{character_count:,} / {character_limit:,} characters ({usage_percentage:.1f}%)"
-                
-                self.deepl_usage_var.set(usage_text)
-                log_debug(f"Updated DeepL usage: {character_count}/{character_limit} characters ({usage_percentage:.1f}%)")
+                self.deepl_usage = "N/A"
             else:
-                # Set fallback message if API call failed
-                self.deepl_usage_var.set(self.ui_lang.get_label("deepl_usage_unavailable", "Unable to retrieve usage data"))
-                log_debug("DeepL usage API call failed or returned invalid data")
+                usage_data = self.translation_handler.get_deepl_usage()
+                
+                if usage_data and isinstance(usage_data, dict):
+                    character_count = usage_data.get('character_count', 0)
+                    character_limit = usage_data.get('character_limit', 0)
+                    
+                    # Calculate usage percentage
+                    if character_limit > 0:
+                        usage_percentage = (character_count / character_limit) * 100
+                    else:
+                        usage_percentage = 0
+                    
+                    # Format according to UI language
+                    if getattr(self.ui_lang, 'current_lang', 'eng') == 'pol':
+                        used_formatted = f"{character_count:,}".replace(',', ' ')
+                        limit_formatted = f"{character_limit:,}".replace(',', ' ')
+                        percentage_formatted = f"{usage_percentage:.1f}".replace('.', ',')
+                        usage_text = f"{used_formatted} / {limit_formatted} znaków ({percentage_formatted}%)"
+                    else:
+                        usage_text = f"{character_count:,} / {character_limit:,} characters ({usage_percentage:.1f}%)"
+                    
+                    self.deepl_usage = usage_text
+                    log_debug(f"Updated DeepL usage: {character_count}/{character_limit} characters ({usage_percentage:.1f}%)")
+                else:
+                    # Set fallback message if API call failed
+                    self.deepl_usage = self.ui_lang.get_label("deepl_usage_unavailable", "Unable to retrieve usage data")
+                    log_debug("DeepL usage API call failed or returned invalid data")
+            
+            if hasattr(self, 'gui') and self.gui and hasattr(self.gui, 'gui_deepl_usage_lbl'):
+                self.gui.gui_deepl_usage_lbl.setText(self.deepl_usage)
         except Exception as e:
             log_debug(f"Error updating DeepL usage: {e}")
-            # Set error fallback
-            if hasattr(self, 'deepl_usage_var') and self.deepl_usage_var is not None:
-                self.deepl_usage_var.set(self.ui_lang.get_label("deepl_usage_error", "Error retrieving usage data"))
+            self.deepl_usage = "Error"
+            if hasattr(self, 'gui') and self.gui and hasattr(self.gui, 'gui_deepl_usage_lbl'):
+                self.gui.gui_deepl_usage_lbl.setText("Error")
+
 
     def _delayed_deepl_usage_update(self):
         """Delayed DeepL usage update to ensure GUI is fully ready."""
@@ -1516,426 +1446,135 @@ class GameChangingTranslator:
             log_debug(f"Error in delayed DeepL usage update: {e}")
 
     def refresh_api_statistics(self):
-        """Refresh and update API usage statistics display with provider-specific data."""
+        """Refresh API stats and set GUI strings."""
         try:
-            if not hasattr(self, 'statistics_handler'):
-                log_debug("Statistics handler not available")
-                return
+            if not hasattr(self, 'statistics_handler'): return
             
+            # Update DeepL usage from API
+            self.update_deepl_usage()
+            
+            # Trigger statistics refresh from handler
             stats = self.statistics_handler.get_statistics()
             
-            def populate_section(stats_data, var_dict, ocr=False):
-                if not var_dict: return
-                
-                cost_key = 'api_usage_total_ocr_cost' if ocr else 'api_usage_total_translation_cost'
-                calls_key = 'api_usage_total_ocr_calls' if ocr else 'api_usage_total_translation_calls'
-                median_key = 'api_usage_median_duration_ocr' if ocr else 'api_usage_median_duration_translation'
-                
-                var_dict[cost_key].set(self.format_currency_for_display(stats_data['total_cost']))
-                var_dict[calls_key].set(self.format_number_with_separators(stats_data['total_calls']))
-                var_dict[median_key].set(f"{stats_data['median_duration']:.3f} s".replace('.', ',') if self.ui_lang.current_lang == 'pol' else f"{stats_data['median_duration']:.3f}s")
-                var_dict['api_usage_avg_cost_per_call'].set(self.format_currency_for_display(stats_data['avg_cost_per_call']))
-                var_dict['api_usage_avg_cost_per_minute'].set(self.format_currency_for_display(stats_data['avg_cost_per_minute'], "/min"))
-                cost_per_hour = round(stats_data['avg_cost_per_minute'], 8) * 60
-                var_dict['api_usage_avg_cost_per_hour'].set(self.format_currency_for_display(cost_per_hour, "/hr"))
-                if not ocr:
-                    var_dict['api_usage_total_words_translated'].set(self.format_number_with_separators(stats_data['total_words']))
-                    var_dict['api_usage_avg_cost_per_word'].set(self.format_currency_for_display(stats_data['avg_cost_per_word']))
-                    wpm_str = f"{stats_data['words_per_minute']:.2f}".replace('.', ',') if self.ui_lang.current_lang == 'pol' else f"{stats_data['words_per_minute']:.2f}"
-                    var_dict['api_usage_words_per_minute'].set(wpm_str)
-
-            def populate_combined_section(stats_data, var_dict):
-                if not var_dict: return
-                var_dict['api_usage_total_api_cost'].set(self.format_currency_for_display(stats_data['total_cost']))
-                var_dict['api_usage_combined_cost_per_minute'].set(self.format_currency_for_display(stats_data['combined_cost_per_minute'], "/min"))
-                cost_per_hour = round(stats_data['combined_cost_per_minute'], 8) * 60
-                var_dict['api_usage_combined_cost_per_hour'].set(self.format_currency_for_display(cost_per_hour, "/hr"))
+            # Compatibility with any remaining legacy code
+            lng = self.ui_lang
+            g_ocr = stats['gemini_ocr']
+            self.gui_gemini_ocr_stats = f"{lng.get_label('stats_total_calls', 'Total Calls')}: {g_ocr['total_calls']} | {lng.get_label('stats_cost', 'Cost')}: {self.format_currency_for_display(g_ocr['total_cost'])}"
             
-            populate_section(stats['gemini_translation'], getattr(self, 'gemini_translation_stat_vars', None), ocr=False)
-            populate_section(stats['gemini_ocr'], getattr(self, 'gemini_ocr_stat_vars', None), ocr=True)
-            populate_combined_section(stats['gemini_combined'], getattr(self, 'gemini_combined_stat_vars', None))
+            g_trans = stats['gemini_translation']
+            self.gui_gemini_trans_stats = f"{lng.get_label('stats_words', 'Words')}: {g_trans['total_words']} | {lng.get_label('stats_cost', 'Cost')}: {self.format_currency_for_display(g_trans['total_cost'])}"
             
-            populate_section(stats['openai_translation'], getattr(self, 'openai_translation_stat_vars', None), ocr=False)
-            populate_section(stats['openai_ocr'], getattr(self, 'openai_ocr_stat_vars', None), ocr=True)
-            populate_combined_section(stats['openai_combined'], getattr(self, 'openai_combined_stat_vars', None))
-
-            log_debug("API statistics refreshed successfully for new UI layout")
+            self.gui_deepl_stats = f"Monitor DeepL: {getattr(self, 'deepl_usage', 'N/A')}"
+            
         except Exception as e:
             log_debug(f"Error refreshing API statistics: {e}")
 
-    def copy_statistics_to_clipboard(self):
-        """Copy current API usage statistics to clipboard with new structure."""
-        try:
-            if not hasattr(self, 'statistics_handler'):
-                log_debug("Statistics handler not available")
-                return
 
-            report_content = self.statistics_handler._generate_text_report(self.ui_lang, self.deepl_usage_var.get())
+    def copy_statistics_to_clipboard(self):
+        """Generate a full detailed report and copy it to the system clipboard."""
+        try:
+            from PySide6.QtWidgets import QApplication, QMessageBox
+            cb = QApplication.clipboard()
             
-            self.root.clipboard_clear()
-            self.root.clipboard_append(report_content)
-            self.root.update()
+            # Use the detailed report generator from StatisticsHandler
+            deepl_usage = getattr(self, 'deepl_usage', 'N/A')
+            report = self.statistics_handler._generate_text_report(self.ui_lang, deepl_usage)
+            cb.setText(report)
             
-            messagebox.showinfo(
-                self.ui_lang.get_label("stats_copied_title", "Copied"), 
-                self.ui_lang.get_label("stats_copied_msg", "Statistics copied to clipboard.")
-            )
-            log_debug("Statistics copied to clipboard")
+            # Show confirmation localized
+            QMessageBox.information(None, 
+                                  self.ui_lang.get_label("stats_copied_title", "Copied"), 
+                                  self.ui_lang.get_label("stats_copied_msg", "Statistics copied to clipboard."))
         except Exception as e:
             log_debug(f"Error copying statistics to clipboard: {e}")
-            messagebox.showerror(self.ui_lang.get_label("export_error_title", "Error"), 
-                               f"{self.ui_lang.get_label('stats_copy_error', 'Error copying to clipboard.')}\n{str(e)}")            
+
 
     def export_statistics_csv(self):
-        """Export API usage statistics to CSV file."""
+        """Export API usage statistics to CSV file using Qt dialogs."""
         try:
-            from tkinter import filedialog
+            from PySide6.QtWidgets import QFileDialog, QMessageBox
             
-            # Ask user for file location
-            file_path = filedialog.asksaveasfilename(
-                defaultextension=".csv",
-                filetypes=[(self.ui_lang.get_label("file_type_csv", "CSV files"), "*.csv"), 
-                          (self.ui_lang.get_label("file_type_all", "All files"), "*.*")],
-                title=self.ui_lang.get_label("export_csv_dialog_title", "Export Statistics to CSV")
-            )
+            # Get the current DeepL usage value
+            deepl_usage = getattr(self, 'deepl_usage', None)
             
-            if file_path and hasattr(self, 'statistics_handler'):
-                # Get the current DeepL usage value
-                deepl_usage = None
-                if hasattr(self, 'deepl_usage_var'):
-                    deepl_usage = self.deepl_usage_var.get()
-                
+            # Ask user for file location using QFileDialog
+            title = self.ui_lang.get_label("export_csv_dialog_title", "Export Statistics to CSV")
+            filter_str = f"{self.ui_lang.get_label('file_type_csv', 'CSV files')} (*.csv);;{self.ui_lang.get_label('file_type_all', 'All files')} (*.*)"
+            
+            file_path, _ = QFileDialog.getSaveFileName(None, title, "", filter_str)
+            
+            if file_path:
+                # Ensure .csv extension
+                if not file_path.lower().endswith('.csv'):
+                    file_path += '.csv'
+                    
                 success = self.statistics_handler.export_statistics_csv(file_path, self.ui_lang, deepl_usage)
                 if success:
-                    messagebox.showinfo(self.ui_lang.get_label("export_success_title", "Export Successful"), 
-                                      f"{self.ui_lang.get_label('export_success_msg', 'Statistics exported to:')}\n{file_path}")
+                    QMessageBox.information(None, 
+                                          self.ui_lang.get_label("export_success_title", "Export Successful"), 
+                                          f"{self.ui_lang.get_label('export_success_msg', 'Statistics exported to:')}\n{file_path}")
                 else:
-                    messagebox.showerror(self.ui_lang.get_label("export_failed_title", "Export Failed"), 
+                    QMessageBox.critical(None, 
+                                       self.ui_lang.get_label("export_failed_title", "Export Failed"), 
                                        self.ui_lang.get_label("export_csv_failed_msg", "Failed to export statistics to CSV."))
             
         except Exception as e:
             log_debug(f"Error exporting statistics to CSV: {e}")
-            messagebox.showerror(self.ui_lang.get_label("export_error_title", "Export Error"), 
+            from PySide6.QtWidgets import QMessageBox
+            QMessageBox.critical(None, self.ui_lang.get_label("export_error_title", "Export Error"), 
                                f"{self.ui_lang.get_label('export_error_msg', 'Error exporting statistics:')}\n{str(e)}")
+
     
     def export_statistics_text(self):
-        """Export API usage statistics to text file."""
+        """Export API usage statistics to text file using Qt dialogs."""
         try:
-            from tkinter import filedialog
+            from PySide6.QtWidgets import QFileDialog, QMessageBox
             
-            # Ask user for file location
-            file_path = filedialog.asksaveasfilename(
-                defaultextension=".txt",
-                filetypes=[(self.ui_lang.get_label("file_type_text", "Text files"), "*.txt"), 
-                          (self.ui_lang.get_label("file_type_all", "All files"), "*.*")],
-                title=self.ui_lang.get_label("export_text_dialog_title", "Export Statistics to Text")
-            )
+            # Get the current DeepL usage value
+            deepl_usage = getattr(self, 'deepl_usage', None)
             
-            if file_path and hasattr(self, 'statistics_handler'):
-                # Get the current DeepL usage value
-                deepl_usage = None
-                if hasattr(self, 'deepl_usage_var'):
-                    deepl_usage = self.deepl_usage_var.get()
-                
+            # Ask user for file location using QFileDialog
+            title = self.ui_lang.get_label("export_text_dialog_title", "Export Statistics to Text")
+            filter_str = f"{self.ui_lang.get_label('file_type_text', 'Text files')} (*.txt);;{self.ui_lang.get_label('file_type_all', 'All files')} (*.*)"
+            
+            file_path, _ = QFileDialog.getSaveFileName(None, title, "", filter_str)
+            
+            if file_path:
+                # Ensure .txt extension
+                if not file_path.lower().endswith('.txt'):
+                    file_path += '.txt'
+                    
                 success = self.statistics_handler.export_statistics_text(file_path, self.ui_lang, deepl_usage)
                 if success:
-                    messagebox.showinfo(self.ui_lang.get_label("export_success_title", "Export Successful"), 
-                                      f"{self.ui_lang.get_label('export_success_msg', 'Statistics exported to:')}\n{file_path}")
+                    QMessageBox.information(None, 
+                                          self.ui_lang.get_label("export_success_title", "Export Successful"), 
+                                          f"{self.ui_lang.get_label('export_success_msg', 'Statistics exported to:')}\n{file_path}")
                 else:
-                    messagebox.showerror(self.ui_lang.get_label("export_failed_title", "Export Failed"), 
+                    QMessageBox.critical(None, 
+                                       self.ui_lang.get_label("export_failed_title", "Export Failed"), 
                                        self.ui_lang.get_label("export_text_failed_msg", "Failed to export statistics to text."))
             
         except Exception as e:
             log_debug(f"Error exporting statistics to text: {e}")
-            messagebox.showerror(self.ui_lang.get_label("export_error_title", "Export Error"), 
+            from PySide6.QtWidgets import QMessageBox
+            QMessageBox.critical(None, self.ui_lang.get_label("export_error_title", "Export Error"), 
                                f"{self.ui_lang.get_label('export_error_msg', 'Error exporting statistics:')}\n{str(e)}")
+
     
     # =============================================================================
-    # AUTO-UPDATE SYSTEM METHODS
+    # AUTO-UPDATE SYSTEM (removed in open-source edition)
     # =============================================================================
     
     def check_for_updates(self, auto_check=False):
-        """Check for updates and handle the user interaction.
-        
-        Args:
-            auto_check (bool): If True, this is an automatic startup check and 
-                              no dialog will be shown when no updates are available.
-        """
-        try:
-            if auto_check:
-                log_debug("Automatic update check on startup")
-            else:
-                log_debug("User initiated update check")
-            
-            # Show checking dialog (only for manual checks)
-            progress_dialog = None
-            if not auto_check:
-                check_msg = self.ui_lang.get_label("check_updates_msg", "Checking for updates...")
-                check_title = self.ui_lang.get_label("check_updates_title", "Checking for Updates")
-                
-                # Create a progress dialog
-                progress_dialog = self._create_progress_dialog(check_title, check_msg)
-                progress_dialog.update()
-            
-            try:
-                # Check for updates
-                update_info = self.update_checker.check_for_updates()
-                
-                # Close progress dialog
-                if progress_dialog:
-                    progress_dialog.destroy()
-                
-                if update_info:
-                    # Update available - show confirmation dialog
-                    if self._show_update_confirmation_dialog(update_info):
-                        # User confirmed - download update
-                        self._download_and_stage_update(update_info)
-                else:
-                    # No updates available - only show dialog for manual checks
-                    if not auto_check:
-                        self._show_no_updates_dialog()
-                    
-            except Exception as e:
-                # Close progress dialog
-                if progress_dialog:
-                    try:
-                        progress_dialog.destroy()
-                    except:
-                        pass
-                raise e
-                
-        except Exception as e:
-            log_debug(f"Error checking for updates: {e}")
-            # Only show error dialog for manual checks
-            if not auto_check:
-                self._show_update_error_dialog(str(e))
-    
-    def _create_progress_dialog(self, title, message):
-        """Create a simple progress dialog."""
-        dialog = tk.Toplevel(self.root)
-        dialog.title(title)
-        dialog.geometry("300x100")
-        dialog.resizable(False, False)
-        
-        # Center on parent window
-        dialog.transient(self.root)
-        dialog.grab_set()
-        
-        # Add message
-        ttk.Label(dialog, text=message).pack(pady=20)
-        
-        return dialog
-    
-    def _show_update_confirmation_dialog(self, update_info):
-        """Show update confirmation dialog and return user choice."""
-        try:
-            current_version = APP_VERSION
-            new_version = update_info['version']
-            release_notes = update_info.get('release_notes', '')[:300]  # Limit length
-            file_size = self.update_checker.format_file_size(update_info.get('size', 0))
-            
-            title = self.ui_lang.get_label("update_available_title", "Update Available")
-            message = self.ui_lang.get_label("update_available_msg_start", "New version {0} is available!").format(new_version) + "\n\n"
-            message += self.ui_lang.get_label("update_available_current_version", "Current version: {0}").format(current_version) + "\n"
-            message += self.ui_lang.get_label("update_available_new_version", "New version: {0}").format(new_version) + "\n"
-            if file_size != "Unknown size":
-                message += self.ui_lang.get_label("update_available_file_size", "File size: {0}").format(file_size) + "\n\n"
-            if release_notes.strip():
-                message += self.ui_lang.get_label("update_available_release_notes", "Release notes:") + f"\n{release_notes}\n\n"
-            message += self.ui_lang.get_label("update_available_question", "Would you like to download and install the update?")
-            
-            return messagebox.askyesno(title, message)
-            
-        except Exception as e:
-            log_debug(f"Error showing update confirmation dialog: {e}")
-            return False
-    
-    def _show_no_updates_dialog(self):
-        """Show no updates available dialog."""
-        title = self.ui_lang.get_label("no_updates_title", "No Updates")
-        message = self.ui_lang.get_label("no_updates_msg", "You have the latest version!") + f"\n\n{self.ui_lang.get_label('update_available_current_version', 'Current version: {0}').format(APP_VERSION)}"
-        
-        messagebox.showinfo(title, message)
-    
-    def _show_update_error_dialog(self, error_message):
-        """Show update error dialog."""
-        title = self.ui_lang.get_label("update_error_title", "Update Error")
-        message = f"{self.ui_lang.get_label('update_error_msg', 'Unable to check for updates:')}\n\n{error_message}"
-        
-        messagebox.showerror(title, message)
-    
-    def _download_and_stage_update(self, update_info):
-        """Download and stage the update with progress dialog."""
-        try:
-            log_debug(f"Starting download of update: {update_info['version']}")
-            
-            title = self.ui_lang.get_label("download_update_title", "Downloading Update")
-            initial_msg = self.ui_lang.get_label("download_update_msg", "Downloading update...")
-            
-            # Create progress dialog
-            progress_dialog = tk.Toplevel(self.root)
-            progress_dialog.title(title)
-            progress_dialog.geometry("400x150")
-            progress_dialog.resizable(False, False)
-            progress_dialog.transient(self.root)
-            progress_dialog.grab_set()
-            
-            # Progress label
-            progress_label = ttk.Label(progress_dialog, text=initial_msg)
-            progress_label.pack(pady=10)
-            
-            # Progress bar
-            progress_var = tk.DoubleVar()
-            progress_bar = ttk.Progressbar(
-                progress_dialog, 
-                variable=progress_var, 
-                maximum=100,
-                length=350
-            )
-            progress_bar.pack(pady=10)
-            
-            # Status label
-            status_label = ttk.Label(progress_dialog, text="")
-            status_label.pack(pady=5)
-            
-            def progress_callback(current, total, status):
-                """Update progress dialog."""
-                try:
-                    if total > 0:
-                        percentage = (current / total) * 100
-                        progress_var.set(percentage)
-                        
-                        # Format size display
-                        current_mb = current / (1024 * 1024)
-                        total_mb = total / (1024 * 1024)
-                        
-                        status_text = self.ui_lang.get_label("download_progress_format", "{0} MB of {1} MB ({2}%)").format(f"{current_mb:.1f}", f"{total_mb:.1f}", f"{percentage:.1f}")
-                        
-                        status_label.config(text=status_text)
-                    
-                    progress_dialog.update()
-                except:
-                    pass  # Ignore errors in progress updates
-            
-            # Start download in the main thread (blocking)
-            progress_dialog.update()
-            success = self.update_checker.download_update(update_info, progress_callback)
-            
-            # Close progress dialog
-            progress_dialog.destroy()
-            
-            if success:
-                # Immediately apply the update instead of waiting for restart
-                self._apply_update_immediately()
-            else:
-                title = self.ui_lang.get_label("download_error_title", "Download Error")
-                message = self.ui_lang.get_label("download_error_msg", "Failed to download update. Please try again later.")
-                
-                messagebox.showerror(title, message)
-                
-        except Exception as e:
-            log_debug(f"Error downloading update: {e}")
-            try:
-                progress_dialog.destroy()
-            except:
-                pass
-            
-            title = self.ui_lang.get_label("download_error_title", "Download Error")
-            message = f"{self.ui_lang.get_label('download_error_detail', 'Error downloading update:')}\n\n{str(e)}"
-            
-            messagebox.showerror(title, message)
-    
-    def _show_restart_required_dialog(self):
-        """Show restart required dialog."""
-        if self.ui_lang.current_lang == 'pol':
-            title = "Wymagane ponowne uruchomienie"
-            message = "Aktualizacja została pobrana pomyślnie!\n\n"
-            message += "Aby zastosować aktualizację, zamknij aplikację i uruchom ją ponownie.\n\n"
-            message += "Aktualizacja zostanie automatycznie zastosowana przy następnym uruchomieniu."
-        else:
-            title = "Restart Required"
-            message = "Update downloaded successfully!\n\n"
-            message += "To apply the update, please close the application and start it again.\n\n"
-            message += "The update will be applied automatically on the next startup."
-        
-        messagebox.showinfo(title, message)
-    
-    def _apply_update_immediately(self):
-        """Apply the update immediately using the batch file approach."""
-        try:
-            log_debug("Applying update immediately after download")
-            
-            # Import UpdateApplier here to avoid circular imports
-            from update_applier import UpdateApplier
-            update_applier = UpdateApplier()
-            
-            # Check if we have a staged update
-            if not update_applier.has_staged_update():
-                log_debug("No staged update found for immediate application")
-                self._show_update_error_dialog("No staged update found")
-                return
-            
-            # Show confirmation dialog before applying update  
-            title = self.ui_lang.get_label("apply_update_title", "Apply Update")
-            message = self.ui_lang.get_label("apply_update_msg", "Update downloaded successfully!") + "\n\n"
-            message += self.ui_lang.get_label("apply_update_detail", "The application will close and automatically restart with the new version.") + "\n\n"
-            message += self.ui_lang.get_label("apply_update_continue", "Click OK to continue.")
-            
-            # Show info dialog with just OK button
-            messagebox.showinfo(title, message)
-            
-            # Apply the update - this will create the batch file and return True if successful
-            success = update_applier.apply_staged_update()
-            
-            if success:
-                log_debug("Update batch file created successfully - exiting application")
-                
-                # Show brief message before exit
-                exit_title = self.ui_lang.get_label("applying_update_title", "Applying Update")
-                exit_msg = self.ui_lang.get_label("applying_update_msg", "Update is being applied...") + "\n\n" + self.ui_lang.get_label("applying_update_restart", "The application will restart automatically.")
-                
-                # Show non-blocking message
-                temp_dialog = tk.Toplevel(self.root)
-                temp_dialog.title(exit_title)
-                temp_dialog.geometry("350x120")
-                temp_dialog.resizable(False, False)
-                temp_dialog.transient(self.root)
-                ttk.Label(temp_dialog, text=exit_msg, justify="center").pack(pady=20)
-                temp_dialog.update()
-                
-                # Exit after short delay to allow user to see the message
-                self.root.after(2000, self._exit_for_update)
-            else:
-                log_debug("Failed to apply update immediately")
-                error_title = self.ui_lang.get_label("update_apply_error_title", "Update Error")
-                error_msg = self.ui_lang.get_label("update_apply_error_msg", "Failed to apply update.") + "\n\n" + self.ui_lang.get_label("update_apply_error_detail", "Please try again or restart the application to apply the update.")
-                
-                messagebox.showerror(error_title, error_msg)
-                
-        except Exception as e:
-            log_debug(f"Error applying update immediately: {e}")
-            error_title = self.ui_lang.get_label("update_apply_error_title", "Update Error")
-            error_msg = f"{self.ui_lang.get_label('update_apply_error_exception', 'An error occurred while applying the update:')}\n\n{str(e)}\n\n{self.ui_lang.get_label('update_apply_error_restart', 'Restart the application to apply the update.')}"
-            
-            messagebox.showerror(error_title, error_msg)
-    
-    def _exit_for_update(self):
-        """Exit the application for update application."""
-        log_debug("Exiting application for update")
-        try:
-            # Close all threads and cleanup
-            self.is_running = False
-            
-            # Give threads a moment to stop
-            self.root.after(500, self.root.quit)
-        except Exception as e:
-            log_debug(f"Error during update exit: {e}")
-            # Force quit
-            self.root.quit()
+        """Open GitHub releases page (open-source edition)."""
+        if not auto_check:
+            import webbrowser
+            webbrowser.open("https://github.com/tomkam1702/OCR-Translator/releases")
+
 
     def toggle_debug_logging(self):
         """Toggle debug logging on/off and update button text."""
-        current_state = self.debug_logging_enabled_var.get()
+        current_state = self.debug_logging_enabled
         new_state = not current_state
         
         # Log state change before changing the state
@@ -1943,344 +1582,19 @@ class GameChangingTranslator:
             log_debug("Debug logging disabled by user")
         
         # Update the state
-        self.debug_logging_enabled_var.set(new_state)
+        self.debug_logging_enabled = new_state
         set_debug_logging_enabled(new_state)
         
         # Log state change after enabling (if we're enabling)
         if new_state:
             log_debug("Debug logging enabled by user")
         
-        # Update button text
-        if hasattr(self, 'debug_log_toggle_btn') and self.debug_log_toggle_btn.winfo_exists():
-            if new_state:
-                button_text = self.ui_lang.get_label("toggle_debug_log_disable_btn")
-            else:
-                button_text = self.ui_lang.get_label("toggle_debug_log_enable_btn")
-            self.debug_log_toggle_btn.config(text=button_text)
-            
         # Save settings
         if self._fully_initialized:
             self.save_settings()
 
-    def show_ocr_preview(self):
-        """Show/create the OCR Preview window."""
-        # Check if window already exists and is valid
-        if self.ocr_preview_window is not None:
-            try:
-                if self.ocr_preview_window.winfo_exists():
-                    # Window already exists, just bring to front
-                    self.ocr_preview_window.lift()
-                    self.ocr_preview_window.attributes('-topmost', True)
-                    self.ocr_preview_window.after(100, lambda: self.ocr_preview_window.attributes('-topmost', False))
-                    return
-            except tk.TclError:
-                # Window was destroyed but variable wasn't cleared
-                self.ocr_preview_window = None
-        
-        # Create new preview window
-        self.ocr_preview_window = tk.Toplevel(self.root)
-        self.ocr_preview_window.title(self.ui_lang.get_label("ocr_preview_title", "OCR Preview"))
-        self.ocr_preview_window.minsize(400, 500)
-        
-        # Load window geometry from config
-        load_ocr_preview_geometry(self.config, self.ocr_preview_window)
-        
-        # Create main frame
-        main_frame = ttk.Frame(self.ocr_preview_window)
-        main_frame.pack(fill="both", expand=True, padx=10, pady=10)
-        
-        # Image section - with horizontal scrollbar (no extra space) - NEW APPROACH
-        image_frame = ttk.LabelFrame(main_frame, text=self.ui_lang.get_label("processed_image_preview", "Processed Image (1:1 scale)"))
-        image_frame.pack(fill="both", expand=True, padx=5, pady=5)
-        
-        # Create frame for image content that won't expand
-        content_frame = ttk.Frame(image_frame)
-        content_frame.pack(fill="x", padx=5, pady=5)
-        
-        # Create canvas with scrollbars - but don't let it expand vertically
-        image_canvas = tk.Canvas(content_frame, bd=0, highlightthickness=0, relief='flat', height=200)
-        h_scrollbar = ttk.Scrollbar(content_frame, orient="horizontal", command=image_canvas.xview)
-        v_scrollbar = ttk.Scrollbar(content_frame, orient="vertical", command=image_canvas.yview)
-        
-        image_canvas.configure(xscrollcommand=h_scrollbar.set, yscrollcommand=v_scrollbar.set)
-        
-        # Pack with no expand for vertical
-        v_scrollbar.pack(side="right", fill="y")
-        h_scrollbar.pack(side="bottom", fill="x")
-        image_canvas.pack(side="left", fill="both", expand=True)
-        
-        # Create label inside canvas for image display
-        self.preview_image_label = ttk.Label(image_canvas, text=self.ui_lang.get_label("no_image_processed", "No image processed yet"), 
-                                            anchor="center", justify="center")
-        
-        # Add label to canvas
-        self.preview_image_canvas_item = image_canvas.create_window(0, 0, anchor="nw", window=self.preview_image_label)
-        
-        # Store canvas reference for updating scroll region
-        self.preview_image_canvas = image_canvas
-        
-        # Bind canvas resize to update scroll region
-        def on_canvas_configure(event):
-            # Update the scroll region to encompass the image
-            image_canvas.configure(scrollregion=image_canvas.bbox("all"))
-        
-        image_canvas.bind('<Configure>', on_canvas_configure)
-        
-        # Text section
-        text_frame = ttk.LabelFrame(main_frame, text=self.ui_lang.get_label("recognized_text_preview", "Recognized Text"))
-        text_frame.pack(fill="x", padx=5, pady=5)
-        
-        self.preview_text_widget = tk.Text(text_frame, height=8, wrap=tk.WORD)
-        text_scrollbar = ttk.Scrollbar(text_frame, orient="vertical", command=self.preview_text_widget.yview)
-        self.preview_text_widget.configure(yscrollcommand=text_scrollbar.set)
-        
-        text_scrollbar.pack(side="right", fill="y")
-        self.preview_text_widget.pack(side="left", fill="both", expand=True, padx=5, pady=5)
-        
-        # Control buttons
-        button_frame = ttk.Frame(main_frame)
-        button_frame.pack(fill="x", pady=5)
-        
-        ttk.Button(button_frame, text=self.ui_lang.get_label("refresh_preview", "Refresh Preview"), 
-                  command=self.refresh_ocr_preview).pack(side="left", padx=5)
-        ttk.Button(button_frame, text=self.ui_lang.get_label("close_btn", "Close"), 
-                  command=self.close_ocr_preview).pack(side="right", padx=5)
-        
-        # Set up proper window close protocol
-        self.ocr_preview_window.protocol("WM_DELETE_WINDOW", self.close_ocr_preview)
-        
-        # Set up window geometry saving on window events
-        def on_preview_configure(event):
-            if event.widget == self.ocr_preview_window:
-                # Save geometry when window is moved or resized
-                if hasattr(self, '_preview_geometry_timer'):
-                    self.root.after_cancel(self._preview_geometry_timer)
-                self._preview_geometry_timer = self.root.after(500, self.save_preview_geometry)
-        
-        self.ocr_preview_window.bind('<Configure>', on_preview_configure)
-        
-        # Start continuous real-time updates (regardless of translation state)
-        self.start_preview_realtime_updates()
-        
-        # Initial preview update
-        self.refresh_ocr_preview()
-
-    def close_ocr_preview(self):
-        """Properly close the OCR Preview window."""
-        if self.ocr_preview_window is not None:
-            try:
-                # Save window geometry before closing
-                self.save_preview_geometry()
-                
-                # Cancel any pending refresh timer
-                if hasattr(self, '_preview_refresh_timer'):
-                    self.root.after_cancel(self._preview_refresh_timer)
-                
-                # Cancel geometry save timer
-                if hasattr(self, '_preview_geometry_timer'):
-                    self.root.after_cancel(self._preview_geometry_timer)
-                
-                # Stop real-time updates
-                self.stop_preview_realtime_updates()
-                
-                # Destroy the window
-                self.ocr_preview_window.destroy()
-            except tk.TclError:
-                # Window might already be destroyed
-                pass
-            finally:
-                # Always clear the reference
-                self.ocr_preview_window = None
-
-    def save_preview_geometry(self):
-        """Save OCR Preview window geometry to config."""
-        if self.ocr_preview_window is not None:
-            try:
-                save_ocr_preview_geometry(self.config, self.ocr_preview_window)
-                save_app_config(self.config)
-            except Exception as e:
-                log_debug(f"Error saving OCR Preview geometry: {e}")
-    
-    def start_preview_realtime_updates(self):
-        """Start continuous real-time updates for OCR Preview window regardless of translation state."""
-        if self.ocr_preview_window is not None:
-            try:
-                if self.ocr_preview_window.winfo_exists():
-                    # Update every 500ms continuously (both when translation is running and stopped)
-                    self._preview_realtime_timer = self.root.after(500, self.preview_realtime_update)
-                else:
-                    self.ocr_preview_window = None
-            except tk.TclError:
-                self.ocr_preview_window = None
-    
-    def stop_preview_realtime_updates(self):
-        """Stop real-time updates for OCR Preview window."""
-        if hasattr(self, '_preview_realtime_timer'):
-            self.root.after_cancel(self._preview_realtime_timer)
-            delattr(self, '_preview_realtime_timer')
-    
-    def preview_realtime_update(self):
-        """Real-time update function for OCR Preview window - works regardless of translation state."""
-        if self.ocr_preview_window is not None:
-            try:
-                if self.ocr_preview_window.winfo_exists():
-                    # Refresh preview with current data (works both when translation is on/off)
-                    self.refresh_ocr_preview()
-                    # Schedule next update
-                    self._preview_realtime_timer = self.root.after(500, self.preview_realtime_update)
-                else:
-                    self.ocr_preview_window = None
-            except tk.TclError:
-                self.ocr_preview_window = None
-
-    def refresh_ocr_preview(self):
-        """Refresh the OCR preview with current settings and captured image."""
-        # Check if window still exists
-        if self.ocr_preview_window is None:
-            return
-            
-        try:
-            if not self.ocr_preview_window.winfo_exists():
-                self.ocr_preview_window = None
-                return
-        except tk.TclError:
-            # Window was destroyed
-            self.ocr_preview_window = None
-            return
-        
-        try:
-            # Get current settings
-            prep_mode = self.preprocessing_mode_var.get()
-            block_size = self.adaptive_block_size_var.get()
-            c_value = self.adaptive_c_var.get()
-            
-            # Always try to capture from source area for real-time preview (independent of translation state)
-            screenshot_pil = None
-            if self.source_overlay and self.source_overlay.winfo_exists():
-                try:
-                    area = self.source_overlay.get_geometry()
-                    if area:
-                        x1, y1, x2, y2 = map(int, area)
-                        width, height = x2-x1, y2-y1
-                        if width > 0 and height > 0:
-                            import pyautogui
-                            screenshot_pil = pyautogui.screenshot(region=(x1, y1, width, height))
-                        else:
-                            screenshot_pil = None
-                    else:
-                        screenshot_pil = None
-                except Exception as e:
-                    log_debug(f"Error capturing for preview: {e}")
-                    screenshot_pil = None
-            
-            # Fallback to using last_screenshot only if direct capture failed
-            if screenshot_pil is None and hasattr(self, 'last_screenshot') and self.last_screenshot:
-                screenshot_pil = self.last_screenshot
-            
-            if screenshot_pil:
-                # Optimized image processing: Direct PIL to OpenCV conversion
-                img_np = np.array(screenshot_pil)
-                img_shape = img_np.shape
-                
-                # Optimized conversion based on common cases (avoid repeated checks)
-                if len(img_shape) == 3:
-                    if img_shape[2] == 3:  # RGB - most common case
-                        img_cv_bgr = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
-                    elif img_shape[2] == 4:  # RGBA
-                        img_cv_bgr = cv2.cvtColor(img_np, cv2.COLOR_RGBA2BGR)
-                    else:
-                        raise ValueError(f"Unexpected 3D image channels: {img_shape[2]}")
-                elif len(img_shape) == 2:  # Grayscale
-                    img_cv_bgr = cv2.cvtColor(img_np, cv2.COLOR_GRAY2BGR)
-                else:
-                    raise ValueError(f"Unexpected image dimensions: {len(img_shape)}D")
-                
-                # Process image
-                from ocr_utils import preprocess_for_ocr
-                processed_cv_img = preprocess_for_ocr(img_cv_bgr, prep_mode, block_size, c_value)
-                
-                # Convert processed image to PIL for display
-                processed_pil = Image.fromarray(processed_cv_img)
-                processed_tk = ImageTk.PhotoImage(processed_pil)
-                
-                # Update image display in canvas
-                self.preview_image_label.configure(image=processed_tk, text="")
-                self.preview_image_label.image = processed_tk  # Keep reference
-                
-                # Update canvas scroll region to fit the image
-                self.preview_image_label.update_idletasks()  # Ensure label has correct size
-                image_width = processed_tk.width()
-                image_height = processed_tk.height()
-                
-                # Adjust canvas height to fit image (with reasonable limits)
-                canvas_height = min(image_height, 400)  # Max height of 400 pixels
-                self.preview_image_canvas.configure(height=canvas_height)
-                
-                # Update the canvas window size and scroll region
-                self.preview_image_canvas.itemconfig(self.preview_image_canvas_item, width=image_width, height=image_height)
-                self.preview_image_canvas.configure(scrollregion=(0, 0, image_width, image_height))
-                
-                # Perform OCR on processed image with all post-processing steps
-                tess_langs = self.get_tesseract_lang_code()
-                from ocr_utils import get_tesseract_model_params, ocr_region_with_confidence, post_process_ocr_text_general, remove_text_after_last_punctuation_mark
-                
-                tess_params = get_tesseract_model_params('general')
-                full_img_region = (0, 0, processed_cv_img.shape[1], processed_cv_img.shape[0])
-                confidence_threshold = self.confidence_var.get()
-                
-                ocr_raw_text = ocr_region_with_confidence(processed_cv_img, full_img_region, tess_langs, tess_params, confidence_threshold)
-                ocr_cleaned_text = post_process_ocr_text_general(ocr_raw_text, tess_langs)
-                
-                # Apply post-processing steps including "Remove Trailing Garbage" if enabled
-                if self.remove_trailing_garbage_var.get() and ocr_cleaned_text:
-                    ocr_cleaned_text = remove_text_after_last_punctuation_mark(ocr_cleaned_text)
-                
-                # Update text display
-                self.preview_text_widget.config(state=tk.NORMAL)
-                self.preview_text_widget.delete(1.0, tk.END)
-                self.preview_text_widget.insert(tk.END, ocr_cleaned_text if ocr_cleaned_text else self.ui_lang.get_label("no_text_recognized", "No text recognized"))
-                self.preview_text_widget.config(state=tk.DISABLED)
-                
-            else:
-                # No image available
-                self.preview_image_label.configure(image="", text=self.ui_lang.get_label("no_image_captured", "No image captured yet"))
-                self.preview_image_label.image = None
-                
-                # Reset canvas to default size for text display
-                self.preview_image_canvas.configure(height=100)  # Small height for text
-                
-                # Reset canvas scroll region for text display
-                self.preview_image_label.update_idletasks()
-                label_width = self.preview_image_label.winfo_reqwidth()
-                label_height = self.preview_image_label.winfo_reqheight()
-                
-                self.preview_image_canvas.itemconfig(self.preview_image_canvas_item, width=label_width, height=label_height)
-                self.preview_image_canvas.configure(scrollregion=(0, 0, label_width, label_height))
-                
-                self.preview_text_widget.config(state=tk.NORMAL)
-                self.preview_text_widget.delete(1.0, tk.END)
-                self.preview_text_widget.insert(tk.END, self.ui_lang.get_label("no_image_for_ocr", "No image available for OCR"))
-                self.preview_text_widget.config(state=tk.DISABLED)
-                
-        except Exception as e:
-            log_debug(f"Error refreshing OCR preview: {e}")
-            # Show error in preview
-            if hasattr(self, 'preview_text_widget') and self.preview_text_widget.winfo_exists():
-                self.preview_text_widget.config(state=tk.NORMAL)
-                self.preview_text_widget.delete(1.0, tk.END)
-                self.preview_text_widget.insert(tk.END, f"Error: {str(e)}")
-                self.preview_text_widget.config(state=tk.DISABLED)
-
     def load_initial_overlay_areas(self):
         load_areas_from_config_om(self)
-
-    def select_source_area(self):
-        select_source_area_om(self)
-        self.save_settings() 
-
-    def select_target_area(self):
-        select_target_area_om(self)
-        self.save_settings() 
 
     def create_source_overlay(self):
         create_source_overlay_om(self)
@@ -2300,53 +1614,31 @@ class GameChangingTranslator:
         self.cache_manager.clear_file_caches()
 
     def clear_cache(self):
-        """Clear unified translation cache - FIXED VERSION (No pause/resume needed)."""
+        """Clear unified translation cache."""
         try:
             log_debug("Clearing unified translation cache...")
             
-            # Notify MarianMT translator about cache clearing FIRST
-            if hasattr(self, 'marian_translator') and self.marian_translator:
-                try:
-                    if hasattr(self.marian_translator, 'notify_cache_cleared'):
-                        self.marian_translator.notify_cache_cleared()
-                        log_debug("Notified MarianMT translator about cache clearing.")
-                    else:
-                        log_debug("MarianMT translator does not have notify_cache_cleared method.")
-                except Exception as e_notify:
-                    log_debug(f"Error notifying MarianMT about cache clearing: {e_notify}")
-            
             # Clear unified cache (thread-safe, no need to pause translation)
-            self.translation_handler.clear_cache()
+            if hasattr(self, 'translation_handler') and self.translation_handler:
+                self.translation_handler.clear_cache()
             
             # Clear in-memory file cache representations (Level 2 persistence remains)
-            self.google_file_cache.clear()
-            self.deepl_file_cache.clear()
+            if hasattr(self, 'deepl_cache_dict'): self.deepl_cache_dict.clear()
             log_debug("Cleared in-memory representations of file caches.")
 
             # Clear queues
-            self._clear_queue(self.ocr_queue)
-            self._clear_queue(self.translation_queue)
+            if hasattr(self, 'ocr_queue'): self._clear_queue(self.ocr_queue)
+            if hasattr(self, 'translation_queue'): self._clear_queue(self.translation_queue)
             log_debug("Cleared OCR and translation queues.")
 
             # Reset text processing state
             self.text_stability_counter = 0
             self.previous_text = ""
-            self.translation_cache.clear()
+            if hasattr(self, 'translation_cache'): self.translation_cache.clear()
             log_debug("Unified translation cache and related states cleared successfully.")
-
-            # Update status briefly
-            original_status_text = self.status_label.cget("text")
-            self.status_label.config(text="Status: Cache cleared")
-            if self.root.winfo_exists():
-                self.root.after(2000, lambda: self.status_label.config(text=original_status_text) if self.status_label.winfo_exists() else None)
                     
         except Exception as e_cc:
             log_debug(f"Error clearing unified cache: {e_cc}")
-            if self.root.winfo_exists():
-                messagebox.showerror("Error", f"Failed to clear cache: {e_cc}", parent=self.root)
-            original_status_text = self.status_label.cget("text")
-            self.status_label.config(text="Status: Cache clearing failed")
-            self.root.after(2000, lambda: self.status_label.config(text=original_status_text) if self.status_label.winfo_exists() else None)
 
     def _clear_queue(self, q_to_clear):
         items_cleared_count = 0
@@ -2374,7 +1666,7 @@ class GameChangingTranslator:
     def _graceful_shutdown_poll(self):
         """
         Non-blocking poll to check if all async API calls have finished.
-        This allows the tkinter event loop to process callbacks that decrement pending call counters.
+        This allows the Qt event loop to process callbacks that decrement pending call counters.
         """
         # Calculate pending calls from all providers
         pending_ocr = 0
@@ -2401,7 +1693,7 @@ class GameChangingTranslator:
 
         # If not done, poll again shortly
         log_debug(f"Waiting for pending API calls to complete... OCR: {pending_ocr}, Translation: {pending_translation}")
-        self.root.after(100, self._graceful_shutdown_poll)
+        QTimer.singleShot(100, self._graceful_shutdown_poll)
 
     def _finalize_shutdown(self):
         """Contains the final steps of the shutdown process after graceful polling."""
@@ -2413,28 +1705,38 @@ class GameChangingTranslator:
         self._clear_queue(self.ocr_queue)
         self._clear_queue(self.translation_queue)
 
-        if self.translation_text and self.translation_text.winfo_exists():
+        # Clear translation text display
+        if self.translation_text and self.translation_text != None:
             try:
-                self.translation_text.config(state=tk.NORMAL)
-                self.translation_text.delete(1.0, tk.END)
-                self.translation_text.config(state=tk.DISABLED)
-            except tk.TclError as e_ctt:
+                # Handle PySide6 widget
+                if hasattr(self.translation_text, 'set_rtl_text'):
+                    self.translation_text.set_rtl_text("", "")
+                # Handle Qt text display methods
+                elif hasattr(self.translation_text, 'clear'):
+                    self.translation_text.clear()
+            except Exception as e_ctt:
                 log_debug(f"Error clearing translation text on stop: {e_ctt}")
         
-        if self.source_overlay and self.source_overlay.winfo_exists() and self.source_overlay.winfo_viewable():
+        if self.source_overlay and self.source_overlay != None and self.source_overlay.isVisible():
             try: self.source_overlay.hide()
-            except tk.TclError: log_debug("Error hiding source overlay on stop (likely closed).")
+            except Exception: log_debug("Error hiding source overlay on stop.")
         
-        if self.target_overlay and self.target_overlay.winfo_exists() and self.target_overlay.winfo_viewable():
+        if self.target_overlay and self.target_overlay != None and self.target_overlay.isVisible():
             try: self.target_overlay.hide()
-            except tk.TclError: log_debug("Error hiding target overlay on stop (likely closed).")
+            except Exception: log_debug("Error hiding target overlay on stop.")
         
-        self.start_stop_btn.config(state=tk.NORMAL)
+        
         status_text_stopped = "Status: " + self.ui_lang.get_label("status_stopped", "Stopped (Press ~ to Start)")
-        self.status_label.config(text=status_text_stopped)
+        
         log_debug("Translation process stopped.")
         
         self.toggle_in_progress = False # Release the lock here
+
+        # If we were in the middle of a discovery-to-regional restart, trigger start now
+        if hasattr(self, 'restart_after_shutdown') and self.restart_after_shutdown:
+            self.restart_after_shutdown = False
+            log_debug("SHUTDOWN: Triggering scheduled restart after discovery...")
+            QTimer.singleShot(500, self.toggle_translation) # Re-start in regional mode
 
     def toggle_translation(self):
         # Add re-entrancy lock
@@ -2457,9 +1759,9 @@ class GameChangingTranslator:
             if hasattr(self, 'update_deepl_usage'):
                 self.update_deepl_usage()
             
-            self.start_stop_btn.config(text="Start", state=tk.DISABLED)
-            self.status_label.config(text="Status: Stopping...")
-            self.root.update_idletasks()
+            
+            
+            QApplication.processEvents()
 
             active_threads_copy = self.threads[:]
             self.threads.clear()
@@ -2479,50 +1781,119 @@ class GameChangingTranslator:
             # Use non-blocking poll for graceful shutdown
             log_debug("Starting graceful shutdown poll for API call thread pools...")
             self._shutdown_start_time = time.monotonic()
-            self.root.after(0, self._graceful_shutdown_poll)
+            QTimer.singleShot(0, self._graceful_shutdown_poll)
             # The rest of the shutdown logic is now in _finalize_shutdown()
             # The lock will be released in _finalize_shutdown()
 
         else: 
             try:
                 log_debug("Starting translation process requested by user...")
-                self.start_stop_btn.config(state=tk.DISABLED) 
-                self.status_label.config(text="Status: Initializing...")
-                self.root.update_idletasks()
+                 
+                
+                QApplication.processEvents()
 
                 valid_start_flag = True 
                 
                 if not self.source_overlay or not self._widget_exists_safely(self.source_overlay):
-                    messagebox.showerror("Start Error", "Source area overlay missing. Select source area.", parent=self.root)
-                    valid_start_flag = False
+                    raise ValueError("Source area overlay missing. Select source area.")
                 if valid_start_flag and (not self.target_overlay or not self._widget_exists_safely(self.target_overlay)):
-                    messagebox.showerror("Start Error", "Target area overlay missing. Select target area.", parent=self.root)
-                    valid_start_flag = False
+                    raise ValueError("Target area overlay missing. Select target area.")
                 if valid_start_flag and (not self.translation_text or not self._widget_exists_safely(self.translation_text)):
-                    messagebox.showerror("Start Error", "Target text display widget missing. Reselect target area.", parent=self.root)
-                    valid_start_flag = False
+                    raise ValueError("Target text display widget missing. Reselect target area.")
                 
-                if self.get_ocr_model_setting() == 'tesseract':
-                    tesseract_exe_path = self.tesseract_path_var.get()
-                    if valid_start_flag and (not tesseract_exe_path or not os.path.isfile(tesseract_exe_path)):
-                        messagebox.showerror("Start Error", f"Tesseract path invalid:\n{tesseract_exe_path}\nCheck Settings.", parent=self.root)
-                        valid_start_flag = False
+
                 
                 if valid_start_flag:
                      try:
-                         self.source_area = self.source_overlay.get_geometry()
-                         self.target_area = self.target_overlay.get_geometry()
+                         # Instead of forcing old variables onto the overlay from INI,
+                         # we use the current positions from the GUI (PySide6) - this solves the jumping frame issue
+                         try:
+                             pass
+                         except Exception as e_ini_read:
+                             log_debug(f"START: Could not restore overlays from INI, using current positions. Error: {e_ini_read}")
+                         
+                         # Handle Auto Detection full screen expansion
+                         if self.auto_detect_enabled:
+                             sw = QApplication.primaryScreen().geometry().width()
+                             sh = QApplication.primaryScreen().geometry().height()
+                             log_debug(f"Auto Detection ON: Expanding source_overlay to full screen (0, 0, {sw}, {sh})")
+                             if self.source_overlay and self._widget_exists_safely(self.source_overlay):
+                                 self.source_overlay.setGeometry(0, 0, sw, sh)
+                             
+                             # Update source_area variables to full screen
+                             self.source_area_x1 = 0
+                             self.source_area_y1 = 0
+                             self.source_area_x2 = sw
+                             self.source_area_y2 = sh
+                             
+                             # Initialize detected coordinates
+                             self.detected_source_area_x1 = 0
+                             self.detected_source_area_y1 = 0
+                             self.detected_source_area_x2 = 0
+                             self.detected_source_area_y2 = 0
+                             # Resilient discovery_timeout loading logic
+                             try:
+                                 import configparser
+                                 _temp_cfg = configparser.ConfigParser()
+                                 _temp_cfg.read('ocr_translator_config.ini', encoding='utf-8')
+                                 if 'Settings' not in _temp_cfg:
+                                     _temp_cfg['Settings'] = {}
+                                 
+                                 if 'discovery_timeout' not in _temp_cfg['Settings']:
+                                     log_debug("DISCOVERY: discovery_timeout missing from INI. Adding default 120s and saving.")
+                                     _temp_cfg['Settings']['discovery_timeout'] = '120'
+                                     import io
+                                     _buf = io.StringIO()
+                                     _temp_cfg.write(_buf)
+                                     _content = _buf.getvalue().strip() + '\n'
+                                     with open('ocr_translator_config.ini', 'w', encoding='utf-8') as _f:
+                                         _f.write(_content)
+                                     _new_timeout = 120
+                                 else:
+                                     _new_timeout = _temp_cfg.getint('Settings', 'discovery_timeout', fallback=120)
+                                 
+                                 self.discovery_timeout = _new_timeout
+                                 log_debug(f"DISCOVERY: Loaded timeout from INI: {_new_timeout}s")
+                             except Exception as e_cfg:
+                                 log_debug(f"DISCOVERY: Could not handle timeout from INI, using fallback ({self.discovery_timeout}s). Error: {e_cfg}")
+
+                             self.discovery_start_time = time.monotonic()
+                             self.is_finishing_discovery = False
+                             self.detection_samples = []
+                             
+                             log_debug(f"detected_source_area_x1 = {self.detected_source_area_x1}")
+                             log_debug(f"detected_source_area_y1 = {self.detected_source_area_y1}")
+                             log_debug(f"detected_source_area_x2 = {self.detected_source_area_x2}")
+                             log_debug(f"detected_source_area_y2 = {self.detected_source_area_y2}")
+
+                             # Re-read geometry after forcing
+                             QApplication.processEvents()
+                             
+                             # Set source_area directly (don't rely on get_geometry which may lag)
+                             self.source_area = [0, 0, sw, sh]
+
+                         if self.source_overlay and hasattr(self.source_overlay, 'get_geometry'):
+                             self.source_area = self.source_overlay.get_geometry()
+                         else:
+                             raise ValueError("Source overlay not found or does not support get_geometry()")
+
+                         
+                         if self.target_overlay and hasattr(self.target_overlay, 'get_geometry'):
+                             self.target_area = self.target_overlay.get_geometry()
+                         else:
+                             raise ValueError("Target overlay not found or does not support get_geometry()")
+                         
                          if not self._validate_area_coords(self.source_area, "source"): valid_start_flag = False
                          if valid_start_flag and not self._validate_area_coords(self.target_area, "target"): valid_start_flag = False
-                     except (tk.TclError, AttributeError) as e_gog:
-                         messagebox.showerror("Start Error", f"Could not get overlay geometry: {e_gog}", parent=self.root)
+                     except (Exception, AttributeError) as e_gog:
+                         raise ValueError(f"Could not get overlay geometry: {e_gog}")
                          valid_start_flag = False
                 
                 if not valid_start_flag:
-                    self.start_stop_btn.config(state=tk.NORMAL)
+                    
                     status_text_failed = "Status: Start Failed"
                     if self.KEYBOARD_AVAILABLE: status_text_failed += " (Press ~ to Retry)"
-                    self.status_label.config(text=status_text_failed)
+                    
                     log_debug("Start aborted due to failed pre-start validation checks.")
                     return
 
@@ -2536,9 +1907,9 @@ class GameChangingTranslator:
                 self._reset_gemini_batch_state() 
 
                 try:
-                    if self.target_overlay and self.target_overlay.winfo_exists() and not self.target_overlay.winfo_viewable():
+                    if self.target_overlay and self.target_overlay != None and not self.target_overlay.isVisible():
                         self.target_overlay.show()
-                except tk.TclError:
+                except Exception:
                     log_debug("Warning: Error ensuring target overlay visibility at start (likely closed).")
 
                 self._clear_queue(self.ocr_queue)
@@ -2546,26 +1917,40 @@ class GameChangingTranslator:
 
                 self.cache_manager.load_file_caches()
 
+                # API Key Validation before starting
+                missing_gemini = not self.gemini_api_key or self.gemini_api_key.strip() == ""
+                missing_deepl = (self.translation_model == 'deepl_api') and (not self.deepl_api_key or self.deepl_api_key.strip() == "")
+                
+                error_msg = None
+                if missing_gemini:
+                    error_msg = self.ui_lang.get_label('error_no_gemini_key', 'Provide your Gemini API key first.')
+                elif missing_deepl:
+                    error_msg = self.ui_lang.get_label('error_no_deepl_key', 'Provide your DeepL API key first.')
+
                 self.is_running = True 
                 
-                if hasattr(self, 'translation_handler'):
-                    if self.is_api_based_ocr_model():
-                        self.translation_handler.start_ocr_session()
-                    self.translation_handler.start_translation_session()
-                
-                self.start_stop_btn.config(text="Stop", state=tk.NORMAL)
-                status_text_running = "Status: " + self.ui_lang.get_label("status_running", "Running (Press ~ to Stop)")
-                self.status_label.config(text=status_text_running)
-                self.root.update_idletasks()
-                
-                capture_thread_instance = threading.Thread(target=run_capture_thread, args=(self,), name="CaptureThread", daemon=True)
-                ocr_thread_instance = threading.Thread(target=run_ocr_thread, args=(self,), name="OCRThread", daemon=True)
-                translation_thread_instance = threading.Thread(target=run_translation_thread, args=(self,), name="TranslationThread", daemon=True)
+                if error_msg:
+                    self.update_translation_text(error_msg)
+                    log_debug(f"START BLOCKED: {error_msg}")
+                    # Skip thread starting logic
+                else:
+                    if hasattr(self, 'translation_handler'):
+                        if self.is_api_based_ocr_model():
+                            self.translation_handler.start_ocr_session()
+                        self.translation_handler.start_translation_session()
+                    
+                    status_text_running = "Status: " + self.ui_lang.get_label("status_running", "Running (Press ~ to Stop)")
+                    
+                    QApplication.processEvents()
+                    
+                    capture_thread_instance = threading.Thread(target=run_capture_thread, args=(self,), name="CaptureThread", daemon=True)
+                    ocr_thread_instance = threading.Thread(target=run_ocr_thread, args=(self,), name="OCRThread", daemon=True)
+                    translation_thread_instance = threading.Thread(target=run_translation_thread, args=(self,), name="TranslationThread", daemon=True)
 
-                self.threads = [capture_thread_instance, ocr_thread_instance, translation_thread_instance]
-                for t_obj in self.threads:
-                    t_obj.start()
-                log_debug(f"Threads started: {[t.name for t in self.threads]}")
+                    self.threads = [capture_thread_instance, ocr_thread_instance, translation_thread_instance]
+                    for t_obj in self.threads:
+                        t_obj.start()
+                    log_debug(f"Threads started: {[t.name for t in self.threads]}")
                 
                 # Release lock after successful start
                 self.toggle_in_progress = False
@@ -2578,7 +1963,7 @@ class GameChangingTranslator:
     def _validate_area_coords(self, area_coordinates, area_type_str):
         min_dimension = 10 
         if not area_coordinates or len(area_coordinates) != 4:
-            messagebox.showerror("Area Validation Error", f"Invalid {area_type_str} area data: {area_coordinates}.", parent=self.root)
+            messagebox.showerror("Area Validation Error", f"Invalid {area_type_str} area data: {area_coordinates}.", parent=None)
             return False
         try:
             x1_val, y1_val, x2_val, y2_val = map(int, area_coordinates)
@@ -2587,415 +1972,90 @@ class GameChangingTranslator:
             if width_val < min_dimension or height_val < min_dimension:
                 messagebox.showerror("Area Validation Error",
                                      f"{area_type_str.capitalize()} area too small ({width_val}x{height_val}). Min {min_dimension}x{min_dimension}.",
-                                     parent=self.root)
+                                     parent=None)
                 return False
             return True
         except (ValueError, TypeError) as e_vac:
-            messagebox.showerror("Area Validation Error", f"Invalid coordinates in {area_type_str} area: {area_coordinates}. Error: {e_vac}", parent=self.root)
+            messagebox.showerror("Area Validation Error", f"Invalid coordinates in {area_type_str} area: {area_coordinates}. Error: {e_vac}", parent=None)
             return False
 
     def stop_translation_from_thread(self):
         if self.is_running:
             log_debug("Requesting stop translation from worker thread.")
-            if self.root.winfo_exists():
-                self.root.after(0, self.toggle_translation)
+            if self.root != None:
+                QTimer.singleShot(0, self.toggle_translation)
 
     def update_translation_model_names(self):
         """Update translation model names with localized strings from CSV files."""
+        self.translation_model_names = {
+            'deepl_api': 'DeepL API'
+        }
+        
         # Get Gemini model names from CSV file
         gemini_translation_models = self.gemini_models_manager.get_translation_model_names()
         
-        # Get OpenAI model names from CSV file
-        openai_translation_models = self.openai_models_manager.get_translation_model_names()
-        
-        # Base translation model names (non-Gemini/OpenAI models)
-        base_translation_models = {
-            'google_api': 'Google Translate API',
-            'deepl_api': 'DeepL API', 
-            'marianmt': self.ui_lang.get_label('translation_model_marianmt_offline', 'MarianMT (offline and free)')
-        }
-        
-        # Build complete translation model names dict
-        self.translation_model_names = {}
-        
-        # Add OpenAI models first (they should appear first in dropdowns)
-        for model_name in openai_translation_models:
-            # Use a special key format for OpenAI models
-            key = f'openai_translation_{model_name}'
-            self.translation_model_names[key] = model_name
-        
-        # Add Gemini models next
         for model_name in gemini_translation_models:
-            # Use a special key format for Gemini models
             key = f'gemini_translation_{model_name}'
-            self.translation_model_names[key] = model_name
-        
-        # Add non-LLM models
-        self.translation_model_names.update(base_translation_models)
-        
-        # For backward compatibility, also add the legacy gemini_api key pointing to the first available model
+            self.translation_model_names[key] = f"Google {model_name}"
+            
         if gemini_translation_models:
             self.translation_model_names['gemini_api'] = gemini_translation_models[0]
             
-        # For backward compatibility, also add the legacy openai_api key pointing to the first available model
-        if openai_translation_models:
-            self.translation_model_names['openai_api'] = openai_translation_models[0]
-        
         # Update the reverse mapping as well
         self.translation_model_values = {v: k for k, v in self.translation_model_names.items()}
         log_debug(f"Updated translation model names: {self.translation_model_names}")
 
+    def update_ocr_model_names(self):
+        """Update OCR model names with localized strings."""
+        self.ocr_model_names = {}
+        
+        # Get Gemini model names from CSV file
+        gemini_ocr_models = self.gemini_models_manager.get_ocr_model_names()
+        
+        for model_name in gemini_ocr_models:
+            key = f'gemini_ocr_{model_name}'
+            self.ocr_model_names[key] = f"Google {model_name}"
+            
+        log_debug(f"Updated OCR model names: {self.ocr_model_names}")
+
     def get_current_gemini_model_for_translation(self):
         """Get the API name of currently selected Gemini translation model."""
-        display_name = self.gemini_translation_model_var.get()
+        display_name = self.gemini_translation_model
         return self.gemini_models_manager.get_api_name_by_display_name(display_name)
     
     def get_current_gemini_model_for_ocr(self):
         """Get the API name of currently selected Gemini OCR model."""
-        display_name = self.gemini_ocr_model_var.get()
+        display_name = self.gemini_ocr_model
         return self.gemini_models_manager.get_api_name_by_display_name(display_name)
     
-    def get_current_openai_model_for_translation(self):
-        """Get the API name of currently selected OpenAI translation model."""
-        display_name = self.openai_translation_model_var.get()
-        return self.openai_models_manager.get_api_name_by_display_name(display_name)
-    
-    def is_openai_model(self, model_name):
-        """Check if the given model name is an OpenAI model."""
-        if not model_name:
-            return False
-        
-        # Check for the generic 'openai' key used by the OCR model var
-        if model_name == 'openai':
-            return True
-
-        # Check if it's the OpenAI API provider identifier
-        if model_name == 'openai_api':
-            return True
-        
-        # Check if it's in our OpenAI translation models list
-        openai_translation_models = self.openai_models_manager.get_translation_model_names()
-        if model_name in openai_translation_models:
-            return True
-            
-        # Check if it's in our OpenAI OCR models list
-        openai_ocr_models = self.openai_models_manager.get_ocr_model_names()
-        if model_name in openai_ocr_models:
-            return True
-
-        # Check if it's using the OpenAI key format
-        if model_name.startswith('openai_translation_'):
-            return True
-        
-        return False
-
     def is_gemini_model(self, model_name):
         """Check if the given model name is a Gemini model."""
         if not model_name:
             return False
         
-        # Check if it's the legacy Gemini identifier
-        if model_name == 'gemini':
+        if model_name in ['gemini', 'gemini_api']:
             return True
         
-        # Check if it's the Gemini API provider identifier
-        if model_name == 'gemini_api':
-            return True
-        
-        # Check if it's in our Gemini translation models
-        gemini_translation_models = self.gemini_models_manager.get_translation_model_names()
-        if model_name in gemini_translation_models:
-            return True
-        
-        # Check if it's in our Gemini OCR models
-        gemini_ocr_models = self.gemini_models_manager.get_ocr_model_names()
-        if model_name in gemini_ocr_models:
-            return True
-        
-        # Check if it's using the Gemini key format
         if model_name.startswith('gemini_'):
             return True
-        
+            
+        # Check if it's in our Gemini model lists
+        if hasattr(self, 'gemini_models_manager'):
+            if model_name in self.gemini_models_manager.get_translation_model_names():
+                return True
+            if model_name in self.gemini_models_manager.get_ocr_model_names():
+                return True
+                
         return False
-
-    def get_current_openai_model_for_ocr(self):
-        """Get the API name of currently selected OpenAI OCR model."""
-        # Read from the new, specific variable
-        display_name = self.openai_ocr_model_var.get()
-        api_name = self.openai_models_manager.get_api_name_by_display_name(display_name)
-        if api_name:
-            return api_name
-        return 'gpt-4o'  # Default fallback if lookup fails
-
+    
     def is_api_based_ocr_model(self, model_name=None):
-        """Check if the given (or current) OCR model is API-based and needs session management."""
+        """Check if the given (or current) OCR model is API-based."""
         if model_name is None:
             model_name = self.get_ocr_model_setting()
         
-        return self.is_gemini_model(model_name) or self.is_openai_model(model_name)
+        return self.is_gemini_model(model_name)
     
-    def create_about_tab(self):
-        """Create the About tab with consistent content for both initial load and language changes."""
-        from ui_elements import create_scrollable_tab
-        
-        # Create About tab with scrollable content
-        scrollable_about = create_scrollable_tab(self.tab_control, self.ui_lang.get_label("about_tab_title", "About"))
-        self.tab_about = scrollable_about
-        
-        # Create the about frame inside the scrollable area
-        about_frame = ttk.LabelFrame(scrollable_about, text=self.ui_lang.get_label("about_tab_title", "About"))
-        about_frame.pack(fill="both", expand=True, padx=10, pady=10)
-        
-        # Dynamic About content using centralized version
-        if self.ui_lang.current_lang == 'pol':
-            about_text = f"""Game-Changing Translator {APP_VERSION} (wersja z {APP_RELEASE_DATE_POLISH} r.)
 
-Copyright © 2025-2026 Tomasz Kamiński
-
-Game-Changing Translator to program komputerowy, który automatycznie przechwytuje tekst z dowolnego fragmentu ekranu, przeprowadza optyczne rozpoznawanie znaków (OCR) i tłumaczy tekst w czasie rzeczywistym. Może służyć do tłumaczenia napisów w grach lub dowolnego innego tekstu, którego nie można łatwo skopiować.
-
-This application was developed in Python using the following AI models: Claude 3.7 Sonnet, Claude Sonnet 4, Claude Sonnet 4.5 and Claude Opus 4.5; Gemini 2.5 Pro and Gemini 3 Pro, and following tools: Google Antigravity IDE and Gemini CLI.
-
-Więcej informacji zawiera instrukcja obsługi."""
-        else:
-            about_text = f"""Game-Changing Translator {APP_VERSION} (Released {APP_RELEASE_DATE})
-
-Copyright © 2025-2026 Tomasz Kamiński
-
-Game-Changing Translator is a desktop application that automatically captures text from any area of your screen, performs optical character recognition (OCR), and translates the text in real-time. You can use it for translating video game subtitles or any other text that you can't easily copy.
-
-This application was developed in Python using the following AI models: Claude 3.7 Sonnet, Claude Sonnet 4, Claude Sonnet 4.5 and Claude Opus 4.5; Gemini 2.5 Pro and Gemini 3 Pro, and following tools: Google Antigravity IDE and Gemini CLI.
-
-For more information, see the user manual."""
-        
-        # Use Text widget for proper wrapping
-        about_text_widget = tk.Text(about_frame, wrap=tk.WORD, relief="flat", 
-                                   borderwidth=0, highlightthickness=0)
-        about_text_widget.pack(fill="both", expand=True, padx=20, pady=20)
-        
-        # Configure tags for hyperlink
-        about_text_widget.tag_configure("hyperlink", foreground="#0366d6", underline=True)
-        about_text_widget.tag_bind("hyperlink", "<Button-1>", lambda e: webbrowser.open("https://github.com/tomkam1702/OHLC-Forge"))
-        about_text_widget.tag_bind("hyperlink", "<Enter>", lambda e: about_text_widget.config(cursor="hand2"))
-        about_text_widget.tag_bind("hyperlink", "<Leave>", lambda e: about_text_widget.config(cursor=""))
-        
-        # Insert main about text
-        about_text_widget.insert(tk.END, about_text)
-        
-        # Insert promotional tool info from localized CSVs
-        other_tool_header = self.ui_lang.get_label("about_other_tool_header", "Check my other tool:")
-        other_tool_desc = self.ui_lang.get_label("about_other_tool_desc", "OHLC Forge – Historical daily data reconstruction for Binance and Bybit perpetuals with custom session close times.")
-        
-        about_text_widget.insert(tk.END, f"\n\n{other_tool_header}\n\n")
-        
-        # Find the product name in description to make it a link
-        product_name = "OHLC Forge"
-        if product_name in other_tool_desc:
-            parts = other_tool_desc.split(product_name, 1)
-            about_text_widget.insert(tk.END, parts[0])
-            about_text_widget.insert(tk.END, product_name, "hyperlink")
-            about_text_widget.insert(tk.END, parts[1])
-        else:
-            about_text_widget.insert(tk.END, other_tool_desc)
-            
-        about_text_widget.config(state=tk.DISABLED)  # Make it read-only
-        
-        # Add Check for Updates button and checkbox
-        update_button_frame = ttk.Frame(about_frame)
-        update_button_frame.pack(fill="x", padx=20, pady=10)
-        
-        check_updates_btn = ttk.Button(
-            update_button_frame, 
-            text=self.ui_lang.get_label("check_for_updates_btn", "Check for Updates"),
-            command=self.check_for_updates
-        )
-        check_updates_btn.pack(side="left")
-        
-        # Add checkbox for automatic update checking
-        check_updates_checkbox = ttk.Checkbutton(
-            update_button_frame,
-            text=self.ui_lang.get_label("check_for_updates_on_startup", "Check for updates on startup"),
-            variable=self.check_for_updates_on_startup_var
-        )
-        check_updates_checkbox.pack(side="left", padx=(20, 0))
-        
-        # Enable/disable button and checkbox based on execution environment
-        import sys
-        is_compiled = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
-        if is_compiled:
-            check_updates_btn.config(state="normal")
-            check_updates_checkbox.config(state="normal")
-        else:
-            check_updates_btn.config(state="disabled")
-            check_updates_checkbox.config(state="disabled")
-        
-        # Store references for language updates
-        self.check_updates_btn = check_updates_btn
-        self.check_updates_checkbox = check_updates_checkbox
-
-    def update_ui_language(self):
-        """Update all UI elements to reflect the selected language"""
-        try:
-            # Start comprehensive UI update - suppresses all saves and traces
-            self.start_ui_update()
-            
-            # Update translation model names with new language
-            self.update_translation_model_names()
-            
-            # The most comprehensive way to fully update the UI is to destroy and recreate all tabs
-            # First, save the current tab selection
-            selected_tab = self.tab_control.select()
-            
-            # First, destroy all existing tabs
-            for i in range(self.tab_control.index('end')-1, -1, -1):
-                self.tab_control.forget(i)
-            
-            # The tabs will be created and assigned in the create_*_tab functions
-            self.tab_main = None
-            self.tab_settings = None
-            self.tab_api_usage = None
-            self.tab_debug = None
-            self.tab_about = None
-            
-            # Recreate all tabs with the new language
-            from gui_builder import create_main_tab, create_settings_tab, create_custom_prompt_tab, create_api_usage_tab, create_debug_tab
-            from ui_elements import create_scrollable_tab
-            
-            # Rebuild all tabs with the new language
-            create_main_tab(self)
-            create_settings_tab(self)
-            create_custom_prompt_tab(self)
-            create_api_usage_tab(self)
-            create_debug_tab(self)
-            
-            # Recreate About tab using the centralized function
-            self.create_about_tab()
-            
-            # Update translation model UI visibility based on current selection
-            self.ui_interaction_handler.update_translation_model_ui()
-            
-            # Update OCR model UI visibility based on current selection
-            self.ui_interaction_handler.update_ocr_model_ui()
-            
-            # Schedule a delayed OCR model UI update to ensure it takes effect after language change
-            self.root.after_idle(lambda: self.ui_interaction_handler.update_ocr_model_ui())
-            
-            # Update adaptive fields visibility based on current preprocessing mode
-            if hasattr(self, 'update_adaptive_fields_visibility'):
-                self.update_adaptive_fields_visibility()
-            
-            # Update translation model display variable with configured model from config
-            current_model_code = self.translation_model_var.get()
-            if current_model_code == 'gemini_api':
-                # For Gemini translation, read the specific model from config
-                saved_gemini_translation_model = self.config['Settings'].get('gemini_translation_model', '')
-                if saved_gemini_translation_model and self.GEMINI_API_AVAILABLE and saved_gemini_translation_model in self.gemini_models_manager.get_translation_model_names():
-                    self.translation_model_display_var.set(saved_gemini_translation_model)
-                    log_debug(f"Language change: Set translation model from config: {saved_gemini_translation_model}")
-                elif self.GEMINI_API_AVAILABLE and self.gemini_models_manager.get_translation_model_names():
-                    self.translation_model_display_var.set(self.gemini_models_manager.get_translation_model_names()[0])
-                    log_debug(f"Language change: Set translation model to first Gemini: {self.gemini_models_manager.get_translation_model_names()[0]}")
-                else:
-                    # Fallback to generic name
-                    new_display_name = self.translation_model_names.get(current_model_code, list(self.translation_model_names.values())[0])
-                    self.translation_model_display_var.set(new_display_name)
-                    log_debug(f"Language change: Set translation model to fallback: {new_display_name}")
-            elif current_model_code == 'openai_api':
-                # For OpenAI translation, read the specific model from config
-                saved_openai_translation_model = self.config['Settings'].get('openai_translation_model', '')
-                if saved_openai_translation_model and self.OPENAI_API_AVAILABLE and saved_openai_translation_model in self.openai_models_manager.get_translation_model_names():
-                    self.translation_model_display_var.set(saved_openai_translation_model)
-                    log_debug(f"Language change: Set translation model from config: {saved_openai_translation_model}")
-                elif self.OPENAI_API_AVAILABLE and self.openai_models_manager.get_translation_model_names():
-                    self.translation_model_display_var.set(self.openai_models_manager.get_translation_model_names()[0])
-                    log_debug(f"Language change: Set translation model to first OpenAI: {self.openai_models_manager.get_translation_model_names()[0]}")
-                else:
-                    # Fallback to generic name
-                    new_display_name = self.translation_model_names.get(current_model_code, list(self.translation_model_names.values())[0])
-                    self.translation_model_display_var.set(new_display_name)
-                    log_debug(f"Language change: Set translation model to fallback: {new_display_name}")
-            else:
-                # For other models, use the localized name
-                new_display_name = self.translation_model_names.get(current_model_code, list(self.translation_model_names.values())[0])
-                self.translation_model_display_var.set(new_display_name)
-                log_debug(f"Language change: Set translation model to localized name: {new_display_name}")
-            
-            # Update all dropdowns with localized names for current language
-            self.ui_interaction_handler.update_all_dropdowns_for_language_change()
-            
-            # Update DeepL model type dropdown if it exists
-            if hasattr(self, 'update_deepl_model_type_for_language'):
-                self.update_deepl_model_type_for_language()
-            
-            # Update Gemini context window dropdown if it exists
-            if hasattr(self, 'update_gemini_context_window_for_language'):
-                self.update_gemini_context_window_for_language()
-            
-            # Update Gemini labels if they exist
-            if hasattr(self, 'update_gemini_labels_for_language'):
-                self.update_gemini_labels_for_language()
-            
-            # Update DeepL usage labels if they exist
-            if hasattr(self, 'update_deepl_usage_for_language'):
-                self.update_deepl_usage_for_language()
-            
-            # Update API Usage tab labels if they exist
-            if hasattr(self, 'update_api_usage_tab_for_language'):
-                self.update_api_usage_tab_for_language()
-            
-            # Restore the tab change handler for focus behavior
-            def on_tab_changed(event):
-                selected_tab_index = self.tab_control.index(self.tab_control.select())
-                if selected_tab_index == 0 and hasattr(self, 'main_tab_start_button') and self.main_tab_start_button.winfo_exists():
-                    self.main_tab_start_button.focus_set()
-                elif selected_tab_index == 1 and hasattr(self, 'settings_tab_save_button') and self.settings_tab_save_button.winfo_exists():
-                    self.settings_tab_save_button.focus_set()
-                elif selected_tab_index == 2 and hasattr(self, 'refresh_api_statistics'):
-                    # API Usage tab - refresh statistics when accessed
-                    self.root.after(100, self.refresh_api_statistics)
-            
-            self.tab_control.bind("<<NotebookTabChanged>>", on_tab_changed)
-            
-            # Set back to the corresponding tab index that was selected before
-            if selected_tab:
-                try:
-                    # Since we've recreated all tabs, we need to find the index
-                    # where the tab was before.
-                    tab_index = int(selected_tab.split('.')[-1])
-                    if 0 <= tab_index < self.tab_control.index('end'):
-                        self.tab_control.select(tab_index)
-                except Exception as e:
-                    log_debug(f"Error restoring tab selection: {e}")
-                    # Default to first tab
-                    if self.tab_control.index('end') > 0:
-                        self.tab_control.select(0)
-            
-            # Update status label based on current state
-            if self.is_running:
-                status_text = "Status: " + self.ui_lang.get_label("status_running", "Running (Press ~ to Stop)")
-            else:
-                status_text = "Status: " + self.ui_lang.get_label("status_stopped", "Stopped (Press ~ to Start)")
-                if not self.KEYBOARD_AVAILABLE:
-                    status_text = self.ui_lang.get_label("status_ready", "Status: Ready")
-            self.status_label.config(text=status_text)
-            
-            # Update button state if translation is running
-            if self.is_running:
-                self.start_stop_btn.config(text=self.ui_lang.get_label("stop_btn"))
-            
-            # Update debug log toggle button text
-            if hasattr(self, 'debug_log_toggle_btn') and hasattr(self.debug_log_toggle_btn, 'winfo_exists') and self.debug_log_toggle_btn.winfo_exists():
-                if self.debug_logging_enabled_var.get():
-                    self.debug_log_toggle_btn.config(text=self.ui_lang.get_label("toggle_debug_log_disable_btn"))
-                else:
-                    self.debug_log_toggle_btn.config(text=self.ui_lang.get_label("toggle_debug_log_enable_btn"))
-            
-            log_debug(f"UI language completely rebuilt for: {self.ui_lang.current_lang}")
-        except Exception as e:
-            log_debug(f"Error updating UI language: {e}")
-        finally:
-            # Always end UI update operation to restore saves and traces
-            self.end_ui_update()
 
     def setup_network_cleanup(self):
         """Setup periodic network connection cleanup to prevent stack corruption."""
@@ -3028,11 +2088,12 @@ For more information, see the user manual."""
             
             # Schedule next cleanup in 20 minutes
             if self.is_running:  # Only schedule if application is still running
-                self.root.after(1200000, cleanup_network_connections)  # 20 minutes = 1200000ms
+                QTimer.singleShot(1200000, cleanup_network_connections)  # 20 minutes = 1200000ms
         
         # Start cleanup cycle after 20 minutes of operation
-        self.root.after(1200000, cleanup_network_connections)
+        QTimer.singleShot(1200000, cleanup_network_connections)
         log_debug("Scheduled periodic network cleanup every 20 minutes")
+
 
     def flush_dns_cache_if_needed(self):
         """Flush system DNS cache if network performance degrades."""
@@ -3057,109 +2118,6 @@ For more information, see the user manual."""
             except Exception as e:
                 log_debug(f"Could not flush DNS cache: {e}")
 
-    def on_closing(self):
-        log_debug("Main window close requested. Initiating shutdown...")
-        
-        # Close OCR Preview window if open
-        if self.ocr_preview_window is not None:
-            try:
-                log_debug("Closing OCR Preview window...")
-                self.close_ocr_preview()
-            except Exception as e:
-                log_debug(f"Error closing OCR Preview window: {e}")
-        
-        if self.is_running:
-            log_debug("Stopping running OCR/translation process before closing...")
-            self.toggle_translation()
-        else:
-             log_debug("Process was not running at close time.")
-
-        # # Force end any remaining sessions when application closes
-        # if hasattr(self, 'translation_handler'):
-        #     try:
-        #         self.translation_handler.force_end_sessions_on_app_close()
-        #     except Exception as e:
-        #         log_debug(f"Error ending sessions on app close: {e}")
-
-        if hasattr(self, 'marian_translator') and self.marian_translator and hasattr(self.marian_translator, 'thread_pool'):
-            try:
-                log_debug("Shutting down MarianMT thread pool...")
-                self.marian_translator.thread_pool.shutdown(wait=True, cancel_futures=True)
-                log_debug("MarianMT thread pool shutdown complete.")
-            except Exception as e_mtps:
-                log_debug(f"Error shutting down MarianMT thread pool: {e_mtps}")
-        
-        # Shutdown OCR and translation thread pools
-        if hasattr(self, 'ocr_thread_pool'):
-            try:
-                log_debug("Shutting down OCR thread pool...")
-                self.ocr_thread_pool.shutdown(wait=False, cancel_futures=True)
-                log_debug("OCR thread pool shutdown complete.")
-            except Exception as e_otp:
-                log_debug(f"Error shutting down OCR thread pool: {e_otp}")
-        
-        if hasattr(self, 'translation_thread_pool'):
-            try:
-                log_debug("Shutting down translation thread pool...")
-                self.translation_thread_pool.shutdown(wait=False, cancel_futures=True)
-                log_debug("Translation thread pool shutdown complete.")
-            except Exception as e_ttp:
-                log_debug(f"Error shutting down translation thread pool: {e_ttp}")
-        try:
-            log_debug("Saving final settings before closing...")
-            if self._fully_initialized:
-                # Save OCR Preview geometry if window is open
-                if self.ocr_preview_window is not None:
-                    self.save_preview_geometry()
-                self.save_settings() 
-            else: 
-                # Save OCR Preview geometry even if not fully initialized
-                if self.ocr_preview_window is not None:
-                    self.save_preview_geometry()
-                self.configuration_handler.save_current_window_geometry()
-                save_app_config(self.config)
-        except Exception as e_ssc:
-            log_debug(f"Error saving settings during closing: {e_ssc}")
-
-        if self.KEYBOARD_AVAILABLE:
-            try:
-                import keyboard
-                keyboard.unhook_all()
-                log_debug("Unhooked all keyboard shortcuts.")
-            except Exception as e_uhk:
-                log_debug(f"Error unhooking keyboard shortcuts: {e_uhk}")
-
-        log_debug("Destroying overlay windows if they exist...")
-        for overlay_attr_name in ['source_overlay', 'target_overlay']:
-            overlay_widget = getattr(self, overlay_attr_name, None)
-            if overlay_widget:
-                try:
-                    # Preserve target overlay position before destroying during shutdown
-                    if overlay_attr_name == 'target_overlay':
-                        from overlay_manager import _preserve_overlay_position
-                        _preserve_overlay_position(self)
-                        log_debug("Preserved target overlay position during app shutdown")
-                    
-                    # Handle tkinter overlays
-                    if hasattr(overlay_widget, 'winfo_exists') and overlay_widget.winfo_exists():
-                        overlay_widget.destroy()
-                    # Handle PySide overlays
-                    elif hasattr(overlay_widget, 'close'):
-                        overlay_widget.close()
-                        
-                except Exception as e_dow:
-                    log_debug(f"Error destroying {overlay_attr_name}: {e_dow}")
-            setattr(self, overlay_attr_name, None)
-        self.translation_text = None
-
-        log_debug("Destroying root window...")
-        try:
-            if self.root and hasattr(self.root, 'winfo_exists') and self.root.winfo_exists():
-                self.root.destroy()
-            log_debug("Root window destroyed.")
-        except Exception as e_drw:
-             log_debug(f"Error destroying root window: {e_drw}")
-        log_debug("Application shutdown sequence complete.")
 
     def load_custom_prompt(self):
         """Loads the custom prompt text from file."""
@@ -3173,6 +2131,18 @@ For more information, see the user manual."""
         except Exception as e:
             log_debug(f"Error loading custom prompt: {e}")
             self.custom_prompt_text = ""
+            
+        try:
+            if os.path.exists(self.custom_ocr_prompt_file):
+                with open(self.custom_ocr_prompt_file, 'r', encoding='utf-8-sig') as f:
+                    self.custom_ocr_prompt_text = f.read()
+                log_debug(f"Loaded custom OCR prompt ({len(self.custom_ocr_prompt_text)} characters)")
+            else:
+                self.custom_ocr_prompt_text = ""
+        except Exception as e:
+            log_debug(f"Error loading custom OCR prompt: {e}")
+            self.custom_ocr_prompt_text = ""
+
 
     def save_custom_prompt(self, text):
         """Saves the custom prompt text to file."""
@@ -3185,3 +2155,22 @@ For more information, see the user manual."""
         except Exception as e:
             log_debug(f"Error saving custom prompt: {e}")
             return False
+
+
+    def save_custom_ocr_prompt(self, text):
+        """Saves the custom OCR prompt text to file."""
+        try:
+            self.custom_ocr_prompt_text = text
+            with open(self.custom_ocr_prompt_file, 'w', encoding='utf-8-sig') as f:
+                f.write(text)
+            log_debug(f"Saved custom OCR prompt ({len(text)} characters)")
+            return True
+        except Exception as e:
+            log_debug(f"Error saving custom OCR prompt: {e}")
+            return False
+
+    def start_ui_update(self):
+        self._is_updating_ui = True
+        
+    def end_ui_update(self):
+        self._is_updating_ui = False

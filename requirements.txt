@@ -1,9 +1,9 @@
 # Core dependencies
 numpy>=1.19.0
 opencv-python>=4.5.0
-pytesseract>=0.3.8
 Pillow>=8.0.0
 pyautogui>=0.9.53
+mss>=9.0.0
 requests>=2.25.0
 
 # GUI framework for RTL translation overlays
@@ -14,15 +14,8 @@ requests>=2.25.0
 PySide6==6.7.3
 
 # Translation APIs
-google-cloud-translate>=3.0.0
 google-generativeai>=0.3.0
 deepl>=1.23.0
-openai>=1.0.0
-
-# Optional offline translation (MarianMT)
-transformers>=4.18.0
-torch>=1.10.0
-sentencepiece>=0.1.96
 
 # Optional keyboard controls
 keyboard>=0.13.5
@@ -30,6 +23,3 @@ keyboard>=0.13.5
 # RTL (Right-to-Left) text processing for proper BiDi display
 python-bidi>=0.4.2
 arabic-reshaper>=3.0.0
-
-# Improves GPU performance for MarianMT if available
-nvidia-ml-py3>=7.352.0; platform_system == "Windows"

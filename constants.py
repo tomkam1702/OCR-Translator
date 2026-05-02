@@ -2,14 +2,17 @@
 RTL_LANGUAGES = {
     'ar',     # Arabic
     'fa',     # Persian/Farsi
-    'he',     # Hebrew
+    'he',     # Hebrew (DeepL)
+    'iw',     # Hebrew (Gemini)
     'ur',     # Urdu
     'ku',     # Kurdish
     'sd',     # Sindhi
     'ps',     # Pashto
     'yi',     # Yiddish
     'ckb',    # Kurdish (Sorani) - DeepL Beta
-    'prs'     # Dari - DeepL Beta
+    'prs',    # Dari - DeepL Beta
+    'dv',     # Dhivehi - Gemini
+    'ug'      # Uyghur - Gemini
 }
 
 # DeepL Beta Languages (require enable_beta_languages=True and model_type="quality_optimized")
@@ -24,9 +27,9 @@ DEEPL_BETA_LANGUAGES = {
 }
 
 # Version Management - Centralized version control
-APP_VERSION = "v3.9.6"
-APP_RELEASE_DATE = "25 March 2026"
-APP_RELEASE_DATE_POLISH = "25 marca 2026"
+APP_VERSION = "v4.0.0"
+APP_RELEASE_DATE = "2 May 2026"
+APP_RELEASE_DATE_POLISH = "2 maja 2026 r."
 GITHUB_API_URL = "https://api.github.com/repos/tomkam1702/OCR-Translator/releases/latest"
 
 def parse_version(version_str):

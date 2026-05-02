@@ -6,69 +6,96 @@ from logger import log_debug
 from resource_handler import get_resource_path
 
 DEFAULT_CONFIG_SETTINGS = {
-    'tesseract_path': r'C:\Program Files\Tesseract-OCR\tesseract.exe',
     'scan_interval': '300', 
-    'stability_threshold': '0',
     'clear_translation_timeout': '3',
-    'image_preprocessing_mode': 'none',
-    'ocr_debugging': 'True',
-    'confidence_threshold': '50',
-    'remove_trailing_garbage': 'True',
-    'source_area_x1': '334',
-    'source_area_y1': '856',
-    'source_area_x2': '1579',
-    'source_area_y2': '1041',
-    'source_area_visible': '0', # Changed to string 'False' or 'True' later
-    'target_area_x1': '717',
-    'target_area_y1': '17',
-    'target_area_x2': '1612',
-    'target_area_y2': '178',
-    'source_area_colour': '#FFFF99',
+    'source_area_x1': '427',
+    'source_area_y1': '859',
+    'source_area_x2': '1538',
+    'source_area_y2': '1006',
+    'source_area_visible': '0',
+    'target_area_x1': '427',
+    'target_area_y1': '42',
+    'target_area_x2': '1538',
+    'target_area_y2': '201',
+    'source_area_colour': '#ffff99',
     'target_area_colour': '#162c43',
     'target_text_colour': '#ffffff',
-    'target_font_size': '18',
+    'target_font_size': '20',
     'target_font_type': 'Arial',
-    'num_beams': '2',
-    'google_translate_api_key': '',
+    'target_opacity': '0.85',
+    'target_text_opacity': '1.0',    
     'deepl_api_key': '',
-    'main_window_geometry': '619x728+6+23', # This seems to be a complete geometry string
-    'main_window_width': '619',   # Keep these for individual component loading
-    'main_window_height': '728',
-    'main_window_x': '6',
-    'main_window_y': '23',
-    'translation_model': 'marianmt', # Default model
-    'marian_models_file': '', # Will be set dynamically in load_app_config
-    'marian_model': 'Helsinki-NLP/opus-mt-fr-en', # Default MarianMT model
-    'google_file_cache': 'True',
+    'translation_model': 'gemini_api',
     'deepl_file_cache': 'True',
+    'deepl_context_window': '2',
     'debug_logging_enabled': 'False',
     # Model-specific language defaults
-    'google_source_lang': 'pl',
-    'google_target_lang': 'en',
+    'gemini_source_lang': 'ja',
+    'gemini_target_lang': 'en',
     'deepl_source_lang': 'DE',
-    'deepl_target_lang': 'EN-GB', # DeepL's code for English (British)
-    'deepl_model_type': 'latency_optimized', # Default to classic model for compatibility
+    'deepl_target_lang': 'EN-GB',
     'gui_language':'English',
-    # OCR Model Selection (Phase 1 - Gemini OCR)
-    'ocr_model': 'tesseract',  # 'tesseract' or 'gemini'
-    # Adaptive thresholding parameters
-    'adaptive_block_size': '41',
-    'adaptive_c': '-60',
-    # OCR Preview window geometry
-    'ocr_preview_geometry': '600x800+100+100',
-    'ocr_preview_width': '600',
-    'ocr_preview_height': '800',
-    'ocr_preview_x': '100',
-    'ocr_preview_y': '100',
+    # OCR Model Selection (Gemini OCR only)
+    'ocr_model': 'gemini',
     # Gemini API settings
-    'gemini_model_name': 'gemini-2.5-flash-lite',
     'gemini_model_temp': '0.0',
     # Separate Gemini model selection for OCR and Translation
-    'gemini_translation_model': 'Gemini 2.5 Flash-Lite',
-    'gemini_ocr_model': 'Gemini 2.5 Flash-Lite',
+    'gemini_translation_model': 'Gemini 3.1 Flash-Lite',
+    'gemini_ocr_model': 'Gemini 3.1 Flash-Lite (Low)',
+    'gemini_context_window': '3',    
     'keep_linebreaks': 'False',
     # Auto-update settings
-    'check_for_updates_on_startup': 'yes'
+    'check_for_updates_on_startup': 'yes',
+    # Auto-detection settings
+    'auto_detect_enabled': 'False',
+    'target_on_source_enabled': 'False',
+    'capture_padding_enabled': 'False',
+    'capture_padding': '100',
+    'discovery_timeout': '120',
+    'custom_prompt_enabled': 'False',
+    'custom_ocr_prompt_enabled': 'False',
+    'config_mode': 'Simple',
+    'ui_visibility_mode': 'Hide',
+    'top_visibility_mode': 'Show',
+    'window_x': '-1',
+    'window_y': '-1',
+    'window_width': '-1',
+    'window_height_show': '-1',
+}
+
+# Hardcoded settings for Simple configuration mode.
+# When config_mode is 'Simple', these values override the corresponding
+# keys from ocr_translator_config.ini. Keys NOT listed here are always
+# read from the ini file regardless of mode.
+SIMPLE_CONFIG_SETTINGS = {
+    'scan_interval': '500',
+    'clear_translation_timeout': '3',
+    'source_area_colour': '#ffff99',
+    'target_area_colour': '#162c43',
+    'target_text_colour': '#ffffff',
+    'target_font_size': '20',
+    'target_font_type': 'Arial',
+    'translation_model': 'gemini_api',
+    'ocr_model': 'gemini',
+    'gemini_model_temp': '0.0',
+    'gemini_translation_model': 'Gemini 3.1 Flash-Lite',
+    'gemini_ocr_model': 'Gemini 3.1 Flash-Lite (Low)',
+    'keep_linebreaks': 'False',
+    'auto_detect_enabled': 'False',
+    'target_on_source_enabled': 'False',
+    'capture_padding_enabled': 'False',
+    'capture_padding': '100',
+    'target_opacity': '0.85',
+    'target_text_opacity': '1.0',
+    'gemini_context_window': '3',
+    'deepl_file_cache': 'True',
+    'gemini_file_cache': 'True',
+    'debug_logging_enabled': 'False',
+    'gemini_api_log_enabled': 'True',
+    'custom_prompt_enabled': 'False',
+    'custom_ocr_prompt_enabled': 'False',
+    'gemini_source_lang': 'auto',
+    'deepl_source_lang': 'auto',
 }
 
 
@@ -76,12 +103,8 @@ def load_app_config():
     """Loads configuration from INI file or creates default values."""
     config_path = 'ocr_translator_config.ini'
     config = configparser.ConfigParser()
-    
-    default_marian_models_path_val = get_resource_path("resources/MarianMT_select_models.csv")
-    log_debug(f"Default MarianMT models path set to: {default_marian_models_path_val}")
 
     dynamic_defaults = DEFAULT_CONFIG_SETTINGS.copy()
-    dynamic_defaults['marian_models_file'] = default_marian_models_path_val
 
     if os.path.exists(config_path):
         try:
@@ -103,24 +126,51 @@ def load_app_config():
     obsolete_keys = ['api_key', 'gpu_enabled', 'spell_check_enabled', 'word_segmentation_enabled',
                     'spell_check_language', 'subtitle_mode', 'parallel_processing', 'target_text_bg_color',
                     'nllb_beam_size', 'source_lang', 'target_lang', 'ocr_lang', 'gemini_fuzzy_detection',
-                    'input_token_cost', 'output_token_cost']  # Removed obsolete cost settings 
+                    'input_token_cost', 'output_token_cost',
+                    # Removed providers (Tesseract, MarianMT, Google Translate, OpenAI)
+                    'tesseract_path', 'stability_threshold', 'image_preprocessing_mode',
+                    'ocr_debugging', 'confidence_threshold', 'remove_trailing_garbage',
+                    'adaptive_block_size', 'adaptive_c', 'num_beams',
+                    'ocr_preview_geometry', 'ocr_preview_width', 'ocr_preview_height',
+                    'ocr_preview_x', 'ocr_preview_y',
+                    'google_translate_api_key', 'google_file_cache',
+                    'google_source_lang', 'google_target_lang',
+                    'marian_models_file', 'marian_model',
+                    'openai_api_key', 'openai_context_window', 'openai_file_cache',
+                    'openai_api_log_enabled', 'openai_translation_model', 'openai_ocr_model',
+                    'openai_source_lang', 'openai_target_lang',
+                    'deepl_model_type',
+                    'main_window_geometry', 'main_window_width', 'main_window_height',
+                    'main_window_x', 'main_window_y']
     for key in obsolete_keys:
         if key in config_settings:
             del config_settings[key]
             settings_changed = True
             log_debug(f"Config: Removed obsolete '{key}' setting.")
 
+    # Migrate old model selections to Gemini
+    current_translation_model = config_settings.get('translation_model', 'gemini_api')
+    if current_translation_model in ('marianmt', 'google_api', 'openai_api') or current_translation_model.startswith('openai_'):
+        config_settings['translation_model'] = 'gemini_api'
+        settings_changed = True
+        log_debug(f"Config: Migrated obsolete translation_model '{current_translation_model}' to 'gemini_api'")
+
+    current_ocr_model = config_settings.get('ocr_model', 'gemini')
+    if current_ocr_model == 'tesseract' or current_ocr_model.startswith('openai'):
+        config_settings['ocr_model'] = 'gemini'
+        settings_changed = True
+        log_debug(f"Config: Migrated obsolete ocr_model '{current_ocr_model}' to 'gemini'")
+
     for key, value in dynamic_defaults.items():
         if key not in config_settings:
+            # Only add discovery_timeout from defaults if the file is being created from scratch
+            if key == 'discovery_timeout' and os.path.exists(config_path):
+                continue
             config_settings[key] = value
             settings_changed = True
             log_debug(f"Config: Added missing key '{key}' with default value '{value}'.")
 
-    current_mode = config_settings.get('image_preprocessing_mode', 'none')
-    if current_mode not in ['none', 'binary', 'binary_inv', 'adaptive']:
-        config_settings['image_preprocessing_mode'] = 'none'
-        settings_changed = True
-        log_debug(f"Config: Invalid preprocessing mode '{current_mode}' changed to 'none'")
+
 
     if settings_changed or not os.path.exists(config_path):
          try:
@@ -142,107 +192,6 @@ def save_app_config(config_object):
         log_debug(f"Error writing settings to file: {file_err}")
         return False
 
-def load_main_window_geometry(app_config, root_window, min_size):
-    try:
-        # Try loading from individual components first, then full geometry string
-        width_str = app_config['Settings'].get('main_window_width')
-        height_str = app_config['Settings'].get('main_window_height')
-        x_str = app_config['Settings'].get('main_window_x')
-        y_str = app_config['Settings'].get('main_window_y')
-
-        if all([width_str, height_str, x_str, y_str]):
-            width = int(width_str)
-            height = int(height_str)
-            x = int(x_str)
-            y = int(y_str)
-        else: # Fallback to full geometry string
-            geometry_str = app_config['Settings'].get('main_window_geometry', '600x480+100+100')
-            parts = geometry_str.split('+')[0].split('x') + geometry_str.split('+')[1:]
-            width, height, x, y = map(int, parts)
-
-        width = max(min_size[0], width)
-        height = max(min_size[1], height)
-        root_window.geometry(f"{width}x{height}+{x}+{y}")
-        log_debug(f"Loaded window geometry: {width}x{height}+{x}+{y}")
-    except Exception as e:
-        log_debug(f"Error loading window geometry: {e}. Using default 600x480+100+100.")
-        root_window.geometry("600x480+100+100")
 
 
-def save_main_window_geometry(app_config, root_window):
-    try:
-        if not root_window or not root_window.winfo_exists():
-            log_debug("Window does not exist, cannot save geometry.")
-            return
-            
-        geometry = root_window.geometry() # Full string e.g. "680x927+15+14"
-        width = root_window.winfo_width()
-        height = root_window.winfo_height()
-        x = root_window.winfo_x()
-        y = root_window.winfo_y()
-
-        if width > 0 and height > 0:
-            app_config['Settings']['main_window_geometry'] = geometry
-            app_config['Settings']['main_window_width'] = str(width)
-            app_config['Settings']['main_window_height'] = str(height)
-            app_config['Settings']['main_window_x'] = str(x)
-            app_config['Settings']['main_window_y'] = str(y)
-            log_debug(f"Updated geometry in config object: {geometry}")
-        else:
-             log_debug(f"Skipping geometry save due to invalid dimensions: W={width}, H={height}")
-    except Exception as e:
-        log_debug(f"Error updating window geometry in config object: {e}")
-
-
-def load_ocr_preview_geometry(app_config, preview_window, min_size=(400, 500)):
-    """Load OCR Preview window geometry from config"""
-    try:
-        # Try loading from individual components first, then full geometry string
-        width_str = app_config['Settings'].get('ocr_preview_width')
-        height_str = app_config['Settings'].get('ocr_preview_height')
-        x_str = app_config['Settings'].get('ocr_preview_x')
-        y_str = app_config['Settings'].get('ocr_preview_y')
-
-        if all([width_str, height_str, x_str, y_str]):
-            width = int(width_str)
-            height = int(height_str)
-            x = int(x_str)
-            y = int(y_str)
-        else: # Fallback to full geometry string
-            geometry_str = app_config['Settings'].get('ocr_preview_geometry', '600x800+100+100')
-            parts = geometry_str.split('+')[0].split('x') + geometry_str.split('+')[1:]
-            width, height, x, y = map(int, parts)
-
-        width = max(min_size[0], width)
-        height = max(min_size[1], height)
-        preview_window.geometry(f"{width}x{height}+{x}+{y}")
-        log_debug(f"Loaded OCR Preview window geometry: {width}x{height}+{x}+{y}")
-    except Exception as e:
-        log_debug(f"Error loading OCR Preview window geometry: {e}. Using default 600x800+100+100.")
-        preview_window.geometry("600x800+100+100")
-
-
-def save_ocr_preview_geometry(app_config, preview_window):
-    """Save OCR Preview window geometry to config"""
-    try:
-        if not preview_window or not preview_window.winfo_exists():
-            log_debug("OCR Preview window does not exist, cannot save geometry.")
-            return
-            
-        geometry = preview_window.geometry() # Full string e.g. "680x927+15+14"
-        width = preview_window.winfo_width()
-        height = preview_window.winfo_height()
-        x = preview_window.winfo_x()
-        y = preview_window.winfo_y()
-
-        if width > 0 and height > 0:
-            app_config['Settings']['ocr_preview_geometry'] = geometry
-            app_config['Settings']['ocr_preview_width'] = str(width)
-            app_config['Settings']['ocr_preview_height'] = str(height)
-            app_config['Settings']['ocr_preview_x'] = str(x)
-            app_config['Settings']['ocr_preview_y'] = str(y)
-            log_debug(f"Updated OCR Preview geometry in config object: {geometry}")
-        else:
-             log_debug(f"Skipping OCR Preview geometry save due to invalid dimensions: W={width}, H={height}")
-    except Exception as e:
-        log_debug(f"Error updating OCR Preview window geometry in config object: {e}")
+

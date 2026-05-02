@@ -5,6 +5,27 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-05-02
+
+### Added
+- **Complete Architectural Redesign**: Application rebuilt from the ground up with a brand-new engine for superior responsiveness and stability.
+- **Dual Interface Modes**:
+  - **Simple Mode**: Streamlined, hassle-free operation with auto-detection.
+  - **Custom Mode**: Granular control over all advanced parameters.
+- **PRO Feature Set**:
+  - **Find Subtitles**: Automated screen scanning to detect and lock onto subtitle areas.
+  - **Target on Source**: Immersive overlay that places translations directly on top of original subtitles.
+  - **Scan Wider**: Adaptive capture area expansion to prevent text truncation.
+  - **OCR Prompt**: Custom AI instructions to filter HUD elements or speaker names during recognition.
+
+### Changed
+- **API-Only Architecture**: Fully transitioned to a state-of-the-art AI-driven workflow (requires Gemini API key).
+- **Branding**: Shifted to a professional "PRO" licensing model for advanced functionality.
+
+### Removed
+- **Legacy Offline Engines**: Retired Tesseract OCR and MarianMT translation to maintain high-quality AI standards.
+- **Streamlined Providers**: Removed OpenAI and Google Translate support to focus on the most effective and cost-efficient engines.
+
 ## [3.9.5] - 2026-02-19
 
 ### Added

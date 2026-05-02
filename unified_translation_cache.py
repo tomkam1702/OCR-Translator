@@ -35,13 +35,8 @@ class UnifiedTranslationCache:
         
         # Include provider-specific parameters in the key
         params_str = ""
-        if provider == "marianmt" and "beam_size" in kwargs:
-            params_str = f"_beam{kwargs['beam_size']}"
-        elif provider == "deepl_api" and "model_type" in kwargs:
+        if provider == "deepl_api" and "model_type" in kwargs:
             params_str = f"_model{kwargs['model_type']}"
-        elif provider == "google_api" and "format" in kwargs:
-            params_str = f"_fmt{kwargs['format']}"
-        # Add more provider-specific parameters as needed
         
         params_hash = hashlib.md5(params_str.encode('utf-8')).hexdigest()[:8] if params_str else ""
         
@@ -55,8 +50,8 @@ class UnifiedTranslationCache:
             text: Source text to translate
             source_lang: Source language code
             target_lang: Target language code  
-            provider: Translation provider ('google_api', 'deepl_api', 'marianmt')
-            **kwargs: Provider-specific parameters (e.g., beam_size for MarianMT, model_type for DeepL)
+            provider: Translation provider ('deepl_api', 'gemini_api')
+            **kwargs: Provider-specific parameters (e.g., model_type for DeepL)
             
         Returns:
             Cached translation if found, None otherwise
@@ -91,9 +86,9 @@ class UnifiedTranslationCache:
             text: Source text that was translated
             source_lang: Source language code
             target_lang: Target language code
-            provider: Translation provider ('google_api', 'deepl_api', 'marianmt')
+            provider: Translation provider ('deepl_api', 'gemini_api')
             translation: The translated text
-            **kwargs: Provider-specific parameters (e.g., beam_size for MarianMT, model_type for DeepL)
+            **kwargs: Provider-specific parameters (e.g., model_type for DeepL)
         """
         cache_key = self._generate_cache_key(text, source_lang, target_lang, provider, **kwargs)
         

@@ -1,9 +1,7 @@
 import re
 from logger import log_debug
 
-# Note: This function is retained for backward compatibility but should be replaced 
-# with the LanguageManager class for new code. Translation handlers should use
-# language_manager.get_tesseract_code() instead.
+
 def get_lang_code_for_translation_api(lang_code):
     """Converts various language codes to standard ISO 639-1 for translation APIs."""
     code_map = {

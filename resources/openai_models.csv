@@ -1,4 +1,0 @@
-Model Name,API Name,Input Cost per 1M,Output Cost per 1M,Translation,OCR
-GPT 5 Nano,gpt-5-nano,0.05,0.4,yes,yes
-GPT 4.1 Mini,gpt-4.1-mini,0.4,1.6,yes,yes
-GPT 4.1 Nano,gpt-4.1-nano,0.1,0.4,yes,yes

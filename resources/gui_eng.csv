@@ -1,7 +1,14 @@
 key,value
 main_tab_title,Home
-select_source_btn,Select Source Area (OCR)
-select_target_btn,Select Target Area (Translation)
+select_source_btn,Source
+select_target_btn,Target
+auto_detect_label,Find Subtitles
+target_on_source_label,Target on Source
+capture_padding_label,Scan Wider
+capture_padding_suffix,%
+tooltip_find_subtitles,"Automatically scans the full screen for a set period to\ndetect where subtitles appear, then locks the capture area."
+tooltip_scan_wider,Expands the captured image beyond the source area for richer\nvisual context. Improves OCR accuracy and reduces misreadings.
+tooltip_target_on_source,"Automatically positions the translation window directly\non top of the source area, covering the original subtitles."
 start_btn,Start
 stop_btn,Stop
 hide_source_btn,Hide/Show Source Window
@@ -10,7 +17,24 @@ clear_cache_btn,Clear Translation Cache
 clear_debug_log_btn,Clear Debug Log
 toggle_debug_log_disable_btn,Disable Debug Log
 toggle_debug_log_enable_btn,Enable Debug Log
-gui_language_label,GUI Language
+gui_language_label,Interface Language
+gui_language_dropdown_label,Language:
+behavior_frame_title,App Behaviour
+appearance_frame_title,Appearance
+performance_frame_title,Caching and Debugging
+keep_linebreaks_label,Keep Linebreaks
+check_for_updates_btn,Check for Updates
+premium_license_title,PRO Licence 👑
+pro_key_placeholder,Enter PRO licence code...
+activate_pro_btn,Activate PRO Key
+refresh_stats_btn,Refresh Stats
+export_csv_btn,Export (CSV)
+copy_stats_btn,Copy to Clipboard
+released_label,Released
+copyright_label,Copyright © 2025-2026 Tomasz Kamiński
+about_description,"This application was developed in Python using the following AI models: Claude Sonnet and Claude Opus, Gemini Flash and Gemini Pro, and the following tools: Claude Desktop, Google Antigravity and Gemini CLI."
+about_info_manual,"For more information, see the user manual."
+about_other_tool_link_desc,Historical daily data reconstruction for Binance and Bybit perpetuals with custom session close times.
 keyboard_shortcuts_title,Keyboard Shortcuts
 status_ready,Status: Ready
 status_ready_hotkey,Status: Ready (Press ~ to Start/Stop)
@@ -18,20 +42,20 @@ shortcut_start_stop,Start/Stop Translation
 shortcut_toggle_source,Toggle Source Window Visibility
 shortcut_toggle_target,Toggle Translation Window Visibility
 shortcut_save_settings,Save Settings
-shortcut_clear_cache,Clear Cache
+shortcut_clear_file_caches,Clear File Caches
+shortcut_clear_cache,Clear Translation Cache
 shortcut_clear_log,Clear Debug Log
+shortcut_reset_window,Reset App Window
 status_running,Running (Press ~ to Stop)
 status_stopped,Stopped (Press ~ to Start)
 settings_tab_title,Settings
 translation_model_label,Translation Model:
-translation_model_marianmt_offline,MarianMT (offline and free)
+models_and_context_section_label,Models and Context
 ocr_model_label,OCR Model:
-ocr_model_tesseract,Tesseract (offline)
 ocr_model_gemini,Gemini API (online)
 source_lang_label,Source Language:
+detect_language,< Detect language >
 target_lang_label,Target Language:
-marian_model_label,MarianMT Model:
-google_api_key_label,Google Translate API Key:
 deepl_api_key_label,DeepL API Key:
 gemini_api_key_label,Gemini API Key:
 deepl_model_type_label,Quality:
@@ -42,14 +66,6 @@ gemini_context_window_2,2 (Two subtitles)
 gemini_context_window_3,3 (Three subtitles)
 gemini_context_window_4,4 (Four subtitles)
 gemini_context_window_5,5 (Five subtitles)
-openai_api_key_label,OpenAI API Key:
-openai_context_window_label,Context Window:
-openai_context_window_0,0 (Disabled)
-openai_context_window_1,1 (Last subtitle)
-openai_context_window_2,2 (Two subtitles)
-openai_context_window_3,3 (Three subtitles)
-openai_context_window_4,4 (Four subtitles)
-openai_context_window_5,5 (Five subtitles)
 deepl_classic_model,Classic
 deepl_nextgen_model,Next-gen
 deepl_context_window_label,Context Window:
@@ -57,38 +73,26 @@ deepl_context_window_0,0 (Disabled)
 deepl_context_window_1,1 (Last subtitle)
 deepl_context_window_2,2 (Two subtitles)
 deepl_context_window_3,3 (Three subtitles)
-models_file_label,MarianMT Model List:
-beam_size_label,Translation Beam Size (MarianMT):
-tesseract_path_label,Tesseract Path:
 scan_interval_label,Scan Interval (ms):
 clear_timeout_label,Clear Translation Timeout (s):
-stability_threshold_label,Text Stability Threshold:
-confidence_threshold_label,OCR Confidence Threshold:
-preprocessing_mode_label,Image Preprocessing Mode:
-ocr_debugging_label,OCR Debugging:
-show_debug_checkbox,Show debug images/text
-preview_btn,Preview
-adaptive_block_size_label,"Block Size (3-101, odd)":
-adaptive_c_label,"C Value (-75 to 75)":
-remove_trailing_label,Remove Trailing Garbage:
-remove_trailing_checkbox,Remove text after last punctuation
+discovery_timeout_label,Time:
+discovery_timeout_unit,s
 source_color_label,Source Area Colour:
 target_color_label,Target Area Colour:
 target_text_color_label,Target Text Colour:
 font_size_label,Target Window Font Size:
 font_type_label,Target Window Font Type:
-opacity_label,Opacity:
-opacity_background_label,Background:
-opacity_text_label,Text:
+opacity_background_label,Opacity Background:
+opacity_text_label,Opacity Text:
 file_cache_frame_title,File Caching Options
 file_cache_description,"File caching saves translations to disk to reduce API costs, and improves performance."
-google_cache_checkbox,"Enable Google Translate file cache (saves to disk, reduces API calls)"
-deepl_cache_checkbox,"Enable DeepL file cache (saves to disk, reduces API calls)"
-gemini_file_cache_checkbox,"Enable Gemini file cache (saves to disk, reduces API calls)"
-openai_file_cache_checkbox,"Enable OpenAI file cache (saves to disk, reduces API calls)"
+gemini_file_cache_checkbox,Enable Gemini file cache (gemini_cache.txt)
+deepl_file_cache_checkbox,Enable DeepL file cache (deepl_cache.txt)
+deepl_cache_file_label,DeepL cache file:
+gemini_cache_file_label,Gemini cache file:
 cache_files_label,Cache files:
 clear_caches_btn,Clear File Caches
-save_settings_btn,Save Settings Now
+save_settings_btn,Save Settings
 browse_btn,Browse
 show_btn,Show
 hide_btn,Hide
@@ -96,27 +100,15 @@ choose_color_btn,Choose Colour
 debug_tab_title,Debugging
 original_image_label,Original Image
 processed_image_label,Processed Image
-ocr_results_label,Tesseract OCR Results
-ocr_results_placeholder,OCR results will appear here when translation is running and Tesseract is selected as the OCR model.
+ocr_results_label,Wyniki OCR
+ocr_results_placeholder,OCR results will appear here when translation is running.
 app_log_label,Application Log
 save_debug_images_btn,Save OCR Images
 refresh_log_btn,Refresh Log
-preprocessing_none,None
-preprocessing_binary,Binary
-preprocessing_binary_inv,Binary Inverted
-preprocessing_adaptive,Adaptive
 about_tab_title,About
 settings_saved,Status: Settings Saved
 no_image_captured,No image captured yet
 no_image_processed,No image processed yet
-marian_beam_explanation,Higher beam values = better but slower translations
-marian_quality_note,Note: MarianMT provides high quality translations
-marian_quality_vary,"for many language pairs. Quality may vary by language."
-marian_download_note,"Models are downloaded on first use (requires Internet)."
-marian_unavailable_line1,"MarianMT is not available. To enable, install:"
-marian_unavailable_line2,pip install transformers torch sentencepiece
-browse_marian_models_title,Select MarianMT Models CSV File
-browse_tesseract_title,Select tesseract.exe
 choose_source_color_title,Choose Source Colour
 choose_target_color_title,Choose Target Colour
 choose_target_text_color_title,Choose Target Text Colour
@@ -127,13 +119,7 @@ dialog_debug_images_saved_title,OCR Images Saved
 dialog_debug_images_saved_message,Images saved to '{0}'.
 dialog_debug_image_saved_title,OCR Image Saved
 dialog_debug_image_saved_message,Original image saved to '{0}'. No processed image.
-ocr_preview_title,OCR Preview
-processed_image_preview,Processed Image (1:1 scale)
-recognized_text_preview,Recognized Text
-refresh_preview,Refresh Preview
-close_btn,Close
-no_text_recognized,No text recognized
-no_image_for_ocr,No image available for OCR
+close_btn,Zamknij
 gemini_total_words_label,Total Words
 gemini_total_cost_label,Total Cost
 gemini_enable_api_log_checkbox,Enable API Log
@@ -145,9 +131,6 @@ api_usage_tab_title,API Usage
 api_usage_section_gemini_ocr,📊 Gemini OCR Statistics
 api_usage_section_gemini_translation,🔄 Gemini Translation Statistics
 api_usage_section_gemini_combined,💰 Combined Gemini Statistics
-api_usage_section_openai_ocr,📊 OpenAI OCR Statistics
-api_usage_section_openai_translation,🔄 OpenAI Translation Statistics
-api_usage_section_openai_combined,💰 Combined OpenAI Statistics
 api_usage_section_deepl,📈 DeepL Usage Tracker
 api_usage_total_ocr_calls,Total OCR Calls:
 api_usage_median_duration_ocr,Median Duration:
@@ -164,13 +147,12 @@ api_usage_total_translation_cost,Total Translation Cost:
 api_usage_combined_cost_per_minute,Combined Cost per Minute:
 api_usage_combined_cost_per_hour,Combined Cost per Hour:
 api_usage_total_api_cost,Total API Cost:
-api_usage_refresh_btn,Refresh Statistics
-api_usage_export_csv_btn,Export to CSV
-api_usage_export_text_btn,Export to Text
-api_usage_copy_btn,Copy
+api_usage_refresh_btn,Refresh
+api_usage_export_csv_btn,Save as CSV
+api_usage_export_text_btn,Save as TXT
+api_usage_copy_btn,Kopiuj
 api_usage_no_data,No data available
-api_usage_info_note,"ℹ️ Note: These statistics are based on short log files (Short_Log). Statistics will be reset if these files are deleted or cleared. Estimated cost tracking is provided for reference purposes only. You are solely responsible for monitoring the usage and costs of individual providers' APIs."
-check_for_updates_btn,Check for Updates
+api_usage_info_note,ℹ️ Note: These statistics are based on short log files (Short_Log). Statistics will be reset if these files are deleted or cleared. Estimated cost tracking is provided for reference purposes only. You are solely responsible for monitoring the usage and costs of individual providers' APIs.
 check_for_updates_on_startup,Check for updates on startup
 check_updates_title,Checking for Updates
 check_updates_msg,Checking for updates...
@@ -194,7 +176,7 @@ download_error_detail,Error downloading update:
 apply_update_title,Apply Update
 apply_update_msg,Update downloaded successfully!
 apply_update_detail,The application will close and automatically restart with the new version.
-apply_update_continue,Click OK to continue.
+apply_update_continue,"Click OK to continue."
 applying_update_title,Applying Update
 applying_update_msg,Update is being applied...
 applying_update_restart,The application will restart automatically.
@@ -224,7 +206,7 @@ gemini_reset_error_msg,Could not access Gemini log file.
 gemini_reset_error_failed,Failed to reset Gemini API log:
 stats_clipboard_header,Game-Changing Translator - API Usage Statistics
 stats_section_ocr_header,📊 Gemini OCR Statistics
-stats_section_translation_header,🔄 Gemini Translation Statistics  
+stats_section_translation_header,🔄 Gemini Translation Statistics
 stats_section_combined_header,💰 Combined API Statistics
 stats_section_deepl_header,📈 DeepL Usage Monitor
 stats_deepl_free_limit,Free Monthly Limit:
@@ -233,7 +215,7 @@ stats_cost_per_min_suffix,/min
 stats_cost_per_hr_suffix,/hr
 stats_duration_suffix,s
 currency_usd, USD
-mb_progress_of, MB of 
+mb_progress_of, MB of
 mb_progress_format, MB ({0}%)
 export_csv_dialog_title,Export Statistics to CSV
 export_text_dialog_title,Export Statistics to Text
@@ -262,16 +244,56 @@ stats_text_combined_cost_per_hour,Combined Cost per Hour
 stats_text_ocr_header_gemini,📊 Gemini OCR Statistics
 stats_text_trans_header_gemini,🔄 Gemini Translation Statistics
 stats_text_combined_header_gemini,💰 Combined Gemini Statistics
-stats_text_ocr_header_openai,📊 OpenAI OCR Statistics
-stats_text_trans_header_openai,🔄 OpenAI Translation Statistics
-stats_text_combined_header_openai,💰 Combined OpenAI Statistics
 stats_text_deepl_header,📈 DeepL Usage Monitor
 stats_report_generated,Report generated:
 custom_prompt_tab_title,Custom Prompt
-custom_prompt_info,"This text will be added at the beginning of the translation instruction for Gemini, OpenAI and DeepL translations. It will be used for EVERY API call. Make it as short as possible to save costs. Use English for best results."
+custom_prompt_translation_title,Translation Prompt
+custom_prompt_ocr_title,OCR Prompt
+custom_prompt_info,This text will be added at the beginning of the translation instruction for Gemini and DeepL translations. It will be used for EVERY API call. Make it as short as possible to save costs. Use English for best results.
+custom_prompt_ocr_info,"This text will be added as a custom OCR instruction for Gemini. It will be used for EVERY API call. Make it as short as possible to save costs. Use English for best results."
 custom_prompt_saved,Custom prompt saved successfully!
 custom_prompt_save_error,Failed to save custom prompt.
 save_btn,Save
 reload_btn,Reload
+custom_prompt_enabled_label,Enabled
+stats_total_calls,Total Calls
+stats_cost,Cost
+stats_words,Words
+stats_usage,Usage
 about_other_tool_header,Check my other tool:
 about_other_tool_desc,OHLC Forge – Historical daily data reconstruction for Binance and Bybit perpetuals with custom session close times.
+gemini_api_key_placeholder,Mandatory field
+deepl_api_key_placeholder,Optional field
+shortcuts_tab_title,Shortcuts
+status_cache_cleared,File caches cleared.
+status_trans_cache_cleared,Translation cache cleared.
+status_debug_log_cleared,Debug log cleared.
+status_settings_saved_auto,Settings saved automatically.
+status_settings_saved,Settings saved.
+stats_no_data,No data
+about_app_description,"Game-Changing Translator is a desktop application that automatically captures text from any area of your screen, performs optical character recognition (OCR), and translates the text in real-time. You can use it for translating video game subtitles or any other text that you can't easily copy."
+config_mode_simple,Simple
+config_mode_advanced,Custom
+ui_visibility_show,Show
+ui_visibility_hide,Hide
+gemini_api_key_label,Gemini API Key:
+deepl_api_key_label,DeepL API Key:
+status_mode_prefix,Mode
+shortcut_screenshot,Take Screenshot
+screenshot_saved_toast,📸 Screenshot saved:
+tooltip_help_info,View in user manual
+tooltip_help_idea,Read in-depth guide
+tooltip_open_user_manual,Open user manual
+error_no_gemini_key,Provide your Gemini API key first.
+error_no_deepl_key,Provide your DeepL API key first.
+status_licence,Licence:
+expand_top_area,Show languages and API keys
+collapse_top_area,Hide languages and API keys
+pro_licence_active,PRO licence active.
+pro_activations_used,{0} of {1} activations used.
+pro_machine_mismatch_title,Licence Error
+pro_machine_mismatch_msg,The saved PRO licence is for a different computer. Please activate again.
+about_pro_msg_1,"To use PRO features, download the"
+about_pro_msg_2,"compiled version"
+about_pro_msg_3,"and buy a PRO licence on"
+about_pro_msg_4,Gumroad
