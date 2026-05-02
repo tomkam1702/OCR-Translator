@@ -113,16 +113,11 @@ class AbstractLLMProvider(ABC):
     
     def _initialize_logging_paths(self):
         """Initialize provider-specific logging file paths."""
-        import sys
+        import nuitka_compat
         
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            base_dir = os.path.dirname(sys.executable)
-        else:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        base_dir = nuitka_compat.get_base_dir()
         
         provider_title = self.provider_name.title()
-        if self.provider_name == "openai":
-            provider_title = "OpenAI"
         
         self.main_log_file = os.path.join(base_dir, f"{provider_title}_Translation_Long_Log.txt")
         self.short_log_file = os.path.join(base_dir, f"{provider_title}_Translation_Short_Log.txt")
@@ -296,45 +291,50 @@ Purpose: Concise {self.provider_name} translation call results and statistics
     def _build_context_string(self, text, source_lang, target_lang):
         """Build context string with identical format for all providers (Gemini's format)."""
         # Get display names for source and target languages
-        source_lang_name = self._get_language_display_name(source_lang)
+        # 'the source language' for instruction, 'SOURCE' for body/labels
+        source_lang_instr = self._get_language_display_name(source_lang, for_instruction=True)
+        source_lang_body = self._get_language_display_name(source_lang)
         target_lang_name = self._get_language_display_name(target_lang)
         
         # Get context window size
         context_size = self._get_context_window_size()
         
         # Add linebreak instruction conditionally
-        # linebreak_instruction = "Use <br> as in the source text. " if self.app.keep_linebreaks_var.get() else ""
-        linebreak_instruction = "Keep <br> linebreaks from the source text in the translation. " if self.app.keep_linebreaks_var.get() else ""
+        # linebreak_instruction = "Use <br> as in the source text. " if self.app.keep_linebreaks else ""
+        linebreak_instruction = "Keep <br> linebreaks from the source text in the translation. " if self.app.keep_linebreaks else ""
         
-        # Add custom prompt prefix if available
+        # Add custom prompt prefix if available (only if enabled)
+        custom_enabled = getattr(self.app, 'custom_prompt_enabled', True)
         custom_prompt = getattr(self.app, 'custom_prompt_text', '').strip()
-        custom_prefix = f"{custom_prompt}\n" if custom_prompt else ""
+        custom_prefix = ""
+        if custom_enabled and custom_prompt:
+            custom_prefix = f"{custom_prompt}\n"
         
         # Build instruction line based on actual context window content
         if context_size == 0:
-            instruction_line = f"<{custom_prefix}Translate idiomatically from {source_lang_name} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
+            instruction_line = f"<{custom_prefix}Translate idiomatically from {source_lang_instr} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
         else:
             # Check actual number of stored context pairs
             actual_context_count = len(self.context_window)
             
             if actual_context_count == 0:
-                instruction_line = f"<{custom_prefix}Translate idiomatically from {source_lang_name} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
+                instruction_line = f"<{custom_prefix}Translate idiomatically from {source_lang_instr} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
             elif context_size == 1:
-                instruction_line = f"<{custom_prefix}Translate idiomatically the second subtitle from {source_lang_name} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
+                instruction_line = f"<{custom_prefix}Translate idiomatically the second subtitle from {source_lang_instr} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
             elif context_size == 2:
                 if actual_context_count == 1:
-                    instruction_line = f"<{custom_prefix}Translate idiomatically the second subtitle from {source_lang_name} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
+                    instruction_line = f"<{custom_prefix}Translate idiomatically the second subtitle from {source_lang_instr} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
                 else:
-                    instruction_line = f"<{custom_prefix}Translate idiomatically the third subtitle from {source_lang_name} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
+                    instruction_line = f"<{custom_prefix}Translate idiomatically the third subtitle from {source_lang_instr} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
             else:
                 target_position = min(actual_context_count + 1, context_size + 1)
                 ordinal = self._get_ordinal_number(target_position)
-                instruction_line = f"<{custom_prefix}Translate idiomatically the {ordinal} subtitle from {source_lang_name} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
+                instruction_line = f"<{custom_prefix}Translate idiomatically the {ordinal} subtitle from {source_lang_instr} to {target_lang_name}. {linebreak_instruction}Return translation only.>"
         
         # Build context window with new text integrated in grouped format
         if context_size == 0:
             # No context, use simple format 
-            message_content = f"{instruction_line}\n\n{source_lang_name.upper()}: {text}\n\n{target_lang_name.upper()}:"
+            message_content = f"{instruction_line}\n\n{source_lang_body.upper()}: {text}\n\n{target_lang_name.upper()}:"
         else:
             # Build context window for multi-line format
             context_with_new_text = self._build_context_window_content(text, source_lang, target_lang)
@@ -380,9 +380,9 @@ Purpose: Concise {self.provider_name} translation call results and statistics
     
     def _update_sliding_window(self, source_text, target_text):
         """Update sliding window with new translation pair including language codes."""
-        # Get current language codes
-        source_lang = getattr(self, 'current_source_lang', 'en')
-        target_lang = getattr(self, 'current_target_lang', 'pl')
+        # Get current language codes with robust fallbacks
+        source_lang = getattr(self, 'current_source_lang', 'en') or 'en'
+        target_lang = getattr(self, 'current_target_lang', 'pl') or 'pl'
         
         # Check for duplicates according to specific rules:
         # Rule 2: If translation is identical to previous translation, cache but don't add to context
@@ -648,19 +648,21 @@ Result:
         }
         return ordinals.get(number, f"{number}th")
     
-    def _get_language_display_name(self, lang_code):
+    def _get_language_display_name(self, lang_code, for_instruction=False):
         """Get display name for language code using the language manager."""
         if lang_code is None:
             return 'Unknown'
+            
+        # Special case for 'auto' detection
+        if lang_code.lower() == 'auto':
+            return 'the source language' if for_instruction else 'SOURCE'
+            
         try:
             # Use the language manager's existing functionality
             display_name = self.app.language_manager.get_localized_language_name(lang_code, self.provider_name, 'english')
             
             # If not found, try fallback logic
             if display_name == lang_code:
-                # Special case for 'auto'
-                if lang_code.lower() == 'auto':
-                    return 'Auto'
                 # Fallback to title case
                 return lang_code.title()
             
@@ -669,7 +671,7 @@ Result:
             log_debug(f"Error getting language display name for {lang_code}/{self.provider_name}: {e}")
             # Special case for 'auto'
             if lang_code.lower() == 'auto':
-                return 'Auto'
+                return 'the source language' if for_instruction else 'SOURCE'
             return lang_code.title()
     
     # === CACHE MANAGEMENT (IDENTICAL ACROSS PROVIDERS) ===

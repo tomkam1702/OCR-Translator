@@ -57,11 +57,9 @@ Unified Cache System → File Persistence
 ### **Core Processing**
 - **`worker_threads.py`** - Background threads (capture → OCR → translation)
 - **`unified_translation_cache.py`** - LRU cache system for all translation providers
-- **`marian_mt_translator.py`** - Local neural translation implementation
-- **`convert_marian.py`** - HuggingFace model conversion utility (© HuggingFace Team)
 
 ### **Utilities**
-- **`ocr_utils.py`** - OCR processing and text extraction
+
 - **`translation_utils.py`** - Translation helper functions
 - **`language_manager.py`** - Language code mappings for different services
 - **`config_manager.py`** - Configuration file handling
@@ -99,13 +97,9 @@ Unified Cache System → File Persistence
 ```
 resources/
 ├── Translation APIs
-│   ├── google_trans_source.csv / google_trans_target.csv
 │   ├── deepl_trans_source.csv / deepl_trans_target.csv
 │   ├── gemini_trans_source.csv / gemini_trans_target.csv
 │   └── gemini_models.csv         # Gemini model configurations and costs
-├── MarianMT Models
-│   ├── MarianMT_select_models.csv
-│   └── MarianMT_models_short_list.csv
 ├── UI Localization
 │   ├── gui_eng.csv / gui_pol.csv
 │   └── language_display_names.csv
@@ -114,10 +108,9 @@ resources/
 ```
 
 ### **Runtime Data** (Generated)
-- **Cache Files**: `deepl_cache.txt`, `googletrans_cache.txt`, `gemini_cache.txt`
-- **API Logs**: `Gemini_API_call_logs.txt`, `GEMINI_API_OCR_short_log.txt`, `GEMINI_API_TRA_short_log.txt`
+- **Cache Files**: `deepl_cache.txt`, `gemini_cache.txt`
+- **API Logs**: `Gemini_*_Log.txt`, `DeepL_Translation_Long_Log.txt`
 - **Debug**: `translator_debug.log`, `debug_images/`
-- **Models**: `marian_models_cache/`
 
 ## 📖 Documentation
 

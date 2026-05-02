@@ -12,11 +12,7 @@ try:
     from google.genai import types
     GENAI_AVAILABLE = True
 except ImportError:
-    try:
-        import google.generativeai as genai
-        GENAI_AVAILABLE = True
-    except ImportError:
-        GENAI_AVAILABLE = False
+    GENAI_AVAILABLE = False
 
 
 class GeminiOCRProvider(AbstractOCRProvider):
@@ -35,7 +31,7 @@ class GeminiOCRProvider(AbstractOCRProvider):
 
     def _get_api_key(self):
         """Get the Gemini API key from the application."""
-        return self.app.gemini_api_key_var.get().strip()
+        return self.app.gemini_api_key.strip()
 
     def _check_provider_availability(self):
         """Check if Gemini libraries are available."""
@@ -69,13 +65,13 @@ class GeminiOCRProvider(AbstractOCRProvider):
             self.client = None
             return False
 
-    def _make_api_call(self, image_data, source_lang):
+    def _make_api_call(self, image_data, source_lang, is_auto_detect=False):
         """Make the actual Gemini OCR API call."""
         if self.client is None:
             raise Exception("Gemini client not initialized")
         
-        # Store source_lang for later use in logging
         self._current_source_lang = source_lang
+        self._current_is_auto_detect = is_auto_detect
         
         # Get the current OCR model
         ocr_model_api_name = self.app.get_current_gemini_model_for_ocr() or 'gemini-2.5-flash-lite'
@@ -86,7 +82,7 @@ class GeminiOCRProvider(AbstractOCRProvider):
         # Get media resolution from model config
         # Use gemini_ocr_model_var which contains the full display name (e.g., "Gemini 3 Flash (Low)")
         # Note: ocr_model_var only contains the provider type ("gemini")
-        ocr_model_display_name = self.app.gemini_ocr_model_var.get()
+        ocr_model_display_name = self.app.gemini_ocr_model
         media_resolution_str = self.app.gemini_models_manager.get_model_media_resolution(ocr_model_display_name)
         
         # Check if we need v1alpha API for per-Part media resolution (required for LOW resolution on Gemini 3)
@@ -136,13 +132,9 @@ class GeminiOCRProvider(AbstractOCRProvider):
 
         ocr_config = types.GenerateContentConfig(**config_args)
         
-        # OCR prompt optimized for text transcription
-        if self.app.keep_linebreaks_var.get():
-            prompt = """1. Transcribe the text from the image exactly as it appears. Do not correct, rephrase, or alter the words in any way. Provide a literal and verbatim transcription of all text in the image. Keep the linebreaks. Don't return anything else.
-2. If there is no text in the image, return only: <EMPTY>."""
-        else:
-            prompt = """1. Transcribe the text from the image exactly as it appears. Do not correct, rephrase, or alter the words in any way. Provide a literal and verbatim transcription of all text in the image. Don't return anything else.
-2. If there is no text in the image, return only: <EMPTY>."""
+        linebreak_instruction = "Keep the linebreaks. " if self.app.keep_linebreaks else ""
+        prompt = f"""1. Transcribe the text from the image exactly as it appears. Do not correct, rephrase, or alter the words in any way. Provide a literal and verbatim transcription of all text in the image. {linebreak_instruction}Don't return anything else.
+2. If there is no text in the image, you MUST return exactly: <EMPTY>."""
         
         # Make the API call
         api_call_start_time = time.time()
@@ -175,12 +167,14 @@ class GeminiOCRProvider(AbstractOCRProvider):
         # First, strip markdown code blocks if they exist
         parsed_text = ocr_result.replace('```text', '').replace('```', '').strip()
 
-        if self.app.keep_linebreaks_var.get():
-            # If keeping linebreaks, replace newlines with <br>
-            parsed_text = parsed_text.replace('\n', '<br>').strip()
-        else:
-            # Otherwise, replace newlines with spaces
-            parsed_text = parsed_text.replace('\n', ' ').strip()
+        # Skip newline processing for auto-detect responses (preserve TEXT:/COORDS: line separation)
+        if not getattr(self, '_current_is_auto_detect', False):
+            if self.app.keep_linebreaks:
+                # If keeping linebreaks, replace newlines with <br>
+                parsed_text = parsed_text.replace('\n', '<br>').strip()
+            else:
+                # Otherwise, replace newlines with spaces
+                parsed_text = parsed_text.replace('\n', ' ').strip()
 
         # Final check for emptiness
         if not parsed_text or "<EMPTY>" in parsed_text:
@@ -228,7 +222,7 @@ class GeminiOCRProvider(AbstractOCRProvider):
 
     def _is_logging_enabled(self):
         """Check if Gemini API logging is enabled."""
-        return self.app.gemini_api_log_enabled_var.get()
+        return self.app.gemini_api_log_enabled
 
     def _log_complete_ocr_call(self, prompt, image_size, raw_response, parsed_response, 
                               call_duration, input_tokens, output_tokens, source_lang, 
@@ -405,10 +399,8 @@ Result:
         """Get the next sequential number for OCR image saving."""
         try:
             # Get the base directory (same as where the script runs from)
-            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-                base_dir = os.path.dirname(sys.executable)
-            else:
-                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            import nuitka_compat
+            base_dir = nuitka_compat.get_base_dir()
             
             ocr_images_dir = os.path.join(base_dir, "OCR_images")
             

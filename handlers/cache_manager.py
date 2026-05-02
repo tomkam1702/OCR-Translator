@@ -14,29 +14,21 @@ class CacheManager:
         self.app = app
         ### FIX: Add dictionaries to track file modification times.
         self._file_timestamps = {
-            'google': 0.0,
             'deepl': 0.0,
-            'gemini': 0.0,
-            'openai': 0.0
+            'gemini': 0.0
         }
         # This will store the actual in-memory cache dictionaries.
         self._in_memory_caches = {
-            'google': self.app.google_file_cache,
-            'deepl': self.app.deepl_file_cache,
-            'gemini': self.app.gemini_file_cache,
-            'openai': self.app.openai_file_cache,
+            'deepl': self.app.deepl_cache_dict,
+            'gemini': self.app.gemini_cache_dict,
         }
 
     def _get_cache_path(self, cache_type):
         """Helper to get the correct file path for a given cache type."""
-        if cache_type == 'google':
-            return self.app.google_cache_file
-        elif cache_type == 'deepl':
+        if cache_type == 'deepl':
             return self.app.deepl_cache_file
         elif cache_type == 'gemini':
             return self.app.gemini_cache_file
-        elif cache_type == 'openai':
-            return self.app.openai_cache_file
         return None
 
     ### FIX: This function now handles all cache types and is more robust.
@@ -102,10 +94,8 @@ class CacheManager:
     ### FIX: `load_file_caches` now just calls the specific loader for each type.
     def load_file_caches(self):
         """Loads all cached translations from disk files into memory."""
-        self._load_specific_file_cache('google')
         self._load_specific_file_cache('deepl')
         self._load_specific_file_cache('gemini')
-        self._load_specific_file_cache('openai')
 
     ### FIX: This function remains mostly the same, but the surrounding logic makes it safe.
     def save_to_file_cache(self, cache_type, cache_key, translated_text):
@@ -113,22 +103,16 @@ class CacheManager:
         cache_file_path = self._get_cache_path(cache_type)
         memory_cache = self._in_memory_caches.get(cache_type)
         
-        if cache_type == 'google':
-            enabled_tk_var = self.app.google_file_cache_var
-            service_name = "GoogleTranslate"
-        elif cache_type == 'deepl':
-            enabled_tk_var = self.app.deepl_file_cache_var
+        if cache_type == 'deepl':
+            enabled_tk_var = self.app.deepl_cache_enabled
             service_name = "DeepL"
         elif cache_type == 'gemini':
-            enabled_tk_var = self.app.gemini_file_cache_var
+            enabled_tk_var = self.app.gemini_cache_enabled
             service_name = "Gemini"
-        elif cache_type == 'openai':
-            enabled_tk_var = self.app.openai_file_cache_var
-            service_name = "OpenAI"
         else:
             return False
 
-        if not cache_file_path or not enabled_tk_var.get():
+        if not cache_file_path or not enabled_tk_var:
             return False
             
         try:
@@ -217,18 +201,14 @@ class CacheManager:
         memory_cache = self._in_memory_caches.get(cache_type)
         cache_file_path = self._get_cache_path(cache_type)
         
-        if cache_type == 'google':
-            enabled_tk_var = self.app.google_file_cache_var
-        elif cache_type == 'deepl':
-            enabled_tk_var = self.app.deepl_file_cache_var
+        if cache_type == 'deepl':
+            enabled_tk_var = self.app.deepl_cache_enabled
         elif cache_type == 'gemini':
-            enabled_tk_var = self.app.gemini_file_cache_var
-        elif cache_type == 'openai':
-            enabled_tk_var = self.app.openai_file_cache_var
+            enabled_tk_var = self.app.gemini_cache_enabled
         else:
             return None # Unknown cache type
         
-        if memory_cache is None or not enabled_tk_var.get():
+        if memory_cache is None or not enabled_tk_var:
             return None
 
         # --- TIMESTAMP CHECK ---
@@ -253,7 +233,7 @@ class CacheManager:
     def clear_file_caches(self):
         """Clears both in-memory and on-disk file caches and resets timestamps."""
         try:
-            for cache_type in ['google', 'deepl', 'gemini', 'openai']:
+            for cache_type in ['deepl', 'gemini']:
                 memory_cache = self._in_memory_caches.get(cache_type)
                 cache_file_path = self._get_cache_path(cache_type)
 

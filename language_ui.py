@@ -85,7 +85,7 @@ class UILanguageManager:
                     for row in reader:
                         if len(row) >= 2:
                             key, value = row[0], row[1]
-                            self.labels[key] = value
+                            self.labels[key] = value.replace("\\n", "\n")
                 log_debug(f"Loaded {len(self.labels)} UI labels from {lang_file}")
                 
                 # Log the first few labels for debugging

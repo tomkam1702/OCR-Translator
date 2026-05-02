@@ -13,12 +13,6 @@ class LanguageManager:
     
     def __init__(self):
         """Initialize language lists and mappings."""
-        # Google Translate language lists
-        self.google_source_languages = []  # List of (name, code) tuples
-        self.google_target_languages = []  # List of (name, code) tuples
-        self.google_source_names = []      # List of names only for UI display
-        self.google_target_names = []      # List of names only for UI display
-        
         # DeepL language lists
         self.deepl_source_languages = []   # List of (name, code) tuples
         self.deepl_target_languages = []   # List of (name, code) tuples
@@ -31,45 +25,11 @@ class LanguageManager:
         self.gemini_source_names = []      # List of names only for UI display
         self.gemini_target_names = []      # List of names only for UI display
         
-        # OpenAI language lists
-        self.openai_source_languages = []  # List of (name, code) tuples
-        self.openai_target_languages = []  # List of (name, code) tuples
-        self.openai_source_names = []      # List of names only for UI display
-        self.openai_target_names = []      # List of names only for UI display
-        
-        # Generic name to ISO code mapping (for MarianMT display name parsing)
+        # Generic name to ISO code mapping (for display name parsing)
         self.generic_name_to_iso_code = {} # e.g., {'english': 'en', 'polish': 'pl'}
         
         # Language display names for localization
         self.language_display_names = []  # List of dicts with code, provider, english_name, polish_name
-        
-        # Tesseract to ISO mapping (used for Tesseract code determination)
-        self.tesseract_to_iso = {
-            'eng': 'en', 'pol': 'pl', 'fra': 'fr', 'deu': 'de', 'spa': 'es',
-            'ita': 'it', 'jpn': 'ja', 'kor': 'ko', 'chi_sim': 'zh-cn', 
-            'chi_tra': 'zh-tw', 'rus': 'ru', 'por': 'pt', 'nld': 'nl',
-            'ara': 'ar', 'hin': 'hi', 'ukr': 'uk', 'ces': 'cs', 'dan': 'da',
-            'fin': 'fi', 'swe': 'sv', 'nor': 'no', 'auto': 'auto', # 'auto' for Tesseract is ambiguous, usually defaults to eng
-            # Additional Tesseract codes for all supported Google Translate and DeepL source languages
-            'afr': 'af', 'sqi': 'sq', 'hye': 'hy', 'aze': 'az', 'eus': 'eu',
-            'bel': 'be', 'bos': 'bs', 'bre': 'br', 'bul': 'bg', 'cat': 'ca',
-            'hrv': 'hr', 'ell': 'el', 'heb': 'he', 'isl': 'is', 'gle': 'ga',
-            'kat': 'ka', 'lav': 'lv', 'lit': 'lt', 'ltz': 'lb', 'mkd': 'mk',
-            'mlt': 'mt', 'ron': 'ro', 'gla': 'gd', 'srp': 'sr', 'slk': 'sk',
-            'slv': 'sl', 'swh': 'sw', 'tha': 'th', 'tur': 'tr', 'vie': 'vi',
-            'cym': 'cy', 'est': 'et', 'hun': 'hu', 'ind': 'id' # Tesseract uses 'ind' for Indonesian
-        }
-        # Reverse mapping for convenience
-        self.iso_to_tesseract = {v: k for k, v in self.tesseract_to_iso.items()}
-        # Handle specific ISO codes that map to one Tesseract code:
-        self.iso_to_tesseract['zh'] = 'chi_sim' # Default Chinese to simplified for Tesseract
-        self.iso_to_tesseract['nb'] = 'nor' # Norwegian Bokmal to Tesseract 'nor'
-        self.iso_to_tesseract['id'] = 'ind' # ISO 'id' to Tesseract 'ind'
-        self.iso_to_tesseract['pt-br'] = 'por' # Portuguese (Brazil) to Tesseract 'por'
-        self.iso_to_tesseract['pt-pt'] = 'por' # Portuguese (Portugal) to Tesseract 'por'
-        # Additional mappings for DeepL uppercase codes
-        self.iso_to_tesseract['zh-cn'] = 'chi_sim' # Ensure Chinese Simplified mapping
-        self.iso_to_tesseract['zh-tw'] = 'chi_tra' # Ensure Chinese Traditional mapping
 
         self.load_language_lists()
         self.load_generic_name_map()
@@ -78,16 +38,12 @@ class LanguageManager:
     def load_language_lists(self):
         """Load language lists from CSV files."""
         try:
-            self._load_csv_to_list(get_resource_path('resources/google_trans_source.csv'), self.google_source_languages, self.google_source_names)
-            self._load_csv_to_list(get_resource_path('resources/google_trans_target.csv'), self.google_target_languages, self.google_target_names)
             self._load_csv_to_list(get_resource_path('resources/deepl_trans_source.csv'), self.deepl_source_languages, self.deepl_source_names)
             self._load_csv_to_list(get_resource_path('resources/deepl_trans_target.csv'), self.deepl_target_languages, self.deepl_target_names)
             self._load_csv_to_list(get_resource_path('resources/gemini_trans_source.csv'), self.gemini_source_languages, self.gemini_source_names)
             self._load_csv_to_list(get_resource_path('resources/gemini_trans_target.csv'), self.gemini_target_languages, self.gemini_target_names)
-            self._load_csv_to_list(get_resource_path('resources/openai_trans_source.csv'), self.openai_source_languages, self.openai_source_names)
-            self._load_csv_to_list(get_resource_path('resources/openai_trans_target.csv'), self.openai_target_languages, self.openai_target_names)
             
-            log_debug(f"Loaded language lists: Google Src({len(self.google_source_names)}), Google Tgt({len(self.google_target_names)}), DeepL Src({len(self.deepl_source_names)}), DeepL Tgt({len(self.deepl_target_names)}), Gemini Src({len(self.gemini_source_names)}), Gemini Tgt({len(self.gemini_target_names)}), OpenAI Src({len(self.openai_source_names)}), OpenAI Tgt({len(self.openai_target_names)})")
+            log_debug(f"Loaded language lists: DeepL Src({len(self.deepl_source_names)}), DeepL Tgt({len(self.deepl_target_names)}), Gemini Src({len(self.gemini_source_names)}), Gemini Tgt({len(self.gemini_target_names)})")
         except Exception as e:
             log_debug(f"Error loading language lists: {e}")
             self._initialize_default_languages() # Fallback
@@ -113,7 +69,14 @@ class LanguageManager:
         else:
             log_debug(f"Language file not found: {file_path}")
         
-        # Sort names alphabetically, special handling for "Auto" if present
+        # Sort tuples and names alphabetically, special handling for "Auto" if present
+        def get_sort_key(item):
+            name = item[0] if isinstance(item, tuple) else item
+            if name == "Auto": return "000" # Sort Auto to start
+            return name
+            
+        lang_tuple_list.sort(key=get_sort_key)
+        
         if "Auto" in name_list_only:
             name_list_only.remove("Auto")
             name_list_only.sort()
@@ -137,7 +100,7 @@ class LanguageManager:
                             self.generic_name_to_iso_code[lang_name] = iso_code
             log_debug(f"Loaded {len(self.generic_name_to_iso_code)} generic language name mappings.")
         else:
-            log_debug(f"Generic lang_codes.csv not found: {file_path}. MarianMT name parsing might be limited.")
+            log_debug(f"Generic lang_codes.csv not found: {file_path}. Language name parsing might be limited.")
             # Populate with some common defaults if file is missing
             self.generic_name_to_iso_code.update({
                 'english': 'en', 'french': 'fr', 'german': 'de', 'polish': 'pl', 
@@ -152,39 +115,24 @@ class LanguageManager:
     def _initialize_default_languages(self):
         """Fallback if CSV loading fails."""
         log_debug("Initializing with minimal default language lists due to loading error.")
-        self.google_source_languages = [("Auto", "auto"), ("English", "en"), ("Polish", "pl")]
-        self.google_source_names = ["Auto", "English", "Polish"]
-        self.google_target_languages = [("English", "en"), ("Polish", "pl")]
-        self.google_target_names = ["English", "Polish"]
         
         self.deepl_source_languages = [("Auto", "auto"), ("English", "EN"), ("Polish", "PL")]
         self.deepl_source_names = ["Auto", "English", "Polish"]
         self.deepl_target_languages = [("English (British)", "EN-GB"), ("Polish", "PL")]
         self.deepl_target_names = ["English (British)", "Polish"]
         
-        # Gemini uses same language codes as Google Translate
         self.gemini_source_languages = [("Auto", "auto"), ("English", "en"), ("Polish", "pl")]
         self.gemini_source_names = ["Auto", "English", "Polish"]
         self.gemini_target_languages = [("English", "en"), ("Polish", "pl")]
         self.gemini_target_names = ["English", "Polish"]
-        
-        # OpenAI uses same language codes as Google Translate
-        self.openai_source_languages = [("English", "en"), ("Polish", "pl")]
-        self.openai_source_names = ["English", "Polish"]
-        self.openai_target_languages = [("English", "en"), ("Polish", "pl")]
-        self.openai_target_names = ["English", "Polish"]
 
     def get_code_from_name(self, name_to_find, service_type, lang_direction="source"):
         """Gets API code from display name for a specific service."""
         lst = None
-        if service_type == 'google_api':
-            lst = self.google_source_languages if lang_direction == "source" else self.google_target_languages
-        elif service_type == 'deepl_api':
+        if service_type == 'deepl_api':
             lst = self.deepl_source_languages if lang_direction == "source" else self.deepl_target_languages
         elif service_type == 'gemini_api':
             lst = self.gemini_source_languages if lang_direction == "source" else self.gemini_target_languages
-        elif service_type == 'openai_api':
-            lst = self.openai_source_languages if lang_direction == "source" else self.openai_target_languages
         
         if lst:
             for name, code in lst:
@@ -195,14 +143,10 @@ class LanguageManager:
     def get_name_from_code(self, code_to_find, service_type, lang_direction="source"):
         """Gets display name from API code for a specific service."""
         lst = None
-        if service_type == 'google_api':
-            lst = self.google_source_languages if lang_direction == "source" else self.google_target_languages
-        elif service_type == 'deepl_api':
+        if service_type == 'deepl_api':
             lst = self.deepl_source_languages if lang_direction == "source" else self.deepl_target_languages
         elif service_type == 'gemini_api':
             lst = self.gemini_source_languages if lang_direction == "source" else self.gemini_target_languages
-        elif service_type == 'openai_api':
-            lst = self.openai_source_languages if lang_direction == "source" else self.openai_target_languages
         
         if lst:
             for name, code in lst:
@@ -215,67 +159,7 @@ class LanguageManager:
                     return name
         return None
 
-    def get_tesseract_code(self, api_source_code, translation_model):
-        """
-        Converts an API-specific source language code to a Tesseract-compatible code.
-        Args:
-            api_source_code (str): The source language code used by the API (e.g., 'en', 'EN', 'auto').
-            translation_model (str): The active translation model ('google_api', 'deepl_api', 'marianmt').
-        Returns:
-            str: Tesseract language code (e.g., 'eng', 'pol'). Defaults to 'eng'.
-        """
-        if not api_source_code or api_source_code.lower() == 'auto':
-            return 'eng' # Tesseract's 'auto' is not reliable, default to English for OCR
 
-        # Normalize API source code for lookup (usually to lowercase ISO 639-1 or similar)
-        norm_code = api_source_code.lower()
-        if translation_model == 'deepl_api': # DeepL might use 'EN', 'ZH'
-            if api_source_code == 'ZH': # DeepL generic Chinese
-                 norm_code = 'zh-cn' # Map to a specific variant for Tesseract mapping
-                 log_debug(f"LanguageManager: Mapped DeepL 'ZH' to '{norm_code}' for Tesseract lookup")
-            elif api_source_code == 'PT': # DeepL generic Portuguese
-                 norm_code = 'pt' # Map to generic Portuguese
-                 log_debug(f"LanguageManager: Mapped DeepL 'PT' to '{norm_code}' for Tesseract lookup")
-            elif api_source_code == 'NB': # DeepL Norwegian Bokmål
-                 norm_code = 'nb' # Keep as Norwegian Bokmål code
-                 log_debug(f"LanguageManager: Recognized DeepL 'NB' as Norwegian Bokmål")
-            elif len(api_source_code) == 2 : # e.g. EN, PL
-                 norm_code = api_source_code.lower()
-        elif translation_model == 'google_api':
-            if norm_code in ['pt-br', 'pt-pt']: # Google Portuguese variants
-                log_debug(f"LanguageManager: Detected Google Portuguese variant '{norm_code}'")
-            elif norm_code == 'no': # Google Norwegian
-                log_debug(f"LanguageManager: Detected Google Norwegian code '{norm_code}'")
-            elif norm_code in ['zh-cn', 'zh-tw']: # Google Chinese variants
-                log_debug(f"LanguageManager: Detected Google Chinese variant '{norm_code}'")
-
-        # Use the iso_to_tesseract map
-        tess_code = self.iso_to_tesseract.get(norm_code)
-        
-        if not tess_code: # If direct mapping fails, try common variations
-            if norm_code.startswith("zh"): # Chinese variants
-                tess_code = 'chi_sim' if 'cn' in norm_code or 'hans' in norm_code else 'chi_tra'
-            elif norm_code.startswith("pt"): # Portuguese variants
-                tess_code = 'por'
-            elif norm_code.startswith("no") or norm_code == "nb": # Norwegian variants
-                tess_code = 'nor'
-            # Add other special cases if they arise
-            
-        if not tess_code: # Fallback if still not found
-            log_debug(f"LanguageManager: No Tesseract code found for API code '{api_source_code}' (normalized: '{norm_code}') with model '{translation_model}'. Defaulting to 'eng'.")
-            return 'eng'
-            
-        log_debug(f"LanguageManager: Mapped API code '{api_source_code}' to Tesseract '{tess_code}' for model '{translation_model}'.")
-        
-        # Final check for known language variants to ensure consistent OCR results
-        if tess_code == 'chi_sim' or tess_code == 'chi_tra':
-            log_debug(f"LanguageManager: Using Chinese OCR mode '{tess_code}' for language code '{api_source_code}'")
-        elif tess_code == 'por':
-            log_debug(f"LanguageManager: Using Portuguese OCR mode 'por' for variant '{api_source_code}'")
-        elif tess_code == 'nor':
-            log_debug(f"LanguageManager: Using Norwegian OCR mode 'nor' for variant '{api_source_code}'")
-            
-        return tess_code
 
     def get_iso_code_from_generic_name(self, language_name_lower):
         """Gets a 2-letter ISO code from a generic language name (lowercase)."""
@@ -311,16 +195,25 @@ class LanguageManager:
 
     def get_localized_language_name(self, code, provider, ui_language='english'):
         """Get localized language name for given code and provider."""
+        if not code: return ""
         try:
+            provider_normalized = provider.lower().replace('_api', '')
+            code_lower = str(code).lower()
             for entry in self.language_display_names:
-                if entry['code'] == code and entry['provider'] == provider:
+                if entry['code'].lower() == code_lower and entry['provider'].lower() == provider_normalized:
                     # Check for Polish UI language variants
                     if ui_language.lower() in ['polish', 'polski', 'pol']:
                         return entry['polish_name']
                     else:
                         return entry['english_name']
-            # Fallback to original code if not found
-            return code
+            
+            # Fallback lookup if not found in language_display_names.csv
+            fallback_provider = f"{provider_normalized}_api" if not provider.endswith('_api') else provider
+            fallback_name = self.get_name_from_code(code, fallback_provider, "source")
+            if not fallback_name:
+                fallback_name = self.get_name_from_code(code, fallback_provider, "target")
+                
+            return fallback_name if fallback_name else code
         except Exception as e:
             log_debug(f"Error getting localized language name: {e}")
             return code
@@ -347,12 +240,9 @@ class LanguageManager:
             
             log_debug(f"No direct match found, trying fallback...")
             
-            # Better fallback: try to find in original language lists using old method
             # For API providers, need to map provider correctly
             fallback_provider = provider
-            if provider == 'google_api':
-                fallback_provider = 'google_api'
-            elif provider == 'deepl_api':
+            if provider == 'deepl_api':
                 fallback_provider = 'deepl_api'
             
             log_debug(f"Direct lookup failed for '{localized_name}', trying fallback with provider '{fallback_provider}'...")
@@ -415,64 +305,7 @@ class LanguageManager:
         except Exception as e:
             log_debug(f"Error in Polish sorting, falling back to default: {e}")
             return sorted(names_list)  # Fallback to default sorting
-        """Get English name from Polish name (for MarianMT reverse lookup)."""
-        try:
-            for entry in self.language_display_names:
-                if entry['provider'] == 'marianmt' and entry['polish_name'] == polish_name:
-                    return entry['english_name']
-            return None
-        except Exception as e:
-            log_debug(f"Error getting English name from Polish: {e}")
-            return None
 
-    def get_localized_language_name_by_english_name(self, english_name, ui_language='english'):
-        """Get localized name by English name (for MarianMT)."""
-        try:
-            # Look up by English name regardless of provider (for MarianMT)
-            for entry in self.language_display_names:
-                if entry['english_name'] == english_name and entry['provider'] == 'marianmt':
-                    # Check for Polish UI language variants
-                    if ui_language.lower() in ['polish', 'polski', 'pol']:
-                        return entry['polish_name']
-                    else:
-                        return entry['english_name']
-            # Fallback to original name
-            return english_name
-        except Exception as e:
-            log_debug(f"Error getting localized name by English name: {e}")
-            return english_name
-
-    def get_localized_marian_display_name(self, english_display_name, ui_language='english'):
-        """
-        Convert MarianMT display name to localized version.
-        Example: "French to English" -> "francuski -> angielski"
-        """
-        try:
-            # Check for Polish UI language variants
-            if ui_language.lower() in ['polish', 'polski', 'pol']:
-                if " to " in english_display_name:
-                    parts = english_display_name.split(" to ")
-                    if len(parts) == 2:
-                        source_lang = parts[0].strip()
-                        target_lang = parts[1].strip()
-                        
-                        # Look up each language using MarianMT provider
-                        source_lang_localized = self.get_localized_language_name_by_english_name(
-                            source_lang, 'polish'
-                        )
-                        target_lang_localized = self.get_localized_language_name_by_english_name(
-                            target_lang, 'polish'
-                        )
-                        
-                        if source_lang_localized and target_lang_localized:
-                            # Use "->" instead of "na" for better readability
-                            return f"{source_lang_localized} -> {target_lang_localized}"
-            
-            # Fallback to original English name
-            return english_display_name
-        except Exception as e:
-            log_debug(f"Error getting localized MarianMT display name: {e}")
-            return english_display_name
 
     def is_rtl_language(self, language_code):
         """

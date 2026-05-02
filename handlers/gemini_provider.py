@@ -14,15 +14,8 @@ try:
     GENAI_AVAILABLE = True
     log_debug("Pre-loaded Google Gen AI libraries (new library)")
 except ImportError:
-    # Fallback to old library if new one not available
-    try:
-        import google.generativeai as genai
-        from google.generativeai.types import HarmCategory, HarmBlockThreshold
-        GENAI_AVAILABLE = True
-        log_debug("Pre-loaded Google Generative AI libraries (legacy fallback)")
-    except ImportError:
-        GENAI_AVAILABLE = False
-        log_debug("Google Generative AI libraries not available")
+    GENAI_AVAILABLE = False
+    log_debug("Google Generative AI libraries not available")
 
 
 class GeminiProvider(AbstractLLMProvider):
@@ -40,7 +33,7 @@ class GeminiProvider(AbstractLLMProvider):
     
     def _get_api_key(self):
         """Get Gemini API key."""
-        return self.app.gemini_api_key_var.get().strip()
+        return self.app.gemini_api_key.strip()
     
     def _check_provider_availability(self):
         """Check if Gemini libraries are available."""
@@ -48,7 +41,7 @@ class GeminiProvider(AbstractLLMProvider):
     
     def _get_context_window_size(self):
         """Get Gemini context window size setting."""
-        return self.app.gemini_context_window_var.get()
+        return self.app.gemini_context_window
     
     def _initialize_client(self, api_key, source_lang, target_lang):
         """Initialize Gemini client session."""
@@ -147,8 +140,8 @@ class GeminiProvider(AbstractLLMProvider):
         # Get the appropriate model for translation
         translation_model_api_name = self.app.get_current_gemini_model_for_translation()
         if not translation_model_api_name:
-            # Fallback to config if no specific model selected
-            translation_model_api_name = self.app.config['Settings'].get('gemini_model_name', 'gemini-2.5-flash-lite')
+            # Emergency fallback if no specific model selected
+            translation_model_api_name = 'gemini-2.5-flash-lite'
         
         # Determine strictness/thought configuration based on model version
         # Gemini 3.0 uses 'thinking_level', Gemini 2.5 uses 'thinking_budget'
@@ -228,7 +221,7 @@ class GeminiProvider(AbstractLLMProvider):
         translation_result = response.text.strip()
         
         # Handle multiple lines based on keep_linebreaks setting
-        if self.app.keep_linebreaks_var.get():
+        if self.app.keep_linebreaks:
             # Keep linebreaks by replacing them with <br>
             translation_result = translation_result.replace('\n', '<br>')
         else:
@@ -284,7 +277,7 @@ class GeminiProvider(AbstractLLMProvider):
     
     def _is_logging_enabled(self):
         """Check if Gemini logging is enabled."""
-        return self.app.gemini_api_log_enabled_var.get()
+        return self.app.gemini_api_log_enabled
     
     def _should_suppress_error(self, error_str):
         """Check if Gemini error should be suppressed from display."""

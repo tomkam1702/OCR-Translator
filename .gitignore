@@ -9,6 +9,8 @@ dist*/
 build/
 *.egg-info/
 release/
+scratch/
+Screenshots/
 
 # Virtual environments
 venv/
@@ -32,6 +34,7 @@ debug_images/
 !screenshots/*.png
 !docs/screenshots/*.png
 !docs/OCR Test/*.png
+!docs/user_manual/*
 docs/*backup*.*
 googletrans_cache*.txt
 deepl_cache*.txt
@@ -65,6 +68,7 @@ test_*.py
 *fix*.md
 *TO_EXCLUDE*.md
 AUTO_UPDATE_TESTING_GUIDE.md
+/test
 
 # Auto-update system temporary directories and files
 update_staging/
@@ -105,3 +109,6 @@ GameChangingTranslator_Alternative.spec
 run.bat
 run_python_compiler.bat
 sync_to_github.ps1
+
+# Exclude licences
+*licence*.json

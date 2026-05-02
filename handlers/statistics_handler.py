@@ -11,16 +11,11 @@ class StatisticsHandler:
     def __init__(self, app):
         self.app = app
         
-        import sys
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            base_dir = os.path.dirname(sys.executable)
-        else:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        import nuitka_compat
+        base_dir = nuitka_compat.get_base_dir()
         
         self.gemini_ocr_log_file = os.path.join(base_dir, "Gemini_OCR_Short_Log.txt")
         self.gemini_translation_log_file = os.path.join(base_dir, "Gemini_Translation_Short_Log.txt")
-        self.openai_ocr_log_file = os.path.join(base_dir, "OpenAI_OCR_Short_Log.txt")
-        self.openai_translation_log_file = os.path.join(base_dir, "OpenAI_Translation_Short_Log.txt")
         
         log_debug("Statistics handler initialized with provider-specific log file paths.")
         
@@ -28,9 +23,8 @@ class StatisticsHandler:
         self._cached_stats = None
     
     def parse_log_file(self, file_path):
-        """Parse a short log file and extract session data."""
+        """Parse a short log file and extract data only from completed sessions."""
         if not os.path.exists(file_path):
-            log_debug(f"Log file not found: {file_path}")
             return []
         
         sessions = []
@@ -38,34 +32,36 @@ class StatisticsHandler:
             with open(file_path, 'r', encoding='utf-8-sig') as f:
                 content = f.read()
             
-            session_blocks = re.split(r'SESSION \d+ STARTED', content)
+            # Find all session start markers
+            starts = list(re.finditer(r'SESSION (\d+) STARTED (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)', content))
             
-            for block in session_blocks[1:]:
-                session_data = self._parse_session_block(block)
-                if session_data:
-                    sessions.append(session_data)
+            for i, start_match in enumerate(starts):
+                session_id = start_match.group(1)
+                start_time_str = start_match.group(2)
+                start_pos = start_match.end()
+                
+                # Find matching session end marker for THIS specific session ID
+                # Search only from the end of this start marker to the beginning of the NEXT start marker (or EOF)
+                next_start_pos = starts[i+1].start() if i + 1 < len(starts) else len(content)
+                block = content[start_pos:next_start_pos]
+                
+                # Check for ENDED marker with the SAME session ID
+                end_match = re.search(f'SESSION {session_id} ENDED (\\d{{4}}-\\d{{2}}-\\d{{2}} \\d{{2}}:\\d{{2}}:\\d{{2}}\\.\\d+)', block)
+                
+                if end_match:
+                    end_time_str = end_match.group(1)
+                    session_data = self._parse_session_block(block, start_time_str, end_time_str)
+                    if session_data:
+                        sessions.append(session_data)
                     
         except Exception as e:
             log_debug(f"Error parsing log file {file_path}: {e}")
         
-        log_debug(f"Parsed {len(sessions)} sessions from {os.path.basename(file_path)}")
         return sessions
     
-    def _parse_session_block(self, block):
+    def _parse_session_block(self, block, session_start, session_end):
         """Parse a single session block and extract calls data."""
         try:
-            start_match = re.search(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)', block)
-            if not start_match:
-                return None
-            
-            session_start = start_match.group(1)
-            
-            end_match = re.search(r'SESSION \d+ ENDED (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)', block)
-            if not end_match:
-                return None
-            
-            session_end = end_match.group(1)
-            
             try:
                 start_time = datetime.strptime(session_start, "%Y-%m-%d %H:%M:%S.%f")
                 end_time = datetime.strptime(session_end, "%Y-%m-%d %H:%M:%S.%f")
@@ -75,20 +71,28 @@ class StatisticsHandler:
             
             calls = []
             
-            ocr_calls = re.finditer(r'========= OCR CALL ===========.*?Result:\s*-+\s*(.*?)\s*-+', block, re.DOTALL)
+            # Use strict call markers but allow them to be at the end of the block
+            ocr_calls = re.finditer(r'========= OCR CALL ===========.*?(?========== OCR CALL ===========|===== TRANSLATION CALL =======|SESSION \d+ ENDED|$)', block, re.DOTALL)
             for call_match in ocr_calls:
-                call_data = self._parse_call_data(call_match.group(0))
+                call_text = call_match.group(0)
+                call_data = self._parse_call_data(call_text)
                 if call_data:
                     call_data['type'] = 'ocr'
                     calls.append(call_data)
             
-            trans_calls = re.finditer(r'===== TRANSLATION CALL =======.*?Result:\s*-+\s*(.*?)\s*-+', block, re.DOTALL)
+            trans_calls = re.finditer(r'===== TRANSLATION CALL =======.*?(?========== OCR CALL ===========|===== TRANSLATION CALL =======|SESSION \d+ ENDED|$)', block, re.DOTALL)
             for call_match in trans_calls:
-                call_data = self._parse_call_data(call_match.group(0))
+                call_text = call_match.group(0)
+                call_data = self._parse_call_data(call_text)
                 if call_data:
                     call_data['type'] = 'translation'
-                    result_text = call_match.group(1)
-                    call_data['word_count'] = self._count_words_in_translation(result_text)
+                    # Accurate word counting from Result block if it exists
+                    result_match = re.search(r'Result:\s*-+\s*(.*?)\s*-+', call_text, re.DOTALL)
+                    if result_match:
+                        result_text = result_match.group(1)
+                        call_data['word_count'] = self._count_words_in_translation(result_text)
+                    else:
+                        call_data['word_count'] = 0
                     calls.append(call_data)
             
             return {
@@ -108,7 +112,7 @@ class StatisticsHandler:
             duration_match = re.search(r'Duration: ([\d\.]+)s', call_text)
             duration = float(duration_match.group(1)) if duration_match else 0.0
             
-            cost_match = re.search(r'Cost: \$([0-9\.]+)', call_text)
+            cost_match = re.search(r'Tokens:.*?Cost: \$([0-9\.]+)', call_text)
             cost = float(cost_match.group(1)) if cost_match else 0.0
             
             return {
@@ -150,24 +154,16 @@ class StatisticsHandler:
         try:
             gemini_ocr_sessions = self.parse_log_file(self.gemini_ocr_log_file)
             gemini_translation_sessions = self.parse_log_file(self.gemini_translation_log_file)
-            openai_ocr_sessions = self.parse_log_file(self.openai_ocr_log_file)
-            openai_translation_sessions = self.parse_log_file(self.openai_translation_log_file)
             
             gemini_ocr_stats = self._calculate_ocr_statistics(gemini_ocr_sessions)
             gemini_translation_stats = self._calculate_translation_statistics(gemini_translation_sessions)
-            openai_ocr_stats = self._calculate_ocr_statistics(openai_ocr_sessions)
-            openai_translation_stats = self._calculate_translation_statistics(openai_translation_sessions)
             
             gemini_combined_stats = self._calculate_combined_statistics(gemini_ocr_stats, gemini_translation_stats)
-            openai_combined_stats = self._calculate_combined_statistics(openai_ocr_stats, openai_translation_stats)
             
             stats = {
                 'gemini_ocr': gemini_ocr_stats,
                 'gemini_translation': gemini_translation_stats,
                 'gemini_combined': gemini_combined_stats,
-                'openai_ocr': openai_ocr_stats,
-                'openai_translation': openai_translation_stats,
-                'openai_combined': openai_combined_stats,
             }
             
             self._cached_stats = stats
@@ -299,9 +295,6 @@ class StatisticsHandler:
             'gemini_ocr': empty_ocr.copy(),
             'gemini_translation': empty_trans.copy(),
             'gemini_combined': empty_combined.copy(),
-            'openai_ocr': empty_ocr.copy(),
-            'openai_translation': empty_trans.copy(),
-            'openai_combined': empty_combined.copy(),
         }
     
     def _format_currency_for_export(self, amount, use_polish_format=False):
@@ -350,9 +343,6 @@ class StatisticsHandler:
                 self._write_csv_section(writer, "Gemini", "Translation", stats['gemini_translation'], use_polish_format)
                 self._write_csv_section(writer, "Gemini", "OCR", stats['gemini_ocr'], use_polish_format)
                 self._write_csv_section(writer, "Gemini", "Combined", stats['gemini_combined'], use_polish_format)
-                self._write_csv_section(writer, "OpenAI", "Translation", stats['openai_translation'], use_polish_format)
-                self._write_csv_section(writer, "OpenAI", "OCR", stats['openai_ocr'], use_polish_format)
-                self._write_csv_section(writer, "OpenAI", "Combined", stats['openai_combined'], use_polish_format)
 
                 deepl_value = deepl_usage if deepl_usage else "N/A"
                 free_limit_label = ui_lang.get_label("csv_metric_free_monthly_limit", "Free Monthly Limit") if ui_lang else "Free Monthly Limit"
@@ -407,7 +397,6 @@ class StatisticsHandler:
         string_buffer.write("=" * 50 + "\n\n")
 
         self._write_text_section(string_buffer, "Gemini", stats, ui_lang, use_polish_format)
-        self._write_text_section(string_buffer, "OpenAI", stats, ui_lang, use_polish_format)
 
         # Use externalized DeepL section
         deepl_header = ui_lang.get_label("stats_text_deepl_header", "📈 DeepL Usage Monitor") if ui_lang else "📈 DeepL Usage Monitor"
@@ -431,37 +420,10 @@ class StatisticsHandler:
         trans_stats = stats[f'{provider.lower()}_translation']
         combined_stats = stats[f'{provider.lower()}_combined']
         
-        # Get externalized labels instead of hard-coded dictionary
         provider_lower = provider.lower()
+        duration_suffix = " s" if use_polish_format else "s"
         
-        # OCR Section
-        ocr_header = ui_lang.get_label(f"stats_text_ocr_header_{provider_lower}", f"📊 {provider} OCR Statistics") if ui_lang else f"📊 {provider} OCR Statistics"
-        f.write(f"{ocr_header}\n")
-        f.write("-" * len(ocr_header) + "\n")
-        
-        total_ocr_calls_label = ui_lang.get_label("stats_text_total_ocr_calls", "Total OCR Calls") if ui_lang else "Total OCR Calls"
-        f.write(f"{total_ocr_calls_label}: {self._format_number_with_separators_for_export(ocr_stats['total_calls'], use_polish_format)}\n")
-        
-        median_duration_label = ui_lang.get_label("stats_text_median_duration", "Median Duration") if ui_lang else "Median Duration"
-        duration_suffix = ui_lang.get_label("stats_duration_suffix", "s") if ui_lang else "s"
-        duration_value = f"{ocr_stats['median_duration']:.3f} {duration_suffix}".replace('.', ',') if use_polish_format else f"{ocr_stats['median_duration']:.3f}{duration_suffix}"
-        f.write(f"{median_duration_label}: {duration_value}\n")
-        
-        avg_cost_per_call_label = ui_lang.get_label("stats_text_avg_cost_per_call", "Average Cost per Call") if ui_lang else "Average Cost per Call"
-        f.write(f"{avg_cost_per_call_label}: {self._format_currency_for_export(ocr_stats['avg_cost_per_call'], use_polish_format)}\n")
-        
-        avg_cost_per_minute_label = ui_lang.get_label("stats_text_avg_cost_per_minute", "Average Cost per Minute") if ui_lang else "Average Cost per Minute"
-        per_min_suffix = ui_lang.get_label("stats_cost_per_min_suffix", "/min") if ui_lang else "/min"
-        f.write(f"{avg_cost_per_minute_label}: {self._format_currency_for_export(ocr_stats['avg_cost_per_minute'], use_polish_format)}{per_min_suffix}\n")
-        
-        avg_cost_per_hour_label = ui_lang.get_label("stats_text_avg_cost_per_hour", "Average Cost per Hour") if ui_lang else "Average Cost per Hour"
-        per_hr_suffix = ui_lang.get_label("stats_cost_per_hr_suffix", "/hr") if ui_lang else "/hr"
-        f.write(f"{avg_cost_per_hour_label}: {self._format_currency_for_export(ocr_stats['avg_cost_per_hour'], use_polish_format)}{per_hr_suffix}\n")
-        
-        total_ocr_cost_label = ui_lang.get_label("stats_text_total_ocr_cost", "Total OCR Cost") if ui_lang else "Total OCR Cost"
-        f.write(f"{total_ocr_cost_label}: {self._format_currency_for_export(ocr_stats['total_cost'], use_polish_format)}\n\n")
-
-        # Translation Section
+        # Translation Section FIRST (Matches GUI)
         trans_header = ui_lang.get_label(f"stats_text_trans_header_{provider_lower}", f"🔄 {provider} Translation Statistics") if ui_lang else f"🔄 {provider} Translation Statistics"
         f.write(f"{trans_header}\n")
         f.write("-" * len(trans_header) + "\n")
@@ -472,31 +434,54 @@ class StatisticsHandler:
         total_words_label = ui_lang.get_label("stats_text_total_words", "Total Words Translated") if ui_lang else "Total Words Translated"
         f.write(f"{total_words_label}: {self._format_number_with_separators_for_export(trans_stats['total_words'], use_polish_format)}\n")
         
-        f.write(f"{median_duration_label}: {f'{trans_stats['median_duration']:.3f} {duration_suffix}'.replace('.', ',') if use_polish_format else f'{trans_stats['median_duration']:.3f}{duration_suffix}'}\n")
+        median_duration_label = ui_lang.get_label("stats_text_median_duration", "Median Duration") if ui_lang else "Median Duration"
+        f.write(f"{median_duration_label}: {f'{trans_stats['median_duration']:.3f}{duration_suffix}'.replace('.', ',') if use_polish_format else f'{trans_stats['median_duration']:.3f}{duration_suffix}'}\n")
         
         words_per_minute_label = ui_lang.get_label("stats_text_words_per_minute", "Average Words per Minute") if ui_lang else "Average Words per Minute"
-        f.write(f"{words_per_minute_label}: {f'{trans_stats['words_per_minute']:.2f}'.replace('.', ',') if use_polish_format else f'{trans_stats['words_per_minute']:.2f}'}\n")
+        f.write(f"{words_per_minute_label}: {int(round(trans_stats['words_per_minute']))}\n")
         
         avg_cost_per_word_label = ui_lang.get_label("stats_text_avg_cost_per_word", "Average Cost per Word") if ui_lang else "Average Cost per Word"
         f.write(f"{avg_cost_per_word_label}: {self._format_currency_for_export(trans_stats['avg_cost_per_word'], use_polish_format)}\n")
         
+        avg_cost_per_call_label = ui_lang.get_label("stats_text_avg_cost_per_call", "Average Cost per Call") if ui_lang else "Average Cost per Call"
         f.write(f"{avg_cost_per_call_label}: {self._format_currency_for_export(trans_stats['avg_cost_per_call'], use_polish_format)}\n")
-        f.write(f"{avg_cost_per_minute_label}: {self._format_currency_for_export(trans_stats['avg_cost_per_minute'], use_polish_format)}{per_min_suffix}\n")
-        f.write(f"{avg_cost_per_hour_label}: {self._format_currency_for_export(trans_stats['avg_cost_per_hour'], use_polish_format)}{per_hr_suffix}\n")
+        
+        avg_cost_per_minute_label = ui_lang.get_label("stats_text_avg_cost_per_minute", "Average Cost per Minute") if ui_lang else "Average Cost per Minute"
+        f.write(f"{avg_cost_per_minute_label}: {self._format_currency_for_export(trans_stats['avg_cost_per_minute'], use_polish_format)}\n")
+        
+        avg_cost_per_hour_label = ui_lang.get_label("stats_text_avg_cost_per_hour", "Average Cost per Hour") if ui_lang else "Average Cost per Hour"
+        f.write(f"{avg_cost_per_hour_label}: {self._format_currency_for_export(trans_stats['avg_cost_per_hour'], use_polish_format)}\n")
         
         total_trans_cost_label = ui_lang.get_label("stats_text_total_trans_cost", "Total Translation Cost") if ui_lang else "Total Translation Cost"
         f.write(f"{total_trans_cost_label}: {self._format_currency_for_export(trans_stats['total_cost'], use_polish_format)}\n\n")
 
+        # OCR Section SECOND
+        ocr_header = ui_lang.get_label(f"stats_text_ocr_header_{provider_lower}", f"📊 {provider} OCR Statistics") if ui_lang else f"📊 {provider} OCR Statistics"
+        f.write(f"{ocr_header}\n")
+        f.write("-" * len(ocr_header) + "\n")
+        
+        total_ocr_calls_label = ui_lang.get_label("stats_text_total_ocr_calls", "Total OCR Calls") if ui_lang else "Total OCR Calls"
+        f.write(f"{total_ocr_calls_label}: {self._format_number_with_separators_for_export(ocr_stats['total_calls'], use_polish_format)}\n")
+        
+        f.write(f"{median_duration_label}: {f'{ocr_stats['median_duration']:.3f}{duration_suffix}'.replace('.', ',') if use_polish_format else f'{ocr_stats['median_duration']:.3f}{duration_suffix}'}\n")
+        
+        f.write(f"{avg_cost_per_call_label}: {self._format_currency_for_export(ocr_stats['avg_cost_per_call'], use_polish_format)}\n")
+        f.write(f"{avg_cost_per_minute_label}: {self._format_currency_for_export(ocr_stats['avg_cost_per_minute'], use_polish_format)}\n")
+        f.write(f"{avg_cost_per_hour_label}: {self._format_currency_for_export(ocr_stats['avg_cost_per_hour'], use_polish_format)}\n")
+        
+        total_ocr_cost_label = ui_lang.get_label("stats_text_total_ocr_cost", "Total OCR Cost") if ui_lang else "Total OCR Cost"
+        f.write(f"{total_ocr_cost_label}: {self._format_currency_for_export(ocr_stats['total_cost'], use_polish_format)}\n\n")
+
         # Combined Section
-        combined_header = ui_lang.get_label(f"stats_text_combined_header_{provider_lower}", f"💰 Combined {provider} API Statistics") if ui_lang else f"💰 Combined {provider} API Statistics"
+        combined_header = ui_lang.get_label(f"stats_text_combined_header_{provider_lower}", f"💰 Combined {provider} Statistics") if ui_lang else f"💰 Combined {provider} Statistics"
         f.write(f"{combined_header}\n")
         f.write("-" * len(combined_header) + "\n")
         
         combined_cost_per_minute_label = ui_lang.get_label("stats_text_combined_cost_per_minute", "Combined Cost per Minute") if ui_lang else "Combined Cost per Minute"
-        f.write(f"{combined_cost_per_minute_label}: {self._format_currency_for_export(combined_stats['combined_cost_per_minute'], use_polish_format)}{per_min_suffix}\n")
+        f.write(f"{combined_cost_per_minute_label}: {self._format_currency_for_export(combined_stats['combined_cost_per_minute'], use_polish_format)}\n")
         
         combined_cost_per_hour_label = ui_lang.get_label("stats_text_combined_cost_per_hour", "Combined Cost per Hour") if ui_lang else "Combined Cost per Hour"
-        f.write(f"{combined_cost_per_hour_label}: {self._format_currency_for_export(combined_stats['combined_cost_per_hour'], use_polish_format)}{per_hr_suffix}\n")
+        f.write(f"{combined_cost_per_hour_label}: {self._format_currency_for_export(combined_stats['combined_cost_per_hour'], use_polish_format)}\n")
         
         total_api_cost_label = ui_lang.get_label("stats_text_total_api_cost", "Total API Cost") if ui_lang else "Total API Cost"
-        f.write(f"{total_api_cost_label}: {self._format_currency_for_export(combined_stats['total_cost'], use_polish_format)}\n\n")
+        f.write(f"{total_api_cost_label}: {self._format_currency_for_export(combined_stats['total_cost'], use_polish_format)}\n\n")

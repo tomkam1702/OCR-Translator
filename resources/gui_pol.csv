@@ -1,16 +1,40 @@
-key,value
+﻿key,value
 main_tab_title,Start
-select_source_btn,Wybierz obszar źródłowy (OCR)
-select_target_btn,Wybierz obszar tłumaczenia
+select_source_btn,Źródło
+select_target_btn,Tłumaczenie
+auto_detect_label,Znajdź napisy
+target_on_source_label,Tłumaczenie na napisach
+capture_padding_label,Skanuj szerzej
+capture_padding_suffix,%
+tooltip_find_subtitles,"Skanuje pełny ekran przez określony czas, aby wykryć\npołożenie napisów, a następnie blokuje obszar skanowania."
+tooltip_scan_wider,"Powiększa przechwytywany obraz poza obszar źródłowy, aby zapewnić szerszy\nkontekst wizualny. Poprawia dokładność OCR i zmniejsza ryzyko błędnych odczytów."
+tooltip_target_on_source,"Automatycznie ustawia okno tłumaczenia bezpośrednio\nna oknie źródłowym, zasłaniając oryginalne napisy."
 start_btn,Start
 stop_btn,Stop
 hide_source_btn,Pokaż lub ukryj okno źródłowe
 hide_target_btn,Pokaż lub ukryj okno tłumaczenia
-clear_cache_btn,Wyczyść bufor tłumaczenia
+clear_cache_btn,Wyczyść tłumaczenia w pamięci
 clear_debug_log_btn,Wyczyść dziennik debugowania
 toggle_debug_log_disable_btn,Wyłącz dziennik debugowania
 toggle_debug_log_enable_btn,Włącz dziennik debugowania
-gui_language_label,Język interfejsu
+gui_language_label,Język interfejsu (GUI)
+gui_language_dropdown_label,Język:
+behavior_frame_title,Zachowanie aplikacji
+appearance_frame_title,Wygląd
+performance_frame_title,Buforowanie i debugowanie
+keep_linebreaks_label,Zachowaj podział wierszy
+check_for_updates_btn,Sprawdź dostępność aktualizacji
+premium_license_title,Licencja PRO 👑
+pro_key_placeholder,Wprowadź kod licencji PRO...
+activate_pro_btn,Aktywuj klucz PRO
+refresh_stats_btn,Odśwież statystyki
+export_csv_btn,Eksportuj (CSV)
+copy_stats_btn,Kopiuj do schowka
+released_label,Wersja z
+copyright_label,Copyright © 2025-2026 Tomasz Kamiński
+about_description,"Program został napisany w języku Python z wykorzystaniem modeli AI: Claude Sonnet i Claude Opus, Gemini Flash i Gemini Pro, przy użyciu narzędzi: Claude Desktop, Google Antigravity i Gemini CLI."
+about_info_manual,Więcej informacji zawiera instrukcja obsługi.
+about_other_tool_link_desc,Historyczna rekonstrukcja dziennych danych dla kontraktów Binance i Bybit z własnymi godzinami zamknięcia sesji.
 keyboard_shortcuts_title,Skróty klawiaturowe
 status_ready,Status: Gotowy
 status_ready_hotkey,"Status: program gotowy. Naciśnij ~, aby rozpocząć/zatrzymać."
@@ -18,22 +42,22 @@ shortcut_start_stop,Rozpocznij/zatrzymaj tłumaczenie
 shortcut_toggle_source,Przełącz widoczność okna źródłowego
 shortcut_toggle_target,Przełącz widoczność okna tłumaczenia
 shortcut_save_settings,Zapisz ustawienia
-shortcut_clear_cache,Wyczyść bufor tłumaczenia
+shortcut_clear_file_caches,Wyczyść tłumaczenia w plikach
+shortcut_clear_cache,Wyczyść tłumaczenia w pamięci
 shortcut_clear_log,Wyczyść dziennik debugowania
-status_running,"program uruchomiony (naciśnij ~, aby zatrzymać)"
-status_stopped,"program zatrzymany (naciśnij ~, aby rozpocząć)"
+shortcut_reset_window,Zresetuj wymiary okna
+status_running,Uruchomiony (Naciśnij ~ aby zatrzymać)
+status_stopped,Zatrzymany (Naciśnij ~ aby uruchomić)
 show_btn,Pokaż
 hide_btn,Ukryj
 settings_tab_title,Ustawienia
 translation_model_label,Model tłumaczenia:
-translation_model_marianmt_offline,MarianMT (lokalny i bezpłatny)
+models_and_context_section_label,Modele i kontekst
 ocr_model_label,Model OCR:
-ocr_model_tesseract,Tesseract (lokalny)
 ocr_model_gemini,Gemini API (online)
 source_lang_label,Język źródłowy:
+detect_language,< Wykryj język >
 target_lang_label,Język docelowy:
-marian_model_label,Model MarianMT:
-google_api_key_label,Klucz API Google Translate:
 deepl_api_key_label,Klucz API DeepL:
 gemini_api_key_label,Klucz API Gemini:
 deepl_model_type_label,Jakość:
@@ -44,14 +68,6 @@ gemini_context_window_2,2 (dwa napisy)
 gemini_context_window_3,3 (trzy napisy)
 gemini_context_window_4,4 (cztery napisy)
 gemini_context_window_5,5 (pięć napisów)
-openai_api_key_label,Klucz API OpenAI:
-openai_context_window_label,Okno kontekstu:
-openai_context_window_0,0 (brak)
-openai_context_window_1,1 (ostatni napis)
-openai_context_window_2,2 (dwa napisy)
-openai_context_window_3,3 (trzy napisy)
-openai_context_window_4,4 (cztery napisy)
-openai_context_window_5,5 (pięć napisów)
 deepl_classic_model,Klasyczna
 deepl_nextgen_model,Nowej generacji
 deepl_context_window_label,Okno kontekstu:
@@ -59,64 +75,40 @@ deepl_context_window_0,0 (brak)
 deepl_context_window_1,1 (ostatni napis)
 deepl_context_window_2,2 (dwa napisy)
 deepl_context_window_3,3 (trzy napisy)
-models_file_label,Lista modeli MarianMT:
-beam_size_label,Rozmiar wiązki tłumaczenia (MarianMT):
-tesseract_path_label,Ścieżka do Tesseract:
 scan_interval_label,Interwał skanowania (ms):
 clear_timeout_label,Czas wyświetlania tłumaczenia (s):
-stability_threshold_label,Próg stabilności tekstu:
-confidence_threshold_label,Próg pewności OCR:
-preprocessing_mode_label,Tryb przetwarzania obrazu:
-ocr_debugging_label,Debugowanie OCR:
-show_debug_checkbox,Pokaż wyniki OCR
-preview_btn,Podgląd
-adaptive_block_size_label,"Rozmiar bloku (3-101, nieparzysty)":
-adaptive_c_label,"Wartość C (-75 do 75)":
-remove_trailing_label,Usuń śmieci na końcu:
-remove_trailing_checkbox,Tłumacz do ostatniego znaku interpunkcyjnego
+discovery_timeout_label,Czas:
+discovery_timeout_unit,s
 source_color_label,Kolor obszaru źródłowego:
 target_color_label,Kolor obszaru tłumaczenia:
 target_text_color_label,Kolor tekstu tłumaczenia:
 font_size_label,Rozmiar czcionki okna tłumaczenia:
 font_type_label,Typ czcionki okna tłumaczenia:
-opacity_label,Nieprzezroczystość:
-opacity_background_label,Tło:
-opacity_text_label,Tekst:
+opacity_background_label,Nieprzezroczystość tła:
+opacity_text_label,Nieprzezroczystość tekstu:
 file_cache_frame_title,Opcje buforowania do plików
 file_cache_description,"Buforowanie do plików zapisuje tłumaczenia na dysk, aby zmniejszyć koszty API i poprawić wydajność."
-google_cache_checkbox,"Włącz bufor Google Translate (zapisuje na dysk, zmniejsza wywołania API)"
-deepl_cache_checkbox,"Włącz bufor DeepL (zapisuje na dysk, zmniejsza wywołania API)"
-gemini_file_cache_checkbox,"Włącz bufor Gemini (zapisuje na dysk, zmniejsza wywołania API)"
-openai_file_cache_checkbox,"Włącz bufor OpenAI (zapisuje na dysk, zmniejsza wywołania API)"
+gemini_file_cache_checkbox,Zapisuj tłumaczenia Gemini w pliku (gemini_cache.txt)
+deepl_file_cache_checkbox,Zapisuj tłumaczenia DeepL w pliku (deepl_cache.txt)
+deepl_cache_file_label,Plik bufora DeepL:
+gemini_cache_file_label,Plik bufora Gemini:
 cache_files_label,Pliki buforów:
-clear_caches_btn,Wyczyść pliki buforów
+clear_caches_btn,Wyczyść tłumaczenia w plikach
 save_settings_btn,Zapisz ustawienia
 browse_btn,Wskaż
 choose_color_btn,Wybierz kolor
 debug_tab_title,Debugowanie
 original_image_label,Obraz oryginalny
 processed_image_label,Obraz przetworzony
-ocr_results_label,Wyniki OCR programu Tesseract
-ocr_results_placeholder,Wyniki OCR pojawią się tutaj po włączeniu tłumaczenia i wybraniu Tesseract jako modelu OCR.
+ocr_results_label,Wyniki OCR
+ocr_results_placeholder,Wyniki OCR pojawią się tutaj po włączeniu tłumaczenia.
 app_log_label,Dziennik aplikacji
 save_debug_images_btn,Zapisz obrazy OCR
 refresh_log_btn,Odśwież dziennik
-preprocessing_none,Brak
-preprocessing_binary,Binarny
-preprocessing_binary_inv,Binarny odwrócony
-preprocessing_adaptive,Adaptacyjny
 about_tab_title,Informacje
 settings_saved,Status: Ustawienia zapisane
 no_image_captured,Nie przechwycono jeszcze obrazu
 no_image_processed,Nie przetworzono jeszcze obrazu
-marian_beam_explanation,"Wyższe wartości wiązki = lepsze, ale wolniejsze tłumaczenia"
-marian_quality_note,"Uwaga: MarianMT zapewnia wysoką jakość tłumaczeń dla wielu"
-marian_quality_vary,"par językowych. Jakość może się różnić w zależności od języka."
-marian_download_note,"Modele są pobierane przy pierwszym użyciu (wymaga Internetu)."
-marian_unavailable_line1,"MarianMT nie jest dostępny. Aby włączyć, zainstaluj:"
-marian_unavailable_line2,"pip install transformers torch sentencepiece"
-browse_marian_models_title,Wybierz plik CSV modeli MarianMT
-browse_tesseract_title,Wybierz plik tesseract.exe
 choose_source_color_title,Wybierz kolor obszaru źródłowego
 choose_target_color_title,Wybierz kolor obszaru tłumaczenia
 choose_target_text_color_title,Wybierz kolor tekstu tłumaczenia
@@ -127,13 +119,7 @@ dialog_debug_images_saved_title,Obrazy OCR zapisane
 dialog_debug_images_saved_message,Obrazy zapisane do '{0}'.
 dialog_debug_image_saved_title,Obraz OCR zapisany
 dialog_debug_image_saved_message,Obraz oryginalny zapisany do '{0}'. Brak przetworzonego obrazu.
-ocr_preview_title,Podgląd OCR
-processed_image_preview,Przetworzony obraz (skala 1:1)
-recognized_text_preview,Rozpoznany tekst
-refresh_preview,Odśwież podgląd
 close_btn,Zamknij
-no_text_recognized,Nie rozpoznano tekstu
-no_image_for_ocr,Brak obrazu dla OCR
 gemini_total_words_label,Łącznie słów
 gemini_total_cost_label,Łączny koszt
 gemini_enable_api_log_checkbox,Włącz rejestr API
@@ -145,9 +131,6 @@ api_usage_tab_title,Zużycie API
 api_usage_section_gemini_ocr,📊 Statystyki OCR Gemini
 api_usage_section_gemini_translation,🔄 Statystyki tłumaczenia Gemini
 api_usage_section_gemini_combined,💰 Łączne statystyki Gemini
-api_usage_section_openai_ocr,📊 Statystyki OCR OpenAI
-api_usage_section_openai_translation,🔄 Statystyki tłumaczenia OpenAI
-api_usage_section_openai_combined,💰 Łączne statystyki OpenAI
 api_usage_section_deepl,📈 Monitor zużycia DeepL
 api_usage_total_ocr_calls,Łączne wywołania OCR:
 api_usage_median_duration_ocr,Mediana czasu trwania:
@@ -164,13 +147,12 @@ api_usage_total_translation_cost,Łączny koszt tłumaczenia:
 api_usage_combined_cost_per_minute,Łączny koszt na minutę:
 api_usage_combined_cost_per_hour,Łączny koszt na godzinę:
 api_usage_total_api_cost,Łączny koszt API:
-api_usage_refresh_btn,Odśwież statystyki
-api_usage_export_csv_btn,Eksportuj do CSV
-api_usage_export_text_btn,Eksportuj do tekstu
+api_usage_refresh_btn,Odśwież
+api_usage_export_csv_btn,Zapisz w CSV
+api_usage_export_text_btn,Zapisz w TXT
 api_usage_copy_btn,Kopiuj
 api_usage_no_data,Brak dostępnych danych
-api_usage_info_note,"ℹ️ Uwaga: statystyki te są oparte na plikach skróconych dzienników (Short_Log). W razie usunięcia lub wyczyszczenia tych plików statystyki zostaną zresetowane. Monitorowanie szacunkowych kosztów ma charakter wyłącznie poglądowy. Użytkownik sam odpowiada za monitorowanie wykorzystania i kosztów API poszczególnych dostawców."
-check_for_updates_btn,Sprawdź dostępność aktualizacji
+api_usage_info_note,ℹ️ Uwaga: statystyki te są oparte na plikach skróconych dzienników (Short_Log). W razie usunięcia lub wyczyszczenia tych plików statystyki zostaną zresetowane. Monitorowanie szacunkowych kosztów ma charakter wyłącznie poglądowy. Użytkownik sam odpowiada za monitorowanie wykorzystania i kosztów API poszczególnych dostawców.
 check_for_updates_on_startup,Sprawdź dostępność aktualizacji przy uruchomieniu
 check_updates_title,Sprawdzanie aktualizacji
 check_updates_msg,Sprawdzanie aktualizacji...
@@ -233,7 +215,7 @@ stats_cost_per_min_suffix,/min
 stats_cost_per_hr_suffix,/godz
 stats_duration_suffix,s
 currency_usd, USD
-mb_progress_of, MB z 
+mb_progress_of, MB z
 mb_progress_format, MB ({0}%)
 export_csv_dialog_title,Eksportuj statystyki do CSV
 export_text_dialog_title,Eksportuj statystyki do tekstu
@@ -262,16 +244,56 @@ stats_text_combined_cost_per_hour,Łączny koszt na godzinę
 stats_text_ocr_header_gemini,📊 Statystyki OCR Gemini
 stats_text_trans_header_gemini,🔄 Statystyki tłumaczenia Gemini
 stats_text_combined_header_gemini,💰 Łączne statystyki Gemini
-stats_text_ocr_header_openai,📊 Statystyki OCR OpenAI
-stats_text_trans_header_openai,🔄 Statystyki tłumaczenia OpenAI
-stats_text_combined_header_openai,💰 Łączne statystyki OpenAI
 stats_text_deepl_header,📈 Monitor użycia DeepL
 stats_report_generated,Raport wygenerowany:
 custom_prompt_tab_title,Własne polecenie
-custom_prompt_info,"Ten tekst trafi na początek instrukcji tłumaczenia dla modeli Gemini, OpenAI i DeepL. Będzie dołączany do KAŻDEGO wywołania API. Ze względu na koszty powinien być jak najkrótszy. Najlepiej po angielsku."
+custom_prompt_translation_title,Polecenie tłumaczenia
+custom_prompt_ocr_title,Polecenie OCR
+custom_prompt_info,Ten tekst trafi na początek instrukcji tłumaczenia dla modeli Gemini i DeepL. Będzie dołączany do KAŻDEGO wywołania API. Ze względu na koszty powinien być jak najkrótszy. Najlepiej po angielsku.
+custom_prompt_ocr_info,"Ten tekst zostanie dodany jako dodatkowa instrukcja OCR dla modelu Gemini. Będzie dołączany do KAŻDEGO wywołania API. Ze względu na koszty powinien być jak najkrótszy. Najlepiej po angielsku."
 custom_prompt_saved,Własne polecenie zostało zapisane!
 custom_prompt_save_error,Nie udało się zapisać własnego polecenia.
 save_btn,Zapisz
 reload_btn,Odśwież
+custom_prompt_enabled_label,Włączone
+stats_total_calls,Wywołania
+stats_cost,Koszt
+stats_words,Słów
+stats_usage,Zużycie
 about_other_tool_header,Inny program autora:
 about_other_tool_desc,OHLC Forge – specjalistyczne narzędzie do rekonstrukcji historycznych danych dziennych dla kontraktów Binance i Bybit z możliwością ustawienia własnej godziny zamknięcia sesji.
+gemini_api_key_placeholder,Pole wymagane
+deepl_api_key_placeholder,Pole opcjonalne
+shortcuts_tab_title,Skróty
+status_cache_cleared,Usunięto tłumaczenia w plikach.
+status_trans_cache_cleared,Usunięto tłumaczenia w pamięci.
+status_debug_log_cleared,Wyczyszczono dziennik debugowania.
+status_settings_saved_auto,Zapisano ustawienia automatycznie.
+status_settings_saved,Zapisano ustawienia.
+stats_no_data,Brak danych
+about_app_description,"Game-Changing Translator to program komputerowy, który automatycznie przechwytuje tekst z dowolnego fragmentu ekranu, przeprowadza optyczne rozpoznawanie znaków (OCR) i tłumaczy tekst w czasie rzeczywistym. Może służyć do tłumaczenia napisów w grach lub dowolnego innego tekstu, którego nie można łatwo skopiować."
+config_mode_simple,Proste
+config_mode_advanced,Własne
+ui_visibility_show,Pokaż
+ui_visibility_hide,Ukryj
+gemini_api_key_label,Klucz API Gemini:
+deepl_api_key_label,Klucz API DeepL:
+status_mode_prefix,Tryb
+shortcut_screenshot,Zrób zrzut ekranu
+screenshot_saved_toast,📸 Zrzut ekranu zapisany:
+tooltip_help_info,Zobacz w instrukcji
+tooltip_help_idea,Przeczytaj szczegółowy opis
+tooltip_open_user_manual,Wyświetl instrukcję
+error_no_gemini_key,Najpierw podaj klucz API Gemini.
+error_no_deepl_key,Najpierw podaj klucz API DeepL.
+status_licence,Licencja:
+expand_top_area,Pokaż języki i klucze API
+collapse_top_area,Ukryj języki i klucze API
+pro_licence_active,Licencja PRO aktywna.
+pro_activations_used,Wykorzystano {0} z {1} aktywacji.
+pro_machine_mismatch_title,Błąd licencji
+pro_machine_mismatch_msg,Zapisana licencja PRO dotyczy innego komputera. Proszę aktywować ją ponownie.
+about_pro_msg_1,"Aby korzystać z funkcji PRO, pobierz"
+about_pro_msg_2,"wersję skompilowaną"
+about_pro_msg_3,"i kup licencję PRO na"
+about_pro_msg_4,Gumroad

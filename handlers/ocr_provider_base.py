@@ -59,17 +59,12 @@ class AbstractOCRProvider(ABC):
     
     def _initialize_logging_paths(self):
         """Initialize provider-specific logging file paths."""
-        import sys
+        import nuitka_compat
         
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            base_dir = os.path.dirname(sys.executable)
-        else:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        base_dir = nuitka_compat.get_base_dir()
         
         base_provider_name = self.provider_name.replace('_ocr', '')
         provider_title = base_provider_name.title()
-        if base_provider_name == "openai":
-            provider_title = "OpenAI"
             
         self.main_log_file = os.path.join(base_dir, f"{provider_title}_OCR_Long_Log.txt")
         self.short_log_file = os.path.join(base_dir, f"{provider_title}_OCR_Short_Log.txt")
@@ -303,9 +298,9 @@ Purpose: Concise {self.provider_name} OCR call results and statistics
     
     # === MAIN OCR INTERFACE ===
     
-    def recognize(self, image_data, source_lang, batch_number=None):
+    def recognize(self, image_data, source_lang, batch_number=None, is_auto_detect=False):
         """Main OCR method - handles all common logic."""
-        log_debug(f"{self.provider_name.title()} OCR request for: {source_lang}")
+        log_debug(f"{self.provider_name.title()} OCR request for: {source_lang} (Auto-Detect: {is_auto_detect})")
         
         # Check circuit breaker and force refresh if needed
         if self.circuit_breaker.should_force_refresh():
@@ -348,7 +343,7 @@ Purpose: Concise {self.provider_name} OCR call results and statistics
             api_call_start_time = time.time()
             
             # Make the provider-specific API call
-            response = self._make_api_call(image_data, source_lang)
+            response = self._make_api_call(image_data, source_lang, is_auto_detect=is_auto_detect)
             
             call_duration = time.time() - api_call_start_time
             log_debug(f"{self.provider_name.title()} OCR API call took {call_duration:.3f}s")
@@ -405,12 +400,12 @@ Purpose: Concise {self.provider_name} OCR call results and statistics
         pass
     
     @abstractmethod
-    def _make_api_call(self, image_data, source_lang):
+    def _make_api_call(self, image_data, source_lang, is_auto_detect=False):
         """Make provider-specific API call."""
         pass
     
     @abstractmethod
-    def _parse_response(self, response):
+    def _parse_response(self, response, is_auto_detect=False):
         """Parse provider-specific response and return (result, input_tokens, output_tokens, model_name_for_costing, model_name_for_logging, model_source)."""
         pass
     
