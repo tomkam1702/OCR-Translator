@@ -1,5 +1,6 @@
 # Game-Changing Translator v4
-Copyright © 2025-2026 Tomasz Kamiński<br><b>Author of</b> <a href="https://github.com/tomkam1702/OHLC-Forge"><img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" width="20" height="20" align="center"></a> <b><a href="https://github.com/tomkam1702/OHLC-Forge">OHLC Forge</a> – Professional tool for crypto traders</b>
+<p>Copyright © 2025-2026 Tomasz Kamiński<br>
+<strong>Author of</strong> <a href="https://github.com/tomkam1702/OHLC-Forge"><img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" width="20" height="20" style="vertical-align: middle;"></a> <strong><a href="https://github.com/tomkam1702/OHLC-Forge">OHLC Forge</a> – Professional tool for crypto traders</strong></p>
 
 ![Game-Changing Translator Logo](docs/screenshots/readme_screen.jpg)
 
