@@ -1,0 +1,21 @@
+﻿ocr_1.png
+
+Tesseract OCR, Gemini Translation:
+Gemini(EN-DE,2025-07-19 16:11:04):~ Trust me, OD tite WE loca mS:==:Vertrau mir, das ist echt gut.
+Gemini(EN-PL,2025-07-19 16:10:51):~ Trust me, OD tite WE loca mS:==:Zaufaj mi, to jest to.
+
+Gemini OCR, Gemini Translation:
+Gemini(EN-DE,2025-07-19 15:35:00):Trust me, Oakmonters know a newcomer when they see one. We locals can tell.:==:Glauben Sie mir, die Oakmonter erkennen einen Neuling, wenn sie einen sehen. Wir Einheimischen merken das.
+Gemini(EN-PL,2025-07-19 15:34:09):Trust me, Oakmonters know a newcomer when they see one. We locals can tell.:==:Zaufaj mi, mieszkańcy Oakmontu wiedzą, kiedy widzą nowicjusza. My, miejscowi, potrafimy to rozpoznać.
+
+
+ocr_2.png
+
+Tesseract OCR, Gemini Translation:
+Gemini(EN-DE,2025-07-19 15:55:13):‘ Paulie: Driv: show, Tom. Next stop's Bi the motel. 7 jj ie:==:Paulie: Fahr, Tom. Nächster Halt ist Bill im Motel. 7 jj ie
+Gemini(EN-PL,2025-07-19 16:07:05):‘ Paulie: Driv: show, Tom. Next stop's Bi the motel. 7 jj ie:==:Paulie: Jedź, Tom. Następny przystanek to motel.
+
+Gemini OCR, Gemini Translation:
+Gemini(EN-DE,2025-07-19 15:59:46):Paulie: Drive before the cops show, Tom. Next stop's Bill at the motel.:==:Paulie: Fahr los, bevor die Cops auftauchen, Tom. Nächster Halt ist Bill im Motel.
+Gemini(EN-PL,2025-07-19 15:55:45):Paulie: Drive before the cops show, Tom. Next stop's Bill at the motel.:==:Paulie: Jedź, zanim gliny się pojawią, Tom. Następny cel to Bill w motelu.
+

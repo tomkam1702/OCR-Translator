@@ -10,7 +10,7 @@ build/
 *.egg-info/
 release/
 scratch/
-Screenshots/
+/Screenshots/
 
 # Virtual environments
 venv/
