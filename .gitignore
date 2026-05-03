@@ -32,6 +32,7 @@ marian_models_cache/
 debug_images/
 *.png
 !screenshots/*.png
+!assets/OHLC_Forge_Logo_small.png
 !docs/screenshots/*.png
 !docs/OCR Test/*.png
 !docs/user_manual/*
