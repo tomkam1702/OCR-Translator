@@ -1,6 +1,7 @@
 # Game-Changing Translator v4
 Copyright © 2025-2026 Tomasz Kamiński
-**Author of** [<img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" width="20" height="20" align="absmiddle">](https://github.com/tomkam1702/OHLC-Forge) **[OHLC Forge](https://github.com/tomkam1702/OHLC-Forge) – Professional tool for crypto traders**
+
+**Author of [<img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" width="20" height="20" valign="middle">](https://github.com/tomkam1702/OHLC-Forge) [OHLC Forge](https://github.com/tomkam1702/OHLC-Forge) – Professional tool for crypto traders**
 
 ![Game-Changing Translator Logo](docs/screenshots/readme_screen.jpg)
 
@@ -191,4 +192,4 @@ For full details, see the [LICENSE](LICENSE) file.
 
 ---
 ### 🔗 Author's Portfolio
-[<img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" width="60" height="60" align="absmiddle">](https://github.com/tomkam1702/OHLC-Forge) **[OHLC Forge](https://github.com/tomkam1702/OHLC-Forge)** — Professional OHLC daily data reconstruction for Binance and Bybit.
+**[<img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" width="60" height="60" valign="middle">](https://github.com/tomkam1702/OHLC-Forge) [OHLC Forge](https://github.com/tomkam1702/OHLC-Forge)** — Professional OHLC daily data reconstruction for Binance and Bybit.
