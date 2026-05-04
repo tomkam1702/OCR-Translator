@@ -261,6 +261,21 @@ class BasePySideOverlay(QMainWindow):
         """Unfreeze the overlay: allow text updates."""
         self.is_frozen = False
 
+    def set_click_through(self, enabled=True):
+        """Enable or disable mouse click pass-through on this overlay.
+        
+        When enabled, all mouse events pass through this window to whatever
+        is underneath (e.g. a game). When disabled, the overlay is interactive
+        (draggable, resizable).
+        
+        This is independent of SetWindowDisplayAffinity (anti-feedback/OBS hiding).
+        """
+        was_visible = self.isVisible()
+        self.setWindowFlag(Qt.WindowTransparentForInput, enabled)
+        if was_visible:
+            self.show()  # Re-shows the window and re-applies anti-feedback
+        log_debug(f"Overlay '{self.windowTitle()}' click-through set to: {enabled}")
+
     def update_style(self, bg_color, opacity, border_px=None):
         self._bg_color = bg_color
         self._opacity = opacity

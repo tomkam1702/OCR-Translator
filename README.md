@@ -1,8 +1,5 @@
 # Game-Changing Translator v4
-Copyright © 2025-2026 Tomasz Kamiński
-
-**Author of [![OHLC Forge Logo](assets/OHLC_Forge_Logo_small.png)](https://github.com/tomkam1702/OHLC-Forge) [OHLC Forge](https://github.com/tomkam1702/OHLC-Forge) – Professional tool for crypto traders**
-
+Copyright © 2025-2026 Tomasz Kamiński<br>**Author of [<img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" width="20" height="20" align="absmiddle">](https://github.com/tomkam1702/OHLC-Forge) [OHLC Forge](https://github.com/tomkam1702/OHLC-Forge) – Professional tool for crypto traders**
 
 ![Game-Changing Translator Logo](docs/screenshots/readme_screen.jpg)
 
@@ -58,6 +55,9 @@ Whether you're exploring the world of *The Witcher*, learning a new language thr
 
 ### ✨ Redesigned GUI & Simple Mode
 The new interface offers two distinct modes: **Simple** for hassle-free operation and **Custom** for granular control.
+
+> [!TIP]
+> **Update v4.0.1 - Mouse Click-Through**: Overlays now automatically become "transparent" to mouse clicks during translation. This allows you to interact with the game underneath without losing focus or accidentally dragging frames.
 
 <p align="center">
   <img src="docs/user_manual/Simple.png" width="80%" alt="Simple Mode GUI">
@@ -193,4 +193,4 @@ For full details, see the [LICENSE](LICENSE) file.
 
 ---
 ### 🔗 Author's Portfolio
-**[<img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" width="60" height="60" alt="OHLC Forge Logo" />](https://github.com/tomkam1702/OHLC-Forge) [OHLC Forge](https://github.com/tomkam1702/OHLC-Forge)** — Professional OHLC daily data reconstruction for Binance and Bybit.
+[<img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" width="60" height="60" align="absmiddle">](https://github.com/tomkam1702/OHLC-Forge) **[OHLC Forge](https://github.com/tomkam1702/OHLC-Forge)** — Professional OHLC daily data reconstruction for Binance and Bybit.

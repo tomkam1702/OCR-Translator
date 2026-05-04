@@ -1705,6 +1705,15 @@ class GameChangingTranslator:
         self._clear_queue(self.ocr_queue)
         self._clear_queue(self.translation_queue)
 
+        # Disable click-through so overlays become interactive again (draggable, resizable)
+        try:
+            if self.target_overlay and self._widget_exists_safely(self.target_overlay):
+                self.target_overlay.set_click_through(False)
+            if self.source_overlay and self._widget_exists_safely(self.source_overlay):
+                self.source_overlay.set_click_through(False)
+        except Exception as e_ct:
+            log_debug(f"Warning: Could not disable click-through on overlays: {e_ct}")
+
         # Clear translation text display
         if self.translation_text and self.translation_text != None:
             try:
@@ -1911,6 +1920,15 @@ class GameChangingTranslator:
                         self.target_overlay.show()
                 except Exception:
                     log_debug("Warning: Error ensuring target overlay visibility at start (likely closed).")
+
+                # Enable click-through so mouse events pass through to the game
+                try:
+                    if self.target_overlay and self._widget_exists_safely(self.target_overlay):
+                        self.target_overlay.set_click_through(True)
+                    if self.source_overlay and self._widget_exists_safely(self.source_overlay):
+                        self.source_overlay.set_click_through(True)
+                except Exception as e_ct:
+                    log_debug(f"Warning: Could not enable click-through on overlays: {e_ct}")
 
                 self._clear_queue(self.ocr_queue)
                 self._clear_queue(self.translation_queue)
