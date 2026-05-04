@@ -155,6 +155,10 @@ Take direct control over what the AI "sees". Filter out complex HUD elements, mi
 > *   **Stay on v3.9.6:** If you do not have (and do not plan to obtain) a Gemini API key, you should **not** update to version 4. Please remain on **version 3.9.6**, which is the final release supporting free offline OCR (Tesseract) and offline translation models (MarianMT).
 > *   **Try Before You Buy:** Do not purchase the **GCT PRO Licence** before thoroughly testing the **FREE** version. Ensure the software works correctly on your system and that the Gemini-powered OCR and translation meet your expectations.
 
+> [!NOTE]
+> ### Updating from v3.9.6 or v4.0.0
+> Due to significant architectural changes in v4, automatic updates from versions **3.9.6** and **4.0.0** are not supported. If you are currently on either of these versions, please download and install the latest release **manually** from the [Releases](https://github.com/tomkam1702/OCR-Translator/releases) page. Automatic updates will work normally starting from version **4.0.1**.
+
 ---
 
 ## 🛑 Deprecated Features
