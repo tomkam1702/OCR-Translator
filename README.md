@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="assets/readme_banner.png" alt="Game-Changing Translator v4 Banner" width="100%">
+  <a href="https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html">
+    <img src="assets/readme_banner.png" alt="Game-Changing Translator v4 Banner" width="100%">
+  </a>
 </p>
 
 Copyright © 2025-2026 Tomasz Kamiński<br>**Author of [![OHLC Forge Logo](assets/OHLC_Forge_Logo_small.png)](https://github.com/tomkam1702/OHLC-Forge) [OHLC Forge](https://github.com/tomkam1702/OHLC-Forge) – Professional tool for crypto traders**
