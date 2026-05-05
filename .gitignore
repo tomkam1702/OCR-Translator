@@ -33,6 +33,7 @@ debug_images/
 *.png
 !screenshots/*.png
 !assets/OHLC_Forge_Logo_small.png
+!assets/*.png
 !docs/screenshots/*.png
 !docs/OCR Test/*.png
 !docs/user_manual/*
