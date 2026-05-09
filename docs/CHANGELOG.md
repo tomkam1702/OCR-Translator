@@ -5,6 +5,20 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.2] - 2026-05-09
+
+### Added
+- **User-Definable Hotkeys**: All global shortcuts can now be fully customized through the new Shortcuts tab.
+- **Enhanced System Integration**: Added "Forbidden Shortcuts" validation to prevent conflicts with critical Windows operations (e.g., Alt+F4).
+
+### Fixed
+- Minor GUI Fixes.
+
+## [4.0.1] - 2026-05-04
+
+### Added
+- **Mouse Click-Through Support**: Overlays now become transparent to mouse input during translation sessions. This prevents accidental focus loss in games and allows seamless interaction with the game world while translation is active.
+
 ## [4.0.0] - 2026-05-02
 
 ### Added
