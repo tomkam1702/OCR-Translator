@@ -6,7 +6,7 @@
 
 Copyright © 2025-2026 Tomasz Kamiński<br>**Author of [![OHLC Forge Logo](assets/OHLC_Forge_Logo_small.png)](https://github.com/tomkam1702/OHLC-Forge) [OHLC Forge](https://github.com/tomkam1702/OHLC-Forge) – Professional tool for crypto traders**
 
-![Game-Changing Translator Logo](docs/screenshots/readme_screen.jpg)
+![Game-Changing Translator Logo](assets/readme_screen.jpg)
 
 ## 🌟 Overview
 
@@ -61,12 +61,14 @@ Whether you're exploring the world of *The Witcher*, learning a new language thr
 ### ✨ Redesigned GUI & Simple Mode
 The new interface offers two distinct modes: **Simple** for hassle-free operation and **Custom** for granular control.
 
-> [!TIP]
-> **Update v4.0.1 - Mouse Click-Through**: Overlays now automatically become "transparent" to mouse clicks during translation. This allows you to interact with the game underneath without losing focus or accidentally dragging frames.
-
 <p align="center">
   <img src="docs/user_manual/Simple.png" width="80%" alt="Simple Mode GUI">
 </p>
+
+> [!TIP]
+> **Update v4.0.2 - Custom Shortcuts**: All global keyboard shortcuts can now be fully modified via the new **Shortcuts** tab. Added system-level conflict protection and clear UI feedback for hotkey registration.
+> 
+> **Update v4.0.1 - Mouse Click-Through**: Overlays now automatically become "transparent" to mouse clicks during translation. This allows you to interact with the game underneath without losing focus or accidentally dragging frames.
 
 ### ⚡ Up and running in 3 simple steps:
 1.  **Set your target language** – Source language is auto-detected in Simple mode.
