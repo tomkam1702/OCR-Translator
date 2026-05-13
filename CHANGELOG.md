@@ -5,6 +5,17 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2026-05-13
+
+### Added
+- **Gemma 4 (DeepInfra) Support**: Full integration of the Gemma 4 26B A4B model through DeepInfra. Offers a high-performance budget alternative to Gemini with lower costs and fast OCR responsiveness.
+- **DeepInfra Cost Tracking**: Real-time token-level analytics and cost monitoring for the DeepInfra API.
+- **Show API Keys Toggle**: Added a convenient checkbox in the header area to quickly show or hide all API keys (Gemini, DeepInfra, DeepL).
+- **UI Indicators**: Added (G) markers to the Shortcuts tab for clear identification of global hotkeys.
+
+### Changed
+- **Dual Shortcut System**: Redesigned hotkey architecture to distinguish between **Global (G)** shortcuts (active during gameplay) and **Local** shortcuts (active only when the app is in focus).
+
 ## [4.0.2] - 2026-05-09
 
 ### Added

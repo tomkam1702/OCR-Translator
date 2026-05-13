@@ -10,9 +10,16 @@ Copyright © 2025-2026 Tomasz Kamiński<br>**Author of [![OHLC Forge Logo](asset
 
 ## 🌟 Overview
 
-**Game-Changing Translator** is a state-of-the-art desktop application designed for real-time screen translation. Using powerful AI-driven OCR and context-aware engines, it captures text from any part of your screen—be it a game, a movie, or a document—and translates it instantly into over 100 languages. 
+**Game-Changing Translator** is a state-of-the-art desktop application designed for real-time screen translation. Using powerful multi-model AI (Gemini &amp; Gemma) and context-aware engines, it captures text from any part of your screen—be it a game, a movie, or a document—and translates it instantly into over 100 languages. 
 
 Whether you're exploring the world of *The Witcher*, learning a new language through entertainment, or simply need to understand content that can't be copied, GCT v4 provides a seamless, immersive experience with floating overlays that stay on top of your content.
+
+> [!IMPORTANT]
+> ### ⚡ Near-Gemini Quality @ 4x Lower Cost!
+> Version 4.1.0 introduces support for **Gemma 4 (DeepInfra)** — providing **equally fast** OCR performance and near-Gemini precision for a fraction of the price. 
+> 
+> 💡 **PRO TIP:** Combine Gemini (Translation) + Gemma (OCR) for the ultimate 3x cost reduction!  
+> 👉 [Read the **Best Value for Money** guide in the manual](https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html#best-value)
 
 ---
 
@@ -66,13 +73,13 @@ The new interface offers two distinct modes: **Simple** for hassle-free operatio
 </p>
 
 > [!TIP]
-> **Update v4.0.2 - Custom Shortcuts**: All global keyboard shortcuts can now be fully modified via the new **Shortcuts** tab. Added system-level conflict protection and clear UI feedback for hotkey registration.
+> **Update v4.1.0 - Gemma Integration**: Added support for **Gemma 4 (DeepInfra)**. Enjoy industry-leading OCR speed and near-Gemini precision at a **4x lower cost**. The ultimate high-performance budget option for real-time translation.
 > 
-> **Update v4.0.1 - Mouse Click-Through**: Overlays now automatically become "transparent" to mouse clicks during translation. This allows you to interact with the game underneath without losing focus or accidentally dragging frames.
+> **Update v4.0.2 - Custom Shortcuts**: All global keyboard shortcuts can now be fully modified via the new **Shortcuts** tab. Added system-level conflict protection and clear UI feedback for hotkey registration.
 
 ### ⚡ Up and running in 3 simple steps:
 1.  **Set your target language** – Source language is auto-detected in Simple mode.
-2.  **Enter your API keys** – Mandatory Gemini key and optional DeepL key.
+2.  **Enter your API keys** – A valid API key from **Google** or **DeepInfra**.
 3.  **Select areas and start** – Position your Source and Target overlays and hit **Start (~)**.
 
 <p align="center">
@@ -86,21 +93,28 @@ The new interface offers two distinct modes: **Simple** for hassle-free operatio
 ## 🛠️ Features
 
 ### 🎁 FREE Features
-*   **Gemini AI OCR**: Industry-first AI-powered text recognition that handles stylised fonts and low-contrast backgrounds.
-*   **Gemini Translation**: Top-quality, context-aware translation in over 100 languages.
+*   **AI-Powered OCR (Gemini &amp; Gemma)**: Industry-first AI text recognition that handles stylised fonts and low-contrast backgrounds.
+*   **AI Translation (Gemini &amp; Gemma)**: Top-quality, context-aware translation in over 100 languages.
 *   **Sliding Context Window**: Remembers up to 5 previous subtitles to maintain narrative coherence.
-*   **Cost Monitoring**: Real-time token-level analytics and cost tracking.
+*   **Cost Monitoring**: Real-time token-level analytics for <strong>Google</strong>, <strong>DeepInfra</strong>, and <strong>DeepL</strong>.
 *   **Two-Tier Caching**: In-memory and file-based caching to save on API costs.
 *   **Native RTL Support**: Flawless bidirectional rendering for Arabic, Hebrew, Persian, etc.
 *   **Translation Prompt**: Inject custom instructions to define tone or game-specific context.
-*   **API Logs**: Comprehensive dual-layer logging for both OCR and Translation.
+*   **API Logs**: Comprehensive dual-layer logging for both OCR and Translation (Gemini &amp; Gemma).
+
+### 🚀 High-Performance, Low-Cost (Gemma &amp; DeepInfra)
+The integration of **Gemma 4 (DeepInfra)** offers a powerful alternative to the standard pipeline:
+*   **Equally Fast:** Optimized DeepInfra hosting provides near-instant OCR, matching the responsiveness of the Gemini API.
+*   **4x Lower Costs:** Get near-Gemini quality at a fraction of the cost (~$0.16/hour for OCR).
+*   **Budget Strategy:** Use Gemini for elite translation and Gemma for OCR to slash total costs by **3x**.
+*   👉 [Read the **Best Value for Money** guide in the manual](https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html#best-value)
 
 ### 👑 PRO Features
 *   **DeepL Translation**: Elite precision for Japanese, Chinese, and European scripts with free context subtitles.
 *   **Find Subtitles**: Automatically scans the screen to detect and lock onto subtitle areas.
 *   **Target on Source**: Automatically overlays the translation directly onto the original subtitle area.
 *   **Scan Wider**: Expands the capture area to prevent word truncation and AI hallucinations.
-*   **OCR Prompt**: Custom instructions for Gemini OCR to filter HUD elements or speaker names.
+*   **OCR Prompt**: Custom instructions for the AI OCR to filter HUD elements or speaker names.
 *   **Custom Appearance**: Full control over background and text colours with native pickers.
 
 ---
@@ -150,17 +164,17 @@ Take direct control over what the AI "sees". Filter out complex HUD elements, mi
 > [!CAUTION]
 > ### Licensing & API Costs – Important Note
 > Please distinguish between the **GCT Software Licence** and **Third-Party API Costs**:
-> *   ![](https://img.shields.io/badge/FREE-f0fdf4?style=flat-square&logoColor=166534) **Features:** These are unlocked in the GCT software for everyone. However, using them requires a connection to the **Google Gemini API**, which carries its own usage costs.
+> *   ![](https://img.shields.io/badge/FREE-f0fdf4?style=flat-square&logoColor=166534) **Features:** These are unlocked in the GCT software for everyone. However, using them requires a connection to the **Google** or **DeepInfra** API, which carries its own usage costs.
 > *   ![](https://img.shields.io/badge/PRO-fefce8?style=flat-square&logoColor=92400e) **Features:** These require a one-time purchase of a **GCT PRO Licence** to unlock advanced functionality within the program. This fee covers only software access and does **not** include or cover any API costs.
-> *   **Independent API Services:** GCT is a professional interface for AI services provided by **Google** and **DeepL**. These are independent commercial entities. You are responsible for all costs incurred through their respective APIs (with the exception of the 500,000 characters/month provided in DeepL's free tier).
-> *   **No Affiliation:** Game-Changing Translator and its author are entirely independent and have **no affiliation** with Google or DeepL. GCT is a tool designed to facilitate the use of these third-party paid services.
+> *   **Independent API Services:** GCT is a professional interface for AI services provided by **Google**, **DeepInfra**, and **DeepL**. These are independent commercial entities. You are responsible for all costs incurred through their respective APIs.
+> *   **No Affiliation:** Game-Changing Translator and its author are entirely independent and have **no affiliation** with Google, DeepInfra, or DeepL. GCT is a tool designed to facilitate the use of these third-party paid services.
 
 > [!WARNING]
 > ### Compatibility & Version 4 Requirements
 > Please review these technical requirements before proceeding:
-> *   **API-Only Architecture:** Version 4 is built entirely around third-party AI APIs. Operation is **impossible** without a valid **Gemini API Key**.
-> *   **Stay on v3.9.6:** If you do not have (and do not plan to obtain) a Gemini API key, you should **not** update to version 4. Please remain on **version 3.9.6**, which is the final release supporting free offline OCR (Tesseract) and offline translation models (MarianMT).
-> *   **Try Before You Buy:** Do not purchase the **GCT PRO Licence** before thoroughly testing the **FREE** version. Ensure the software works correctly on your system and that the Gemini-powered OCR and translation meet your expectations.
+> *   **API-Only Architecture:** Version 4 is built entirely around third-party AI APIs. Operation requires a valid API key from **Google** or **DeepInfra**.
+> *   **Stay on v3.9.6:** If you do not have (and do not plan to obtain) an API key, you should **not** update to version 4. Please remain on **version 3.9.6**, which is the final release supporting free offline OCR (Tesseract) and offline translation models (MarianMT).
+> *   **Try Before You Buy:** Do not purchase the **GCT PRO Licence** before thoroughly testing the **FREE** version. Ensure the software works correctly on your system and that the AI-powered OCR and translation meet your expectations.
 
 > [!NOTE]
 > ### Updating from v3.9.6 or v4.0.0
