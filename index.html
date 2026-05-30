@@ -234,6 +234,11 @@
         .comparison-table tr:nth-child(even) .winner {
             background: #dbeafe !important;
         }
+
+        /* ── PREMIUM HIGHLIGHT ── */
+        .premium-highlight { background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 28px 32px; margin: 32px 0; }
+        .premium-highlight h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .premium-highlight p { font-size: 14px; color: #78350f; line-height: 1.6; }
         
         .footer {
             text-align: center;
@@ -362,37 +367,71 @@
             </div>
         </div>
 
-        <div class="card" style="border-left-color: #0ea5e9; background: #f0f9ff; margin-bottom: 2rem;">
-            <h2 style="color: #0369a1;"><span class="icon">💰</span> Best Value for Money – Pricing Comparison</h2>
-            <p style="color: #0369a1; font-size: 0.95rem; margin-bottom: 1.5rem;">For the optimal balance of quality and cost, we recommend using <strong>Gemini</strong> for translation and <strong>Gemma 4</strong> for OCR. This setup reduces your total hourly cost by approximately <strong>3 times</strong>.</p>
-            
-            <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #0369a1; background: rgba(255,255,255,0.6); border-radius: 8px; overflow: hidden;">
+        <div class="premium-highlight" id="best-value" style="background: #f0fdf4; border-color: #bbf7d0; margin-top: 32px;">
+            <h3 style="color: #166534;">💡 Pro Tip: Best Value for Money</h3>
+            <p style="color: #166534; font-size: 14px; margin-bottom: 20px;">For the optimal balance of quality and cost, we recommend using <strong>Gemini 3 Flash</strong> or <strong>Gemini 3.1 Flash-Lite</strong> for translation and <strong>Gemma 4</strong> for OCR. Since OCR is the primary cost driver (5-6x more expensive than translation), switching to Gemma for screen scanning reduces your total hourly cost by approximately <strong>3 times</strong>.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+              <div style="background: rgba(255,255,255,0.7); padding: 16px; border-radius: 8px; border: 1px solid rgba(22,101,52,0.1);">
+                <strong style="color: #166534; display: block; margin-bottom: 8px;">Recommended (Best Value)</strong>
+                <p style="font-size: 13px; margin: 0; color: #1e293b;">
+                  • Translation: <strong>Gemini 3 Flash</strong><br>
+                  • OCR: <strong>Gemma 4 (DeepInfra)</strong><br>
+                  • Estimated cost: <strong>~$0.29 / hour</strong>
+                </p>
+              </div>
+              <div style="background: rgba(255,255,255,0.7); padding: 16px; border-radius: 8px; border: 1px solid rgba(22,101,52,0.1);">
+                <strong style="color: #166534; display: block; margin-bottom: 8px;">Maximum Savings</strong>
+                <p style="font-size: 13px; margin: 0; color: #1e293b;">
+                  • Translation: <strong>Gemma 4</strong><br>
+                  • OCR: <strong>Gemma 4 (DeepInfra)</strong><br>
+                  • Estimated cost: <strong>~$0.18 / hour</strong>
+                </p>
+              </div>
+            </div>
+            <p style="color: #166534; font-size: 12px; margin-top: 20px; opacity: 0.8; line-height: 1.4;">
+              <strong>Disclaimer:</strong> Costs are estimates based on a 750ms Scan Interval and are provided for illustrative purposes only. Actual costs depend on screen content, token density, and current API pricing. <strong>You are solely responsible for monitoring and managing your own API usage and billing through your official Google or DeepInfra provider accounts.</strong>
+            </p>
+        </div>
+
+        <div class="premium-highlight" style="background: #f0f9ff; border-color: #bae6fd; margin-top: 16px;">
+            <h3 style="color: #0369a1;">💰 Model Pricing Comparison (per 1M tokens)</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; color: #0369a1; background: rgba(255,255,255,0.4); border-radius: 8px;">
               <thead>
-                <tr style="border-bottom: 2px solid #bae6fd; text-align: left; background: rgba(3, 105, 161, 0.05);">
-                  <th style="padding: 12px;">Model Name (per 1M tokens)</th>
-                  <th style="padding: 12px;">Input (Text / Image)</th>
-                  <th style="padding: 12px;">Output (OCR / Translation)</th>
+                <tr style="border-bottom: 2px solid #bae6fd; text-align: left;">
+                  <th style="padding: 10px;">Model Provider / Name</th>
+                  <th style="padding: 10px;">Input (Image / Text)</th>
+                  <th style="padding: 10px;">Output (OCR / Translation)</th>
                 </tr>
               </thead>
               <tbody>
                 <tr style="border-bottom: 1px solid #bae6fd;">
-                  <td style="padding: 12px;"><strong>Gemma 4 26B A4B (DeepInfra)</strong></td>
-                  <td style="padding: 12px;">$0.07</td>
-                  <td style="padding: 12px;">$0.34</td>
+                  <td style="padding: 10px;"><strong>Gemma 4 26B A4B (DeepInfra)</strong></td>
+                  <td style="padding: 10px;">$0.07</td>
+                  <td style="padding: 10px;">$0.34</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #bae6fd;">
-                  <td style="padding: 12px;"><strong>Gemini 3.1 Flash-Lite (Google)</strong></td>
-                  <td style="padding: 12px;">$0.25</td>
-                  <td style="padding: 12px;">$1.50</td>
+                  <td style="padding: 10px;"><strong>Gemini 3.1 Flash-Lite (Google)</strong></td>
+                  <td style="padding: 10px;">$0.25</td>
+                  <td style="padding: 10px;">$1.50</td>
                 </tr>
                 <tr>
-                  <td style="padding: 12px;"><strong>Gemini 3 Flash (Google)</strong></td>
-                  <td style="padding: 12px;">$0.50</td>
-                  <td style="padding: 12px;">$3.00</td>
+                  <td style="padding: 10px;"><strong>Gemini 3 Flash (Google)</strong></td>
+                  <td style="padding: 10px;">$0.50</td>
+                  <td style="padding: 10px;">$3.00</td>
                 </tr>
               </tbody>
             </table>
-            <p style="color: #0369a1; font-size: 11px; margin-top: 12px; opacity: 0.7; font-style: italic;">*Pricing data current as of May 2026.</p>
+
+            <div style="margin-top: 16px; padding: 14px; background: rgba(255,255,255,0.6); border-radius: 8px; border: 1px dashed #bae6fd;">
+              <p style="margin: 0; font-size: 13px; color: #0369a1; line-height: 1.5;">
+                <strong>⚠️ Note on OCR Resolution (LOW vs MEDIUM):</strong><br>
+                Although the price per token is identical, the <strong>MEDIUM</strong> resolution setting captures more pixels and sends a larger data payload per image compared to <strong>LOW</strong>. Consequently, each screenshot in MEDIUM mode consumes more tokens, resulting in higher actual hourly expenses. Stick to LOW resolution unless you encounter extremely complex or tiny fonts.
+              </p>
+            </div>
+
+            <p style="color: #0369a1; font-size: 11px; margin-top: 12px; opacity: 0.7; text-align: right; font-style: italic;">
+              *Pricing data verified as of May 2026.
+            </p>
         </div>
 
         <div class="card">
