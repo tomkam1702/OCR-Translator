@@ -5,6 +5,27 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.1] - 2026-06-03
+
+### Added
+- **Gemini 3.5 Flash Support (Beta)**: Added Google's Gemini 3.5 Flash model for translation. Currently disabled (Beta); can be manually enabled by editing `gemini_models.csv`.
+- **DeepSeek & Qwen Models Support (Beta)**: Added backend support for DeepSeek V4 (Pro/Flash) and Qwen3-VL (30B/235B) models via DeepInfra. Currently disabled; can be manually enabled by editing `deepinfra_models.csv`.
+- **Gemma Temperature Configuration**: Added customizable temperature parameters for Gemma/DeepInfra models in the configuration file.
+
+### Changed
+- **Launcher Rewritten in C**: Completely rewrote the application launcher in C to prevent false positive Windows Defender warnings.
+- **Asynchronous Caching & Logging**: Implemented asynchronous background writing for file caches and log files to eliminate disk I/O blocking.
+- **DeepInfra Platform Transition**: Renamed Gemma cache/log files and statistics tabs to DeepInfra (e.g., `deepinfra_cache.txt`, `DeepInfra_OCR_Short_Log.txt`) to reflect support for multiple DeepInfra-hosted models.
+- **WebP Quality for OCR**: Increased WebP capture quality settings for improved AI OCR text recognition.
+- **Gemini Temperature Adjustment**: Set default temperature for Gemini models to `1.00`.
+- **Manual Asset Optimization**: Replaced PNG screenshots with optimized WebP files in the manual directory.
+
+### Fixed
+- **Words Per Minute Decimal Formatting**: Fixed the WPM tracking stat to display exactly two decimal places.
+- **Shortcut Double Redefinition**: Resolved a bug allowing a key combination to be bound twice during shortcut customization.
+- **Zombie Session Rejection**: Added checks to automatically reject translation outputs from aborted ("zombie") screenshot loops.
+- **DeepInfra Missing Key Dialog**: Added a warning dialog if a DeepInfra model is selected without an API key configured.
+
 ## [4.1.0] - 2026-05-13
 
 ### Added
