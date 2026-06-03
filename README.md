@@ -73,9 +73,9 @@ The new interface offers two distinct modes: **Simple** for hassle-free operatio
 </p>
 
 > [!TIP]
-> **Update v4.1.0 - Gemma Integration**: Added support for **Gemma 4 (DeepInfra)**. Enjoy industry-leading OCR speed and near-Gemini precision at a **4x lower cost**. The ultimate high-performance budget option for real-time translation.
+> **Update v4.1.1 - Windows Defender Fix**: Completely rewrote the application launcher in C to prevent incorrect Windows Defender flags and false-positive antivirus blocks. Added asynchronous background caching/logging, stability improvements, and backend support for Gemini 3.5 Flash and DeepInfra models (DeepSeek, Qwen).
 > 
-> **Update v4.0.2 - Custom Shortcuts**: All global keyboard shortcuts can now be fully modified via the new **Shortcuts** tab. Added system-level conflict protection and clear UI feedback for hotkey registration.
+> **Update v4.1.0 - Gemma Integration**: Added support for **Gemma 4 (DeepInfra)**. Enjoy industry-leading OCR speed and near-Gemini precision at a **4x lower cost**. The ultimate high-performance budget option for real-time translation.
 
 ### ⚡ Up and running in 3 simple steps:
 1.  **Set your target language** – Source language is auto-detected in Simple mode.
