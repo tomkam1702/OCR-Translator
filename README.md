@@ -69,7 +69,7 @@ Whether you're exploring the world of *The Witcher*, learning a new language thr
 The new interface offers two distinct modes: **Simple** for hassle-free operation and **Custom** for granular control.
 
 <p align="center">
-  <img src="docs/user_manual/Simple.png" width="80%" alt="Simple Mode GUI">
+  <img src="docs/user_manual/Simple.webp" width="80%" alt="Simple Mode GUI">
 </p>
 
 > [!TIP]
@@ -83,9 +83,9 @@ The new interface offers two distinct modes: **Simple** for hassle-free operatio
 3.  **Select areas and start** – Position your Source and Target overlays and hit **Start (~)**.
 
 <p align="center">
-  <img src="docs/user_manual/japanese01.png" width="80%" alt="Japanese Frame Setup 1">
-  <img src="docs/user_manual/japanese02b.png" width="80%" alt="Japanese Frame Setup 2">
-  <img src="docs/user_manual/japanese03b.png" width="80%" alt="Japanese Frame Setup 3">
+  <img src="docs/user_manual/japanese01.webp" width="80%" alt="Japanese Frame Setup 1">
+  <img src="docs/user_manual/japanese02b.webp" width="80%" alt="Japanese Frame Setup 2">
+  <img src="docs/user_manual/japanese03b.webp" width="80%" alt="Japanese Frame Setup 3">
 </p>
 
 ---
@@ -128,19 +128,19 @@ These features work together to create an "invisible" translator. **Find Subtitl
 
 **Step 1: Initial Scan**
 
-<img src="docs/user_manual/GCT_screenshot_2026-04-20_22-50-52.png" width="90%" alt="Initial Scan">
+<img src="docs/user_manual/GCT_screenshot_2026-04-20_22-50-52.webp" width="90%" alt="Initial Scan">
 
 *The capture frame starts at a default size.*
 
 **Step 2: Adaptive Growth**
 
-<img src="docs/user_manual/GCT_screenshot_2026-04-20_22-50-56.png" width="90%" alt="Adaptive Growth">
+<img src="docs/user_manual/GCT_screenshot_2026-04-20_22-50-56.webp" width="90%" alt="Adaptive Growth">
 
 *The frame expands in real-time to fit longer subtitles.*
 
 **Step 3: Locked & Immersive**
 
-<img src="docs/user_manual/GCT_screenshot_2026-04-20_22-51-02.png" width="90%" alt="Locked & Immersive">
+<img src="docs/user_manual/GCT_screenshot_2026-04-20_22-51-02.webp" width="90%" alt="Locked & Immersive">
 
 *The frame locks at the perfect width, providing a seamless translation overlay.*
 
@@ -152,7 +152,7 @@ These features work together to create an "invisible" translator. **Find Subtitl
 Take direct control over what the AI "sees". Filter out complex HUD elements, minimaps, and speaker names to focus only on the dialogue.
 
 <p align="center">
-  <img src="docs/user_manual/OCR_custom_prompt_example.png" width="80%" alt="OCR Prompt Demo">
+  <img src="docs/user_manual/OCR_custom_prompt_example.webp" width="80%" alt="OCR Prompt Demo">
   <br>
   <strong>Result: "Bang. Brain all up the walls."</strong> – the speaker name "Vincenzo:" is stripped, and all HUD elements are ignored. The debug log on the right confirms the exact OCR output.
 </p>
