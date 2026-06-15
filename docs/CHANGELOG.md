@@ -5,6 +5,11 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.2] - 2026-06-15
+
+### Fixed
+- **Windows Dark Mode Text Visibility**: Fixed an issue where labels, checkbox text, and input fields had white text that became invisible on white/light blue backgrounds when Windows was set to Dark Mode. The application styling has been updated to explicitly enforce dark text colors, ensuring the user interface looks identical and remains fully readable in both light and dark operating system themes.
+
 ## [4.1.1] - 2026-06-03
 
 ### Added
