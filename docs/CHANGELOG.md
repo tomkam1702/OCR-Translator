@@ -5,6 +5,27 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0] - 2026-08-08
+
+### Added
+- **Custom Prompt Profile Management System (`.ctp` & `.cop`)**: Complete redesign of prompt storage using dedicated Custom Translation Prompt (`.ctp`) and Custom OCR Prompt (`.cop`) profiles in the application root directory with UTF-8 BOM encoding.
+- **Three-Button Prompt Workflow (`Load` / `Save` / `Save As`)**: Replaced basic save/reload controls with a flexible 3-button profile workflow for both Translation Prompt and OCR Prompt.
+- **Custom GCT Modal Dialogs**: Integrated lightweight, high-DPI-scaled modal dialogs with GCT window branding (`PromptFileListDialog`, `PromptSaveAsDialog`) instead of generic system file pickers:
+  - **Profile Selector (`Load`)**: Displays clean file names without extensions, pre-selects the active profile, supports instant double-click selection, right-click context menu, and keyboard deletion (`Del`).
+  - **In-Dialog Profile Deletion (`Delete`)**: Integrated deletion with confirmation prompt and protection for default profiles (`custom_prompt.ctp`, `custom_ocr_prompt.cop`), automatically falling back to defaults if the active profile is removed.
+  - **Smart Profile Creation (`Save As`)**: Enables creating new profiles with automatic extension normalization (e.g. `Witcher` and `Witcher.ctp` both resolve cleanly to `Witcher.ctp`), invalid character validation, and overwrite protection.
+- **Active Profile Persistence & Live UI Indicators**: Active prompt files are saved to `ocr_translator_config.ini`, reloaded automatically on startup, and displayed dynamically in plain gray text next to the *Enabled* checkbox in the Custom Prompt tab.
+- **Automatic Legacy Migration**: Seamlessly migrates legacy `custom_prompt.txt` and `custom_ocr_prompt.txt` files to `.ctp` and `.cop` formats on application launch.
+- **Gemini 3.6 Flash Model Support**: Integrated Google's Gemini 3.6 Flash model for translation with reduced token consumption at $1.50/$7.50 per 1M tokens.
+- **Gemini 3.5 Flash-Lite Model Support**: Integrated Google's fastest, lowest-cost Gemini 3.5 model for high-throughput translation and OCR (with Medium and Low media resolution profiles) at $0.30/$2.50 per 1M tokens.
+- **Gemma 4 26B A4B Priority Tier (DeepInfra)**: Added dedicated Priority service tier model option for Translation and OCR with `service_tier: "priority"` ($0.105/$0.51 per 1M tokens).
+
+### Changed
+- **Adaptive Gemini API Configuration**: Backend automatically tailors `GenerateContentConfig` to model version. For Gemini 3.5+ models (Gemini 3.6 Flash, Gemini 3.5 Flash-Lite), deprecated sampling parameters (`temperature`, `top_p`, `top_k`, `candidate_count`) are automatically excluded in accordance with Google API specifications, while enforcing `thinking_level="minimal"`.
+- **Legacy Gemini 3.x Parameter Cleanup**: Removed unsupported `candidate_count` parameter from Gemini 3.0/3.1 configuration while preserving temperature controls.
+- **OCR Temperature Logic**: Temperature configuration in Gemini OCR is now applied conditionally, preventing deprecated parameter errors on 3.5+ models.
+- **DeepInfra Priority Service Tier Architecture**: Automated dynamic detection of Priority models in `deepinfra_models.csv` (any model containing "Priority" in its name automatically injects `extra_body={"service_tier": "priority"}`).
+
 ## [4.1.2] - 2026-06-15
 
 ### Fixed

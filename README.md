@@ -73,9 +73,12 @@ The new interface offers two distinct modes: **Simple** for hassle-free operatio
 </p>
 
 > [!TIP]
-> **Update v4.1.1 - Windows Defender Fix**: Completely rewrote the application launcher in C to prevent incorrect Windows Defender flags and false-positive antivirus blocks. Added asynchronous background caching/logging, stability improvements, and backend support for Gemini 3.5 Flash and DeepInfra models (DeepSeek, Qwen).
-> 
-> **Update v4.1.0 - Gemma Integration**: Added support for **Gemma 4 (DeepInfra)**. Enjoy industry-leading OCR speed and near-Gemini precision at a **4x lower cost**. The ultimate high-performance budget option for real-time translation.
+> **Update v4.2.0**
+> - **Create, save, and manage multiple custom prompt profiles** tailored for different games (supporting both Translation and OCR).
+> - **Check out the latest models:** `Gemini 3.6 Flash` for translation and `Gemini 3.5 Flash-Lite` for OCR. Take advantage of the **Priority** tier for `Gemma`-based OCR.
+>
+> **Update v4.1.1**
+> - **Windows Defender Fix**: Completely rewrote the application launcher in C to prevent incorrect Windows Defender flags and false-positive antivirus blocks. Added asynchronous background caching/logging, stability improvements, and backend support for Gemini 3.5 Flash and DeepInfra models (DeepSeek, Qwen).
 
 ### ⚡ Up and running in 3 simple steps:
 1.  **Set your target language** – Source language is auto-detected in Simple mode.
