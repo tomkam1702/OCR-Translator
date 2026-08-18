@@ -12,7 +12,7 @@ Copyright © 2025-2026 Tomasz Kamiński<br>**Author of [![OHLC Forge Logo](asset
 
 **Game-Changing Translator (GCT)** is a state-of-the-art desktop application designed for **real-time screen translation** and **neural voice-over (TTS)** for games, movies, and on-screen content. 
 
-Powered by multi-model AI vision recognition (**Gemini**, **Gemma**, and **Qwen**), context-aware translation engines, and an embedded **100% offline neural voice engine** (Supertonic 3), it translates and vocalizes dialogue from any part of your screen into over 100 languages with zero latency and zero voice API costs.
+Powered by multi-model AI vision recognition (**Gemini**, **Gemma**, and **Qwen**), context-aware translation engines, and an embedded **100% offline neural voice engine** (Supertonic 3), it translates and vocalizes dialogue from any part of your screen into multiple languages with zero latency and zero voice API costs.
 
 Whether you're exploring the cinematic world of *The Witcher*, playing Japanese RPGs, or learning a new language through entertainment, GCT provides a seamless, immersive experience with floating overlays and synchronized real-time voice-over.
 
