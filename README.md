@@ -44,7 +44,7 @@ Whether you're exploring the cinematic world of *The Witcher*, playing Japanese 
         <br>
         <strong>🗡️ <a href="https://youtu.be/qzKY3d8DEoQ">Final Fantasy XVI</a></strong>
         <br>
-        <em>Real-time neural voice-over in cinematic dialogue</em>
+        <em>Real-time neural voice-over<br>in cinematic dialogue</em>
       </td>
       <td align="center" width="50%">
         <a href="https://youtu.be/011Evjv-Rys">
@@ -53,7 +53,7 @@ Whether you're exploring the cinematic world of *The Witcher*, playing Japanese 
         <br>
         <strong>🌌 <a href="https://youtu.be/011Evjv-Rys">Star Wars: The Old Republic</a></strong>
         <br>
-        <em>Subtitles + Voice-Over synchronized dialogue with zero API audio cost</em>
+        <em>Subtitles + Voice-Over synchronized dialogue<br>with zero API audio cost</em>
       </td>
     </tr>
   </table>
