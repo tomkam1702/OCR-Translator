@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Game-Changing Translator v4 User Manual – AI-powered screen translation with Gemini, Gemma and DeepL." />
-  <title>Game-Changing Translator v4 – User Manual</title>
+  <meta name="description" content="Game-Changing Translator v4.5 User Manual – AI-powered real-time screen translation and neural voice-over with Gemini, Gemma, Qwen, DeepL, and Supertonic." />
+  <title>Game-Changing Translator v4.5 – User Manual</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -160,7 +160,14 @@
 
     /* ── FOOTER ── */
     footer { background: var(--navy); color: var(--muted); text-align: center; padding: 32px; font-size: 13px; margin-top: 60px; }
-    footer a { color: #60a5fa; text-decoration: none; }
+    /* ── TTS LANGUAGES GRID ── */
+    .tts-lang-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+    .tts-lang-item { padding: 8px 10px; border: 1px solid #bae6fd; border-radius: 6px; text-align: center; font-size: 13px; font-weight: 600; color: #0369a1; transition: background 0.15s ease; }
+    .tts-lang-item.t-1 { background: rgba(255,255,255,0.80); }
+    .tts-lang-item.t-2 { background: rgba(255,255,255,0.55); }
+    .tts-lang-item:hover { background: #e0f2fe; }
+    @media(max-width: 800px){ .tts-lang-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media(max-width: 500px){ .tts-lang-grid { grid-template-columns: repeat(2, 1fr); } }
 
     img { max-width: 100%; height: auto; }
   </style>
@@ -173,13 +180,16 @@
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-badge">📖 User Manual · v4.2.0</div>
+  <div class="hero-badge">📖 User Manual · v4.5.0</div>
   <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 24px;">
     <img src="user_manual/app_icon_shadow.webp" alt="GCT App Icon" style="width: 130px; height: auto; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));">
     <h1 style="text-align: left; margin-bottom: 0;">Game-Changing<br><span>Translator</span></h1>
   </div>
-  <p>Next-generation AI translation for game and movie subtitles.<br>Powered by state-of-the-art OCR and superior context-aware engines, providing high-quality translation in over 100 languages.</p>
-  <div class="hero-meta">Copyright © 2025–2026 Tomasz Kamiński &nbsp;·&nbsp; Released 8 August 2026 &nbsp;·&nbsp; Built with ❤️ for gamers and language learners</div>
+  <p style="max-width: 760px;">Next-generation AI translation and real-time neural voice-over<br>
+  for game and movie subtitles.<br>
+  AI-based OCR (Gemini, Gemma, Qwen) and context-aware engines,<br>
+  providing high-quality translation in over 100 languages.</p>
+  <div class="hero-meta">Copyright © 2025–2026 Tomasz Kamiński &nbsp;·&nbsp; Released 18 August 2026 &nbsp;·&nbsp; Built with ❤️ for gamers and language learners</div>
 </div>
 
 <!-- WHY GAME-CHANGING TRANSLATOR -->
@@ -199,13 +209,13 @@
       </div>
       <div class="feature-item">
         <div class="feature-item-icon">🤖</div>
-        <h4>AI-Powered OCR (Gemini & Gemma) <span class="badge badge-free">Free</span></h4>
-        <p>Industry-first AI text recognition. Use <strong>Gemini</strong> (including the fast <strong>Gemini 3.5 Flash-Lite</strong>) for high accuracy, or <strong>Gemma 4 (DeepInfra)</strong> with optional <strong>Priority Tier</strong> for ultra-low costs (~$0.16/hour for OCR) and zero queueing during peak hours.</p>
+        <h4>AI-Powered OCR (Gemini, Gemma &amp; Qwen) <span class="badge badge-free">Free</span></h4>
+        <p>Industry-first AI text recognition. Use <strong>Gemini</strong> (including the fast <strong>Gemini 3.5 Flash-Lite</strong>) for high accuracy, budget-friendly <strong>Gemma 4 (DeepInfra)</strong> (~$0.16/hour for OCR), or state-of-the-art <strong>Qwen3-VL-30B (DeepInfra)</strong> — exceptionally accurate and highly recommended for Asian scripts (Japanese, Chinese, Korean). Optional <strong>Priority Tier</strong> guarantees zero queueing during peak hours.</p>
       </div>
       <div class="feature-item">
         <div class="feature-item-icon">🌍</div>
-        <h4>AI Translation (Gemini & Gemma) <span class="badge badge-free">Free</span></h4>
-        <p>Context-aware translation in 100+ languages. Choose our recommended <strong>Gemini 3 Flash</strong> for best value and natural phrasing, the frontier <strong>Gemini 3.6 Flash</strong> for advanced reasoning, or <strong>Gemma 4 (DeepInfra)</strong> for budget-friendly gameplay.</p>
+        <h4>AI Translation (Gemini &amp; Gemma) <span class="badge badge-free">Free</span></h4>
+        <p>Context-aware translation in 100+ languages. Choose our recommended <strong>Gemini 3 Flash</strong> for best value and natural phrasing, frontier <strong>Gemini 3.7 Flash</strong> and <strong>Gemini 3.6 Flash</strong> for advanced reasoning, or <strong>Gemma 4 (DeepInfra)</strong> for budget-friendly gameplay.</p>
       </div>
       <div class="feature-item">
         <div class="feature-item-icon">🎯</div>
@@ -272,6 +282,11 @@
         <h4>OCR API Logs <span class="badge badge-free">Free</span></h4>
         <p>Comprehensive audit trail for every vision-based request. Track image metadata, token efficiency, and model latencies. Every recognition event is logged with its exact prompt, enabling precise debugging and cost monitoring.</p>
       </div>
+      <div class="feature-item">
+        <div class="feature-item-icon">🎙️</div>
+        <h4>Neural Voice-Over (TTS) <span class="badge-group"><span class="badge badge-premium">PRO</span> <span class="badge badge-new">New v4</span></span></h4>
+        <p>Real-time neural speech synthesis in 31 languages. Listen to translated audio, read original subtitles without translation, or combine voice with on-screen overlays — 100% offline with zero API costs.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -284,8 +299,9 @@
       <h4>Licensing &amp; API Costs – Important Note</h4>
       <p>Please distinguish between the <strong>GCT Software Licence</strong> and <strong>Third-Party API Costs</strong>:</p>
       <ul>
-        <li><strong><span class="badge badge-free">Free</span> Features:</strong> These are unlocked in the GCT software for everyone. However, using them requires a connection to the <strong>Google Gemini</strong> or <strong>DeepInfra (Gemma)</strong> API, which carries its own usage costs.</li>
-        <li><strong><span class="badge badge-premium">PRO</span> Features:</strong> These require a one-time purchase of a <strong>GCT PRO Licence</strong> to unlock advanced functionality within the program. This fee covers only software access and does <strong>not</strong> include or cover any API costs.</li>
+        <li><strong><span class="badge badge-free">Free</span> Features:</strong> These are unlocked in the GCT software for everyone. However, using online OCR and translation requires a connection to the <strong>Google Gemini</strong> or <strong>DeepInfra (Gemma / Qwen)</strong> API, which carries its own usage costs.</li>
+        <li><strong><span class="badge badge-premium">PRO</span> Features:</strong> These require a one-time purchase of a <strong>GCT PRO Licence</strong> to unlock advanced functionality within the program (such as DeepL, Find Subtitles, and unlimited TTS Voice-Over). This fee covers software access and does <strong>not</strong> include third-party API costs.</li>
+        <li><strong>Supertonic Neural Voice-Over (TTS):</strong> Runs entirely locally on your hardware with <strong>zero API costs</strong>.</li>
         <li><strong>Independent API Services:</strong> GCT is a professional interface for AI services provided by <strong>Google</strong>, <strong>DeepInfra</strong>, and <strong>DeepL</strong>. These are independent commercial entities. You are responsible for all costs incurred through their respective APIs.</li>
         <li><strong>No Affiliation:</strong> Game-Changing Translator and its author are entirely independent and have <strong>no affiliation</strong> with Google, DeepInfra, or DeepL. GCT is a tool designed to facilitate the use of these third-party paid services.</li>
       </ul>
@@ -319,6 +335,7 @@
     <li><a href="#best-value">Translation Costs (<span style="color: #166534;">💡 Best Value for Money</span>)</a></li>
     <li><a href="#settings-behaviour">Settings: App Behaviour</a></li>
     <li><a href="#premium-features">PRO Features In Depth</a></li>
+    <li><a href="#settings-tts">Settings: TTS (Voice-Over) and Subtitles</a></li>
     <li><a href="#appearance">Settings: Appearance</a></li>
     <li><a href="#settings-caching">Settings: Caching &amp; Debugging</a></li>
     <li><a href="#settings-language">Settings: Interface Language</a></li>
@@ -438,7 +455,7 @@
         <div class="callout-num">1</div>
         <div class="callout-body">
           <strong>Translation Model <span class="badge badge-free">Free</span></strong>
-          <p>Selects the model used for translation. <strong>Gemini 3 Flash</strong> is our primary recommendation – offering elite, natural phrasing at an exceptional price. Alternatively, <strong>Gemini 3.6 Flash</strong> delivers Google's latest frontier generation, <strong>Gemini 3.5 Flash-Lite</strong> provides ultra-fast low-cost throughput, and <strong>Gemma 4 (DeepInfra)</strong> (with optional <strong>Priority Tier</strong>) offers maximum cost savings.</p>
+          <p>Selects the model used for translation. <strong>Gemini 3 Flash</strong> is our primary recommendation – offering elite, natural phrasing at an exceptional price. Alternatively, <strong>Gemini 3.7 Flash</strong> and <strong>Gemini 3.6 Flash</strong> deliver Google's latest frontier generation, <strong>Gemini 3.5 Flash-Lite</strong> provides ultra-fast low-cost throughput, and <strong>Gemma 4 (DeepInfra)</strong> (with optional <strong>Priority Tier</strong>) offers maximum cost savings.</p>
         </div>
       </div>
       <div class="callout premium">
@@ -452,7 +469,7 @@
         <div class="callout-num">2</div>
         <div class="callout-body">
           <strong>OCR Model <span class="badge badge-free">Free</span></strong>
-          <p>Selects the model for text recognition. <strong>Gemma 4 (DeepInfra)</strong> is the ultimate budget choice – <strong>4x cheaper</strong> than Google models while maintaining near-perfect accuracy. For peak-hour reliability, use <strong>Gemma 4 Priority</strong>. Alternatively, Google's <strong>Gemini 3.5 Flash-Lite (Low / Medium)</strong> provides dependable vision-based character recognition.</p>
+          <p>Selects the model for text recognition. <strong>Gemma 4 (DeepInfra)</strong> is the ultimate budget choice – <strong>4x cheaper</strong> than Google models while maintaining near-perfect accuracy. <strong>Qwen3-VL-30B (DeepInfra)</strong> delivers outstanding vision recognition and is <strong>especially recommended for Asian languages</strong> (Japanese, Chinese, Korean) where it achieves exceptional character precision. Both Gemma and Qwen offer a <strong>Priority Tier</strong> for peak-hour reliability. Alternatively, Google's <strong>Gemini 3.5 Flash-Lite (Low / Medium)</strong> provides dependable vision-based character recognition.</p>
         </div>
       </div>
       <div class="callout">
@@ -511,6 +528,16 @@
           <td style="padding: 10px;">$0.51</td>
         </tr>
         <tr style="border-bottom: 1px solid #bae6fd;">
+          <td style="padding: 10px;"><strong>Qwen3-VL-30B-A3B (DeepInfra) <span style="font-size: 11px; color: #0284c7;">· Recommended for Asian scripts</span></strong></td>
+          <td style="padding: 10px;">$0.12</td>
+          <td style="padding: 10px;">$0.48</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #bae6fd;">
+          <td style="padding: 10px;"><strong>Qwen3-VL-30B-A3B Priority (DeepInfra) <span style="font-size: 11px; color: #0284c7;">· Recommended for Asian scripts</span></strong></td>
+          <td style="padding: 10px;">$0.225</td>
+          <td style="padding: 10px;">$0.90</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #bae6fd;">
           <td style="padding: 10px;"><strong>Gemini 3.5 Flash-Lite (Google)</strong></td>
           <td style="padding: 10px;">$0.30</td>
           <td style="padding: 10px;">$2.50</td>
@@ -525,10 +552,15 @@
           <td style="padding: 10px;">$0.50</td>
           <td style="padding: 10px;">$3.00</td>
         </tr>
-        <tr>
+        <tr style="border-bottom: 1px solid #bae6fd;">
           <td style="padding: 10px;"><strong>Gemini 3.6 Flash (Google)</strong></td>
-          <td style="padding: 10px;">$1.50</td>
-          <td style="padding: 10px;">$7.50</td>
+          <td style="padding: 10px;">$0.75</td>
+          <td style="padding: 10px;">$3.75</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px;"><strong>Gemini 3.7 Flash (Google)</strong></td>
+          <td style="padding: 10px;">$0.75</td>
+          <td style="padding: 10px;">$3.75</td>
         </tr>
       </tbody>
     </table>
@@ -649,6 +681,137 @@
   </div>
 </div>
 
+<!-- SETTINGS: TTS (VOICE-OVER) AND SUBTITLES -->
+<section id="settings-tts">
+  <div class="section-label">Settings Tab</div>
+  <h2>TTS (Voice-Over) and Subtitles</h2>
+  <p>Listen to in-game dialogue spoken aloud in real time. Choose whether to hear translated dialogue, read original text, or combine speech with screen subtitles — powered by an offline, neural voice engine with 31 supported languages and no extra API cost.<br>💡 While <strong>TTS</strong> is a <strong>PRO</strong> feature, <strong>FREE</strong> users can try it for 3 minutes on every application launch.</p>
+  <div class="doc-grid">
+    <div>
+      <img src="user_manual/tts.webp" alt="TTS (Voice-Over) and Subtitles settings" class="doc-img" />
+      <p class="doc-img-caption">TTS (Voice-Over) and Subtitles – third group in the Settings tab</p>
+    </div>
+    <div class="callouts">
+      <div class="callout premium" id="tts-voice-over-mode">
+        <div class="callout-num">1</div>
+        <div class="callout-body">
+          <strong>Voice-Over Mode <span class="badge badge-premium">PRO</span></strong>
+          <p>Controls speech and overlay output:<br><br>
+          <strong>None:</strong> subtitles only<br>
+          <strong>Voice-over only (translation):</strong> plays audio without screen overlay<br>
+          <strong>Voice-over and subtitles (translation):</strong> simultaneous speech and subtitles<br>
+          <strong>Read original subtitles (no translation):</strong> reads dialogue aloud in its source language with zero translation API cost<br><br>
+          If a chosen language isn't supported by the voice engine, unavailable modes are greyed out with an explanatory note.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="callout-num">2</div>
+        <div class="callout-body">
+          <strong>Subtitle Translation <span class="badge badge-free">Free</span></strong>
+          <p>Choose between <strong>Optimised for voice-over</strong> and <strong>Standard</strong>. The voice-over optimised mode crafts natural, concise sentences tailored for TTS, reducing audio latency and keeping playback in sync with the scene.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="callout-num">3</div>
+        <div class="callout-body">
+          <strong>Voice Style <span class="badge badge-free">Free</span></strong>
+          <p>Select from 10 distinct, natural-sounding multilingual voices (5 male, 5 female). <strong>Male 5</strong> (deep, grave) and <strong>Female 5</strong> (poised, composed) are recommended for cinematic immersion.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="callout-num">4</div>
+        <div class="callout-body">
+          <strong>Speech Speed &amp; Voice Volume <span class="badge badge-free">Free</span></strong>
+          <p>Fine-tune voice playback speed (<strong>0.6x–2.0x</strong>, default 1.2x) and volume (<strong>0.0–1.0</strong>) to match gameplay pace without pitch distortion. Click <strong>▶ Test Voice</strong> to preview the selected voice style and speed instantly.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="callout-num">5</div>
+        <div class="callout-body">
+          <strong>Typewriter Subtitle Support <span class="badge badge-free">Free</span></strong>
+          <p><em>(Experimental)</em> When set to <strong>On</strong>, the engine waits for character-by-character animated subtitles to fully appear before reading, preventing fragmented speech and repeated sentence starts. If subtitles in your game or video do not appear gradually (not in typewriter style), keep this option <strong>Off</strong> for lower latency.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="premium-highlight" style="background: #f0fdf4; border-color: #bbf7d0; margin-top: 28px;">
+    <h3 style="color: #166534; margin-bottom: 14px;">⚡ 100% Offline Neural Voice Engine &amp; Pro Tips</h3>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; gap: 12px; align-items: flex-start;">
+        <span style="font-size: 1.2rem; flex-shrink: 0; line-height: 1.4;">💻</span>
+        <p style="color: #166534; font-size: 14px; margin: 0; line-height: 1.6;">
+          TTS is powered by the embedded <strong>Supertonic 3</strong> neural engine, running completely offline on your PC with <strong>zero API costs</strong>. It performs best on a reasonably modern processor with AVX2 support (most CPUs released from 2016 onwards) and 16 GB of RAM.
+        </p>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: flex-start;">
+        <span style="font-size: 1.2rem; flex-shrink: 0; line-height: 1.4;">💡</span>
+        <p style="color: #166534; font-size: 14px; margin: 0; line-height: 1.6;">
+          We strongly recommend using <strong>Voice-over only</strong> and <strong>Voice-over and subtitles</strong> in combination with <strong>Optimised for voice-over</strong> subtitle translation. When enabled, dialogue is translated in a concise, professional, punchy, and very idiomatic style specifically designed for TTS, minimising audio latency and keeping voice playback in sync with the scene.
+        </p>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: flex-start;">
+        <span style="font-size: 1.2rem; flex-shrink: 0; line-height: 1.4;">👑</span>
+        <p style="color: #166534; font-size: 14px; margin: 0; line-height: 1.6;">
+          All users can try every voice-over mode with a <strong>3-minute trial on every app launch</strong>. When the trial expires, the app automatically transitions back to subtitles-only mode (or safely halts when reading original text). A <strong>PRO licence</strong> unlocks unlimited, unrestricted voice-over.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="premium-highlight" style="background: #f0f9ff; border-color: #bae6fd; margin-top: 16px;">
+    <h3 style="color: #0369a1; margin-bottom: 12px;">🌐 Supported Voice-Over Languages (31 Languages)</h3>
+    <p style="color: #0369a1; font-size: 13px; margin-bottom: 14px; line-height: 1.5;">
+      The built-in Supertonic TTS engine provides high-quality, offline voice synthesis for 31 languages:
+    </p>
+
+    <div class="tts-lang-grid">
+      <div class="tts-lang-item t-1" style="grid-column: 1;">English</div>
+
+      <div class="tts-lang-item t-1" style="grid-column: 1;">Arabic</div>
+      <div class="tts-lang-item t-2">Bulgarian</div>
+      <div class="tts-lang-item t-1">Croatian</div>
+      <div class="tts-lang-item t-2">Czech</div>
+      <div class="tts-lang-item t-1">Danish</div>
+
+      <div class="tts-lang-item t-2">Dutch</div>
+      <div class="tts-lang-item t-1">Estonian</div>
+      <div class="tts-lang-item t-2">Finnish</div>
+      <div class="tts-lang-item t-1">French</div>
+      <div class="tts-lang-item t-2">German</div>
+
+      <div class="tts-lang-item t-1">Greek</div>
+      <div class="tts-lang-item t-2">Hindi</div>
+      <div class="tts-lang-item t-1">Hungarian</div>
+      <div class="tts-lang-item t-2">Indonesian</div>
+      <div class="tts-lang-item t-1">Italian</div>
+
+      <div class="tts-lang-item t-2">Japanese</div>
+      <div class="tts-lang-item t-1">Korean</div>
+      <div class="tts-lang-item t-2">Latvian</div>
+      <div class="tts-lang-item t-1">Lithuanian</div>
+      <div class="tts-lang-item t-2">Polish</div>
+
+      <div class="tts-lang-item t-1">Portuguese</div>
+      <div class="tts-lang-item t-2">Romanian</div>
+      <div class="tts-lang-item t-1">Russian</div>
+      <div class="tts-lang-item t-2">Slovak</div>
+      <div class="tts-lang-item t-1">Slovenian</div>
+
+      <div class="tts-lang-item t-2">Spanish</div>
+      <div class="tts-lang-item t-1">Swedish</div>
+      <div class="tts-lang-item t-2">Turkish</div>
+      <div class="tts-lang-item t-1">Ukrainian</div>
+      <div class="tts-lang-item t-2">Vietnamese</div>
+    </div>
+  </div>
+
+  <div class="tip" style="margin-top: 16px;">
+    <span class="tip-icon">⚖️</span>
+    <span><strong>Voice-Over Licensing:</strong> The voice-over engine is powered by <strong>Supertonic 3</strong>, a neural TTS model by <strong>Supertone Inc.</strong>, released under the <strong>BigScience Open RAIL-M License</strong> (model weights distributed unmodified); the <em>supertonic</em> Python package is MIT-licensed. Full license texts are included in <code>tts_models/LICENSE</code> and <code>LICENSES-INFO.txt</code> next to the application. Use of the voice-over feature is subject to the OpenRAIL-M use restrictions — including no impersonation without consent and no unlawful or harmful use. <strong>Voice-over audio is AI-generated</strong>; when publishing recordings or streams that contain it, please disclose that the voice is synthetic (e.g. in the video description), in line with applicable regulations such as the EU AI Act.</span>
+  </div>
+</section>
+
 <!-- SETTINGS: APPEARANCE -->
 <section id="appearance">
   <div class="section-label">Settings Tab</div>
@@ -657,7 +820,7 @@
   <div class="doc-grid">
     <div>
       <img src="user_manual/appearance.webp" alt="Appearance settings" class="doc-img" />
-      <p class="doc-img-caption">Appearance – third group in the Settings tab</p>
+      <p class="doc-img-caption">Appearance – fourth group in the Settings tab</p>
     </div>
     <div class="callouts">
       <div class="callout premium">
@@ -1033,7 +1196,7 @@
         <div style="font-size: 1.3rem; width: 26px; text-align: center; flex-shrink: 0; margin-top: -2px;">👑</div>
         <div class="callout-body">
           <strong>PRO Licence Activation</strong>
-          <p>Enter your PRO licence key and click <strong>Activate PRO Key</strong> to unlock all PRO features: DeepL, Find Subtitles, Scan Wider, Target on Source, colour pickers, and OCR Prompt.</p>
+          <p>Enter your PRO licence key and click <strong>Activate PRO Key</strong> to unlock all PRO features: DeepL, Find Subtitles, Scan Wider, Target on Source, colour pickers, OCR Prompt, and unlimited TTS Voice-Over.</p>
         </div>
       </div>
     </div>
@@ -1042,8 +1205,8 @@
 
 <!-- FOOTER -->
 <footer>
-  <p>Game-Changing Translator v4.2.0 &nbsp;·&nbsp; Copyright © 2025–2026 <a href="https://github.com/tomkam1702/OCR-Translator">Tomasz Kamiński</a></p>
-  <p style="margin-top:8px;">AI-powered real-time screen translation · Gemini &amp; Gemma OCR · Gemini, Gemma &amp; DeepL Translation</p>
+  <p>Game-Changing Translator v4.5.0 &nbsp;·&nbsp; Copyright © 2025–2026 <a href="https://github.com/tomkam1702/OCR-Translator">Tomasz Kamiński</a></p>
+  <p style="margin-top:8px;">AI-powered real-time screen translation · Gemini, Gemma &amp; Qwen OCR · Gemini, Gemma &amp; DeepL Translation · Supertonic Neural Voice-Over</p>
 </footer>
 
 </body>

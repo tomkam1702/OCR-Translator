@@ -5,6 +5,21 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.0] - 2026-08-18
+
+### Added
+- **Embedded Neural Voice-Over (TTS)**: Integrated offline neural speech synthesis powered by the **Supertonic 3** engine, running 100% locally on CPU (with AVX2 support) with zero API costs for voice generation.
+- **4 Voice-Over Modes**:
+  - **Voice-Over Only**: Plays spoken dialogue without on-screen subtitle boxes for distraction-free immersion.
+  - **Voice-Over and Subtitles**: Simultaneous synchronized audio playback with floating subtitle overlay.
+  - **Read Original Subtitles (No Translation)**: Reads on-screen dialogue aloud in its source language with zero translation API cost.
+  - **None**: Traditional floating subtitle overlay only.
+- **Voice-Over Optimised Translation Mode**: Added a dedicated translation style option that generates concise, punchy, and idiomatic phrasing specifically tailored for speech synthesis, cutting audio duration and reducing speech latency.
+- **31 Supported Voice-Over Languages**: Added native multilingual voice synthesis support for 31 languages (English, Arabic, Bulgarian, Croatian, Czech, Danish, Dutch, Estonian, Finnish, French, German, Greek, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Latvian, Lithuanian, Polish, Portuguese, Romanian, Russian, Slovak, Slovenian, Spanish, Swedish, Turkish, Ukrainian, and Vietnamese).
+- **10 Natural Voice Styles & Controls**: 5 male and 5 female voices with pitch-neutral speed scaling (0.6x–2.0x), independent volume adjustment, and instant **▶ Test Voice** preview.
+- **Typewriter Subtitle Support**: Added smart detection for gradual character-by-character subtitle animations to prevent fragmented speech playback.
+- **Voice-Over Free Trial Mode**: Free tier includes 3 minutes of full voice-over functionality on every application launch; unlimited continuous voice-over unlocked with a PRO licence.
+
 ## [4.2.0] - 2026-08-08
 
 ### Added
