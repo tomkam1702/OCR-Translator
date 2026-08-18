@@ -110,7 +110,7 @@ The new Voice-Over module transforms GCT into a full dubbing and voice-acting co
 | Feature | Description & Advantages |
 | :--- | :--- |
 | **🎧 4 Flexible Output Modes** | • **Voice-over only:** Pure spoken dialogue without on-screen subtitle boxes – zero HUD clutter.<br>• **Voice-over and subtitles:** Simultaneous speech and floating translation overlay.<br>• **Read original subtitles (no translation):** Reads on-screen text aloud in its native source language with **zero translation API cost**.<br>• **None:** Traditional visual subtitle overlay only. |
-| **⚡ Optimised for Voice-Over** | Selectable translation style that crafts concise, punchy, and idiomatic sentences specifically tailored for TTS. This dramatically reduces audio duration, eliminating latency and keeping speech perfectly in sync with rapid dialogue. |
+| **⚡ Optimised for Voice-Over** | Selectable translation style that crafts concise, punchy, and idiomatic sentences specifically tailored for TTS. This dramatically reduces audio duration and speech latency. |
 | **💻 100% Offline & Zero API Costs** | Powered by the embedded **Supertonic 3** neural engine running entirely on your local CPU (with AVX2 support). No third-party TTS subscriptions, no token charges for voice synthesis. |
 | **👑 Free 3-Min Trial on Every Launch** | All users can freely test every voice mode and speed setting for 3 minutes on every application startup. A **PRO licence** unlocks unlimited, permanent playback. |
 | **🌐 31 Supported Languages** | Comprehensive multilingual voice synthesis covering 31 languages. |
