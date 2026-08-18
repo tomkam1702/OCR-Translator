@@ -113,13 +113,9 @@ The new Voice-Over module transforms GCT into a full dubbing and voice-acting co
 | **⚡ Optimised for Voice-Over** | Selectable translation style that crafts concise, punchy, and idiomatic sentences specifically tailored for TTS. This dramatically reduces audio duration, eliminating latency and keeping speech perfectly in sync with rapid dialogue. |
 | **💻 100% Offline & Zero API Costs** | Powered by the embedded **Supertonic 3** neural engine running entirely on your local CPU (with AVX2 support). No third-party TTS subscriptions, no token charges for voice synthesis. |
 | **👑 Free 3-Min Trial on Every Launch** | All users can freely test every voice mode and speed setting for 3 minutes on every application startup. A **PRO licence** unlocks unlimited, permanent playback. |
-| **🌐 31 Supported Languages** | Comprehensive multilingual voice synthesis covering major European, Asian, and Middle Eastern languages. |
+| **🌐 31 Supported Languages** | Comprehensive multilingual voice synthesis covering 31 languages. |
 
-### 🌐 Supported Voice-Over Languages (31 Languages)
-
-| | | |
-| :--- | :--- | :--- |
-| • **Arabic**<br>• **Bulgarian**<br>• **Croatian**<br>• **Czech**<br>• **Danish**<br>• **Dutch**<br>• **English**<br>• **Estonian**<br>• **Finnish**<br>• **French**<br>• **German** | • **Greek**<br>• **Hindi**<br>• **Hungarian**<br>• **Indonesian**<br>• **Italian**<br>• **Japanese**<br>• **Korean**<br>• **Latvian**<br>• **Lithuanian**<br>• **Polish** | • **Portuguese**<br>• **Romanian**<br>• **Russian**<br>• **Slovak**<br>• **Slovenian**<br>• **Spanish**<br>• **Swedish**<br>• **Turkish**<br>• **Ukrainian**<br>• **Vietnamese** |
+👉 For details on the new TTS feature, see the [User Manual](https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html#settings-tts).
 
 ---
 
