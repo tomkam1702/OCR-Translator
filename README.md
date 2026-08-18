@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html">
-    <img src="assets/readme_banner.png" alt="Game-Changing Translator v4 Banner" width="100%">
+    <img src="assets/readme_banner.png" alt="Game-Changing Translator v4.5 Banner" width="100%">
   </a>
 </p>
 
@@ -10,20 +10,58 @@ Copyright © 2025-2026 Tomasz Kamiński<br>**Author of [![OHLC Forge Logo](asset
 
 ## 🌟 Overview
 
-**Game-Changing Translator** is a state-of-the-art desktop application designed for real-time screen translation. Using powerful multi-model AI (Gemini &amp; Gemma) and context-aware engines, it captures text from any part of your screen—be it a game, a movie, or a document—and translates it instantly into over 100 languages. 
+**Game-Changing Translator (GCT)** is a state-of-the-art desktop application designed for **real-time screen translation** and **neural voice-over (TTS)** for games, movies, and on-screen content. 
 
-Whether you're exploring the world of *The Witcher*, learning a new language through entertainment, or simply need to understand content that can't be copied, GCT v4 provides a seamless, immersive experience with floating overlays that stay on top of your content.
+Powered by multi-model AI vision recognition (**Gemini**, **Gemma**, and **Qwen**), context-aware translation engines, and an embedded **100% offline neural voice engine** (Supertonic 3), it translates and vocalizes dialogue from any part of your screen into over 100 languages with zero latency and zero voice API costs.
+
+Whether you're exploring the cinematic world of *The Witcher*, playing Japanese RPGs, or learning a new language through entertainment, GCT provides a seamless, immersive experience with floating overlays and synchronized real-time voice-over.
 
 > [!IMPORTANT]
+> ### 🎙️ NEW in v4.5: Real-Time Neural Voice-Over (TTS)
+> Experience games like never before! Listen to translated dialogue spoken aloud by natural AI voices, or read original subtitles without translation. Runs **100% locally on your PC** with **zero API costs** across **31 languages**.
+> 
+> 🎁 **FREE tier:** Includes a **3-minute trial on every app launch**.  
+> 👑 **PRO tier:** Unlocks unlimited, continuous voice-over.
+
+> [!TIP]
 > ### ⚡ Near-Gemini Quality @ 4x Lower Cost!
-> Version 4.1.0 introduces support for **Gemma 4 (DeepInfra)** — providing **equally fast** OCR performance and near-Gemini precision for a fraction of the price. 
+> Support for **Gemma 4 (DeepInfra)** and **Qwen3-VL-30B** provides lightning-fast OCR and near-Gemini precision for a fraction of the price (~$0.16/hour for OCR).
 > 
 > 💡 **PRO TIP:** Combine Gemini (Translation) + Gemma (OCR) for the ultimate 3x cost reduction!  
 > 👉 [Read the **Best Value for Money** guide in the manual](https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html#best-value)
 
 ---
 
-## 🎬 Featured Game Demonstrations
+## 🎙️ Neural Voice-Over (TTS) in Action
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="50%">
+        <a href="https://youtu.be/qzKY3d8DEoQ">
+          <img src="https://img.youtube.com/vi/qzKY3d8DEoQ/maxresdefault.jpg" alt="Final Fantasy XVI Real-Time Neural Voice-Over Demo" style="width: 100%; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+        </a>
+        <br>
+        <strong>🗡️ <a href="https://youtu.be/qzKY3d8DEoQ">Final Fantasy XVI</a></strong>
+        <br>
+        <em>Real-time neural voice-over in high-paced cinematic action</em>
+      </td>
+      <td align="center" width="50%">
+        <a href="https://youtu.be/011Evjv-Rys">
+          <img src="https://img.youtube.com/vi/011Evjv-Rys/maxresdefault.jpg" alt="Star Wars: The Old Republic Real-Time Neural Voice-Over Demo" style="width: 100%; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+        </a>
+        <br>
+        <strong>🌌 <a href="https://youtu.be/011Evjv-Rys">Star Wars: The Old Republic</a></strong>
+        <br>
+        <em>Subtitles + Voice-Over synchronized dialogue with zero API audio cost</em>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## 🎬 Real-Time Subtitle Translation Demonstrations
 
 <div align="center">
   <table>
@@ -35,7 +73,7 @@ Whether you're exploring the world of *The Witcher*, learning a new language thr
         <br>
         <strong>🧙‍♂️ <a href="https://youtu.be/0bMoL1pR7tM">The Witcher 3</a></strong>
         <br>
-        <em>Revolutionary AI OCR & natural Polish-to-English translation</em>
+        <em>AI OCR & natural Polish-to-English translation</em>
       </td>
       <td align="center" width="33%">
         <a href="https://youtu.be/Iy4bIr06Ae4">
@@ -61,24 +99,37 @@ Whether you're exploring the world of *The Witcher*, learning a new language thr
 
 ---
 
-## 🪄 Introducing Version 4: A New Era of Translation
+## 🎙️ Neural Voice-Over (TTS) – Key Highlights
 
-**Version 4** is not just an update — it is a complete architectural redesign. Built with a brand-new engine from the ground up, it offers a smoother, more responsive experience and a state-of-the-art interface tailored for modern gaming.
+The new Voice-Over module transforms GCT into a full dubbing and voice-acting companion for foreign games and video content:
 
-### ✨ Redesigned GUI & Simple Mode
-The new interface offers two distinct modes: **Simple** for hassle-free operation and **Custom** for granular control.
+<p align="center">
+  <img src="docs/user_manual/tts.webp" width="85%" alt="TTS Settings Panel">
+</p>
+
+| Feature | Description & Advantages |
+| :--- | :--- |
+| **🎧 4 Flexible Output Modes** | • **Voice-over only:** Pure spoken dialogue without on-screen subtitle boxes – zero HUD clutter.<br>• **Voice-over and subtitles:** Simultaneous speech and floating translation overlay.<br>• **Read original subtitles (no translation):** Reads on-screen text aloud in its native source language with **zero translation API cost**.<br>• **None:** Traditional visual subtitle overlay only. |
+| **⚡ Optimised for Voice-Over** | Selectable translation style that crafts concise, punchy, and idiomatic sentences specifically tailored for TTS. This dramatically reduces audio duration, eliminating latency and keeping speech perfectly in sync with rapid dialogue. |
+| **💻 100% Offline & Zero API Costs** | Powered by the embedded **Supertonic 3** neural engine running entirely on your local CPU (with AVX2 support). No third-party TTS subscriptions, no token charges for voice synthesis. |
+| **👑 Free 3-Min Trial on Every Launch** | All users can freely test every voice mode and speed setting for 3 minutes on every application startup. A **PRO licence** unlocks unlimited, permanent playback. |
+| **🌐 31 Supported Languages** | Comprehensive multilingual voice synthesis covering major European, Asian, and Middle Eastern languages. |
+
+### 🌐 Supported Voice-Over Languages (31 Languages)
+
+| | | |
+| :--- | :--- | :--- |
+| • **Arabic**<br>• **Bulgarian**<br>• **Croatian**<br>• **Czech**<br>• **Danish**<br>• **Dutch**<br>• **English**<br>• **Estonian**<br>• **Finnish**<br>• **French**<br>• **German** | • **Greek**<br>• **Hindi**<br>• **Hungarian**<br>• **Indonesian**<br>• **Italian**<br>• **Japanese**<br>• **Korean**<br>• **Latvian**<br>• **Lithuanian**<br>• **Polish** | • **Portuguese**<br>• **Romanian**<br>• **Russian**<br>• **Slovak**<br>• **Slovenian**<br>• **Spanish**<br>• **Swedish**<br>• **Turkish**<br>• **Ukrainian**<br>• **Vietnamese** |
+
+---
+
+## 🪄 Redesigned GUI & Simple Mode
+
+The interface offers two distinct modes: **Simple** for hassle-free operation and **Custom** for granular control.
 
 <p align="center">
   <img src="docs/user_manual/Simple.webp" width="80%" alt="Simple Mode GUI">
 </p>
-
-> [!TIP]
-> **Update v4.2.0**
-> - **Create, save, and manage multiple custom prompt profiles** tailored for different games (supporting both Translation and OCR).
-> - **Check out the latest models:** `Gemini 3.6 Flash` for translation and `Gemini 3.5 Flash-Lite` for OCR. Take advantage of the **Priority** tier for `Gemma`-based OCR.
->
-> **Update v4.1.1**
-> - **Windows Defender Fix**: Completely rewrote the application launcher in C to prevent incorrect Windows Defender flags and false-positive antivirus blocks. Added asynchronous background caching/logging, stability improvements, and backend support for Gemini 3.5 Flash and DeepInfra models (DeepSeek, Qwen).
 
 ### ⚡ Up and running in 3 simple steps:
 1.  **Set your target language** – Source language is auto-detected in Simple mode.
@@ -93,32 +144,35 @@ The new interface offers two distinct modes: **Simple** for hassle-free operatio
 
 ---
 
-## 🛠️ Features
+## 🛠️ Features Breakdown
 
 ### 🎁 FREE Features
-*   **AI-Powered OCR (Gemini &amp; Gemma)**: Industry-first AI text recognition that handles stylised fonts and low-contrast backgrounds.
+*   **AI-Powered OCR (Gemini, Gemma &amp; Qwen)**: Multi-model AI text recognition that handles stylised fonts, low-contrast backgrounds, and Asian scripts.
 *   **AI Translation (Gemini &amp; Gemma)**: Top-quality, context-aware translation in over 100 languages.
-*   **Sliding Context Window**: Remembers up to 5 previous subtitles to maintain narrative coherence.
-*   **Cost Monitoring**: Real-time token-level analytics for <strong>Google</strong>, <strong>DeepInfra</strong>, and <strong>DeepL</strong>.
-*   **Two-Tier Caching**: In-memory and file-based caching to save on API costs.
-*   **Native RTL Support**: Flawless bidirectional rendering for Arabic, Hebrew, Persian, etc.
-*   **Translation Prompt**: Inject custom instructions to define tone or game-specific context.
-*   **API Logs**: Comprehensive dual-layer logging for both OCR and Translation (Gemini &amp; Gemma).
+*   **Neural Voice-Over 3-Min Trial**: Test all voice styles, speeds, and output modes for 3 minutes on every application launch.
+*   **Voice-Over Optimised Translation Mode**: Concise translation style tailored specifically for fast speech synthesis and low latency.
+*   **Sliding Context Window**: Remembers up to 5 previous subtitles to maintain narrative and grammatical flow across dialogue.
+*   **Cost Monitoring**: Real-time token-level analytics for **Google**, **DeepInfra**, and **DeepL**.
+*   **Two-Tier Caching**: In-memory LRU cache + persistent disk cache for zero-cost repeated phrases.
+*   **Native RTL Support**: Flawless bidirectional rendering for Arabic, Hebrew, and Persian.
+*   **Translation Prompt Profiles**: Create, save, and switch between custom prompt profiles for different games.
+*   **API Logs**: Comprehensive dual-layer logging for both OCR and Translation pipelines.
 
 ### 🚀 High-Performance, Low-Cost (Gemma &amp; DeepInfra)
-The integration of **Gemma 4 (DeepInfra)** offers a powerful alternative to the standard pipeline:
-*   **Equally Fast:** Optimized DeepInfra hosting provides near-instant OCR, matching the responsiveness of the Gemini API.
-*   **4x Lower Costs:** Get near-Gemini quality at a fraction of the cost (~$0.16/hour for OCR).
+*   **Equally Fast:** Optimized DeepInfra hosting provides near-instant OCR matching the responsiveness of the Gemini API.
+*   **4x Lower Costs:** Near-Gemini quality at a fraction of the cost (~$0.16/hour for OCR).
 *   **Budget Strategy:** Use Gemini for elite translation and Gemma for OCR to slash total costs by **3x**.
 *   👉 [Read the **Best Value for Money** guide in the manual](https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html#best-value)
 
 ### 👑 PRO Features
+*   **Unlimited Neural Voice-Over (TTS)**: Continuous, unrestricted offline voice synthesis in 31 languages.
+*   **All Voice-Over Modes**: Voice-over only (invisible overlay), simultaneous speech + subtitles, and source language voice reading.
 *   **DeepL Translation**: Elite precision for Japanese, Chinese, and European scripts with free context subtitles.
-*   **Find Subtitles**: Automatically scans the screen to detect and lock onto subtitle areas.
+*   **Find Subtitles**: Automatically scans the screen to detect, adapt, and lock onto dynamic subtitle boxes.
 *   **Target on Source**: Automatically overlays the translation directly onto the original subtitle area.
 *   **Scan Wider**: Expands the capture area to prevent word truncation and AI hallucinations.
-*   **OCR Prompt**: Custom instructions for the AI OCR to filter HUD elements or speaker names.
-*   **Custom Appearance**: Full control over background and text colours with native pickers.
+*   **OCR Prompt**: Custom instructions for the AI OCR to filter HUD elements, ammo counters, or speaker names.
+*   **Custom Appearance**: Full control over background and text colours with native colour pickers.
 
 ---
 
@@ -149,10 +203,8 @@ These features work together to create an "invisible" translator. **Find Subtitl
 
 </div>
 
-
-
 ### ✍️ OCR Prompt
-Take direct control over what the AI "sees". Filter out complex HUD elements, minimaps, and speaker names to focus only on the dialogue.
+Take direct control over what the AI "sees". Filter out complex HUD elements, minimaps, and speaker names to focus only on dialogue.
 
 <p align="center">
   <img src="docs/user_manual/OCR_custom_prompt_example.webp" width="80%" alt="OCR Prompt Demo">
@@ -167,29 +219,18 @@ Take direct control over what the AI "sees". Filter out complex HUD elements, mi
 > [!CAUTION]
 > ### Licensing & API Costs – Important Note
 > Please distinguish between the **GCT Software Licence** and **Third-Party API Costs**:
-> *   ![](https://img.shields.io/badge/FREE-f0fdf4?style=flat-square&logoColor=166534) **Features:** These are unlocked in the GCT software for everyone. However, using them requires a connection to the **Google** or **DeepInfra** API, which carries its own usage costs.
-> *   ![](https://img.shields.io/badge/PRO-fefce8?style=flat-square&logoColor=92400e) **Features:** These require a one-time purchase of a **GCT PRO Licence** to unlock advanced functionality within the program. This fee covers only software access and does **not** include or cover any API costs.
-> *   **Independent API Services:** GCT is a professional interface for AI services provided by **Google**, **DeepInfra**, and **DeepL**. These are independent commercial entities. You are responsible for all costs incurred through their respective APIs.
-> *   **No Affiliation:** Game-Changing Translator and its author are entirely independent and have **no affiliation** with Google, DeepInfra, or DeepL. GCT is a tool designed to facilitate the use of these third-party paid services.
+> *   **FREE Features:** Unlocked in the GCT software for everyone. Using online OCR and translation requires a connection to the **Google** or **DeepInfra** API, which carries its own usage costs.
+> *   **PRO Features:** Require a one-time purchase of a **GCT PRO Licence** to unlock advanced functionality within the program (DeepL, Find Subtitles, unlimited TTS Voice-Over). This fee covers software access and does **not** include third-party API costs.
+> *   **Supertonic Neural Voice-Over (TTS):** Runs entirely locally on your hardware with **zero API costs**.
+> *   **Independent API Services:** GCT is an independent interface for AI services provided by **Google**, **DeepInfra**, and **DeepL**. You are responsible for all costs incurred through their respective APIs.
+> *   **No Affiliation:** Game-Changing Translator and its author are entirely independent and have **no affiliation** with Google, DeepInfra, or DeepL.
 
 > [!WARNING]
-> ### Compatibility & Version 4 Requirements
-> Please review these technical requirements before proceeding:
-> *   **API-Only Architecture:** Version 4 is built entirely around third-party AI APIs. Operation requires a valid API key from **Google** or **DeepInfra**.
-> *   **Stay on v3.9.6:** If you do not have (and do not plan to obtain) an API key, you should **not** update to version 4. Please remain on **version 3.9.6**, which is the final release supporting free offline OCR (Tesseract) and offline translation models (MarianMT).
-> *   **Try Before You Buy:** Do not purchase the **GCT PRO Licence** before thoroughly testing the **FREE** version. Ensure the software works correctly on your system and that the AI-powered OCR and translation meet your expectations.
-
-> [!NOTE]
-> ### Updating from v3.9.6 or v4.0.0
-> Due to significant architectural changes in v4, automatic updates from versions **3.9.6** and **4.0.0** are not supported. If you are currently on either of these versions, please download and install the latest release **manually** from the [Releases](https://github.com/tomkam1702/OCR-Translator/releases) page. Automatic updates will work normally starting from version **4.0.1**.
-
----
-
-## 🛑 Deprecated Features
-
-Version 4 marks a significant shift towards high-quality AI-driven workflows. As a result, the following features have been retired:
-*   **Tesseract** OCR and **MarianMT** translation: These traditional/local technologies no longer keep up with the state-of-the-art results provided by modern AI.
-*   **OpenAI** and **Google Translate** support: Retired to streamline the application towards the most effective and cost-efficient engines.
+> ### Compatibility & System Requirements
+> *   **API-Only Architecture:** Version 4 requires a valid API key from **Google** (AI Studio) or **DeepInfra**.
+> *   **CPU Requirements for TTS:** Local Neural Voice-Over runs efficiently on CPU with **AVX2 support** (standard on CPUs from 2016 onwards); 16 GB RAM is recommended.
+> *   **Stay on v3.9.6:** If you do not have (and do not plan to obtain) an API key, you should remain on **version 3.9.6**, which is the final release supporting offline Tesseract OCR and MarianMT translation.
+> *   **Try Before You Buy:** Test the **FREE** version thoroughly before purchasing a PRO licence to ensure the software and models meet your expectations.
 
 ---
 
@@ -198,21 +239,13 @@ Version 4 marks a significant shift towards high-quality AI-driven workflows. As
 *   📖 **[Full User Manual](https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html)**
 *   💰 **[Get GCT PRO on Gumroad](https://tomkam17.gumroad.com/l/gct)**
 *   🌐 **[Official Website](https://tomkam1702.github.io/OCR-Translator/)**
+*   ⭐ **[Download Releases on GitHub](https://github.com/tomkam1702/OCR-Translator/releases)**
 
 ---
 
 ## 📜 Licence
 
 This project is proprietary software. The source code is provided for educational and evaluation purposes under a restrictive **End User License Agreement (EULA)**.
-
-**You may:**
-*   Use the Free Edition for personal and evaluation purposes.
-*   Review the source code for learning.
-
-**You may NOT:**
-*   Redistribute or sell the software.
-*   Modify the software to bypass PRO license checks.
-*   Use the code for commercial gain without permission.
 
 For full details, see the [LICENSE](LICENSE) file.
 

@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game-Changing Translator - Revolutionary AI-Powered Real-Time Screen Translation</title>
+    <meta name="description" content="Game-Changing Translator v4.5 – AI-powered real-time screen translation and neural voice-over with Gemini, Gemma, Qwen, DeepL, and Supertonic." />
+    <title>Game-Changing Translator - Revolutionary AI Screen Translation & Neural Voice-Over</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --blue:      #0078d7;
@@ -43,14 +47,14 @@
         .feature-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 16px; /* Wider gaps as requested */
+            gap: 16px; 
             margin: 28px 0; 
-            background: transparent; /* Transparent gaps */
+            background: transparent;
             border: none;
         }
         .feature-item { 
             padding: 24px; 
-            border-radius: 20px; /* More rounded corners */
+            border-radius: 20px; 
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border: 1px solid rgba(30, 64, 175, 0.05);
@@ -60,7 +64,7 @@
         .feature-item:hover { 
             transform: translateY(-3px);
             box-shadow: var(--shadow);
-            background: white; /* Highlight on hover */
+            background: white; 
         }
         .feature-item-icon { font-size: 1.4rem; margin-bottom: 8px; }
         .feature-item h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; line-height: 1.2; }
@@ -97,7 +101,7 @@
         .header .subtitle {
             font-size: 1.2rem;
             color: #cbd5e1;
-            max-width: 800px;
+            max-width: 840px;
             margin: 0 auto;
         }
         
@@ -125,10 +129,11 @@
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 2rem;
         }
         
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
         }
         
@@ -197,43 +202,6 @@
             color: white;
             transform: translateY(-2px);
         }
-        
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-        
-        .comparison-table th {
-            background: var(--blue);
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-        }
-        
-        .comparison-table td {
-            padding: 0.8rem 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .comparison-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-        
-        .winner {
-            background: #f0f9ff !important;
-            font-weight: 600;
-            color: var(--blue-dk);
-        }
-        
-        .comparison-table tr:nth-child(even) .winner {
-            background: #dbeafe !important;
-        }
 
         /* ── PREMIUM HIGHLIGHT ── */
         .premium-highlight { background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 28px 32px; margin: 32px 0; }
@@ -249,6 +217,11 @@
             margin: 2rem 0;
             border: 1px solid var(--border);
         }
+
+        /* ── TTS LANGUAGES GRID ── */
+        .tts-lang-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 14px; }
+        .tts-lang-item { padding: 8px 10px; border: 1px solid #bae6fd; border-radius: 6px; text-align: center; font-size: 13px; font-weight: 600; color: #0369a1; background: rgba(255,255,255,0.7); }
+        .tts-lang-item:hover { background: #e0f2fe; }
         
         @media (max-width: 768px) {
             .header h1 {
@@ -263,25 +236,30 @@
                 flex-direction: column;
                 align-items: center;
             }
+            .tts-lang-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .tts-lang-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <div class="hero-badge">🚀 World's First Multi-Model AI-OCR Game Translator</div>
+            <div class="hero-badge">🚀 World's First Multi-Model AI-OCR Game Translator with Neural Voice-Over</div>
             <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 24px; flex-wrap: wrap;">
-                <img src="docs/user_manual/app_icon_shadow.png" alt="GCT App Icon" style="width: 140px; height: auto; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));">
+                <img src="docs/user_manual/app_icon_shadow.webp" alt="GCT App Icon" style="width: 140px; height: auto; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));">
                 <h1>Game-Changing<br><span>Translator</span></h1>
             </div>
-            <p class="subtitle">Revolutionary real-time screen translation powered by <strong>Gemini &amp; Gemma</strong> models – premium quality at record-low prices</p>
+            <p class="subtitle">Next-generation real-time screen translation and offline <strong>neural voice-over</strong> powered by <strong>Gemini, Gemma, Qwen &amp; Supertonic</strong> — premium quality at record-low prices with zero voice API costs.</p>
             <p style="font-size: 0.85rem; margin-top: 1.5rem; opacity: 0.7; display: flex; align-items: center; justify-content: center; gap: 10px; color: #94a3b8;">
                 Check out my other professional tool: 
-                <a href="https://github.com/tomkam1702/OHLC-Forge"><img src="https://raw.githubusercontent.com/tomkam1702/OHLC-Forge/main/images/OHLC_Forge_Logo.png" alt="OHLC Forge Logo" style="height: 20px; width: auto; filter: grayscale(1) brightness(2);"></a>
+                <a href="https://github.com/tomkam1702/OHLC-Forge"><img src="assets/OHLC_Forge_Logo_small.png" alt="OHLC Forge Logo" style="height: 20px; width: auto; filter: grayscale(1) brightness(2);"></a>
                 <a href="https://github.com/tomkam1702/OHLC-Forge" style="color: #60a5fa; text-decoration: underline; font-weight: 600;">OHLC Forge (Crypto Data Tool)</a>
             </p>
         </header>
 
+        <!-- FEATURE GRID -->
         <div class="feature-grid">
             <div class="feature-item" style="grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 20px; padding: 24px 32px;">
                 <div class="feature-item-icon" style="font-size: 2.2rem; margin-bottom: 0;">🕹️</div>
@@ -290,86 +268,109 @@
                     <p style="font-size: 14px; max-width: none; color: var(--navy); line-height: 1.6;">✨ The defining feature of version 4 ✨<br><strong>Simple mode</strong> is designed for immediate operation – just pick your languages, position your overlays, and start translating.<br><strong>Custom mode</strong> provides granular control over every aspect of the tool, allowing power users to fine-tune quality, performance, and cost.</p>
                 </div>
             </div>
+
+            <!-- FEATURE: NEURAL VOICE-OVER (TTS) -->
+            <div class="feature-item" style="border: 2px solid #38bdf8; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+                <div class="feature-item-icon">🎙️</div>
+                <h4>Neural Voice-Over (TTS) <span class="badge-group"><span class="badge badge-premium">PRO</span> <span class="badge badge-new">New v4.5</span></span></h4>
+                <p>Real-time neural speech synthesis in 31 languages. Listen to translated dialogue, read original subtitles without translation, or combine voice with floating overlays — 100% offline with zero API costs.</p>
+            </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">🤖</div>
-                <h4>AI-Powered OCR (Gemini &amp; Gemma) <span class="badge badge-free">Free</span></h4>
-                <p>Industry-first AI text recognition. Use <strong>Gemini</strong> for ultimate precision or <strong>Gemma 4 (DeepInfra)</strong> for <strong>4x lower cost</strong> (~$0.16/hour) while maintaining near-perfect accuracy.</p>
+                <h4>AI-Powered OCR (Gemini, Gemma &amp; Qwen) <span class="badge badge-free">Free</span></h4>
+                <p>Industry-first AI text recognition. Use <strong>Gemini</strong> for high accuracy, budget-friendly <strong>Gemma 4</strong> (~$0.16/hour), or state-of-the-art <strong>Qwen3-VL-30B</strong> for elite accuracy on Asian scripts.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">🌍</div>
                 <h4>AI Translation (Gemini &amp; Gemma) <span class="badge badge-free">Free</span></h4>
-                <p>Multiple models for top-quality, context-aware translation in 100+ languages. Choose <strong>Gemini 3 Flash</strong> for best results, or <strong>Gemma 4 (DeepInfra)</strong> for a fast, cost-effective alternative.</p>
+                <p>Context-aware translation in 100+ languages. Choose our recommended <strong>Gemini 3 Flash</strong> for best value and natural phrasing, or <strong>Gemma 4</strong> for maximum cost savings.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">🎯</div>
                 <h4>DeepL Translation <span class="badge badge-premium">PRO</span></h4>
-                <p>High-quality, context-aware translation for over 100 languages. Delivers elite precision for Japanese, Chinese, and European scripts, as well as minority languages such as Welsh, Icelandic, Maori, and Burmese. Context subtitles are provided free and don't count towards your quota.</p>
+                <p>High-quality, context-aware translation for over 100 languages. Delivers elite precision for Japanese, Chinese, and European scripts. Context subtitles are provided free and don't count towards your quota.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">🧠</div>
                 <h4>Sliding Context Window <span class="badge badge-free">Free</span></h4>
                 <p>Send up to 5 previous subtitles with every request. Maintains character names, grammatical flow, and narrative coherence across dialogue.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">📊</div>
                 <h4>Cost Monitoring <span class="badge badge-free">Free</span></h4>
-                <p>Real-time token-level analytics: cost per call, per minute, and cumulative cost for <strong>Google</strong>, <strong>DeepInfra</strong> and <strong>DeepL</strong> APIs tracked simultaneously.</p>
+                <p>Real-time token-level analytics: cost per call, per minute, and cumulative cost for <strong>Google</strong>, <strong>DeepInfra</strong>, and <strong>DeepL</strong> APIs tracked simultaneously.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">⚡</div>
                 <h4>Two-Tier Caching <span class="badge badge-free">Free</span></h4>
                 <p>In-memory LRU cache + optional file cache. Repeated phrases cost zero API credits – retrieved instantly from the disk.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">🔍</div>
                 <h4>Find Subtitles <span class="badge badge-premium">PRO</span> <span class="badge badge-new">New v4</span></h4>
                 <p>Automatically scans the full screen for a set period to detect where subtitles appear, then locks the capture area.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">↔️</div>
                 <h4>Scan Wider <span class="badge-group"><span class="badge badge-premium">PRO</span> <span class="badge badge-new">New v4</span></span></h4>
                 <p>Dynamically expands the OCR capture area to prevent edge-of-frame word truncation and AI hallucinations from tight crops.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">🪟</div>
                 <h4>Target on Source <span class="badge-group"><span class="badge badge-premium">PRO</span> <span class="badge badge-new">New v4</span></span></h4>
                 <p>Automatically overlays the translation directly onto the original subtitle area for seamless, immersive reading.<br><em>Even with this option disabled, a PRO user can drag the target window manually over the subtitles.</em></p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">📝</div>
                 <h4>Translation Prompt <span class="badge badge-free">Free</span></h4>
                 <p>Inject a custom instruction into every translation request. Define the tone, style, or game-specific context to ensure consistent character names and immersive dialogue.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">✍️</div>
                 <h4>OCR Prompt <span class="badge-group"><span class="badge badge-premium">PRO</span> <span class="badge badge-new">New v4</span></span></h4>
                 <p>Inject a custom instruction into every AI OCR call – ignore HUD elements, strip speaker names, focus on dialogue only.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">🖥️</div>
                 <h4>New Redesigned GUI <span class="badge badge-new">New v4</span></h4>
-                <p>Fully redesigned interface with Simple and Custom modes. Clean, responsive, and self-contained. Built-in High-DPI scaling ensures a perfectly crisp and consistent interface across all screen resolutions.</p>
+                <p>Fully redesigned interface with Simple and Custom modes. Clean, responsive, and self-contained. Built-in High-DPI scaling ensures a crisp interface across all screen resolutions.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">🔡</div>
                 <h4>Native RTL Support <span class="badge badge-free">Free</span></h4>
-                <p>The advanced native RTL engine powered by PySide6. Flawless character shaping, cursive joining, and bidirectional rendering for Arabic, Hebrew, Pashto, and Persian. Punctuation and numbering are handled with pixel-perfect accuracy.</p>
+                <p>The advanced native RTL engine powered by PySide6. Flawless character shaping, cursive joining, and bidirectional rendering for Arabic, Hebrew, Pashto, and Persian.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">📜</div>
                 <h4>Translation API Logs <span class="badge badge-free">Free</span></h4>
-                <p>Unparalleled transparency with dual-layer logging. Short logs provide a quick overview of costs, while Long logs capture the entire API exchange – including system prompts, context subtitles, and raw model responses.</p>
+                <p>Unparalleled transparency with dual-layer logging. Short logs provide a quick overview of costs, while Long logs capture the entire API exchange – including system prompts and raw responses.</p>
             </div>
+
             <div class="feature-item">
                 <div class="feature-item-icon">🖼️</div>
                 <h4>OCR API Logs <span class="badge badge-free">Free</span></h4>
-                <p>Comprehensive audit trail for every vision-based request. Track image metadata, token efficiency, and model latencies for both Gemini and Gemma pipelines.</p>
+                <p>Comprehensive audit trail for every vision-based request. Track image metadata, token efficiency, and model latencies for both Gemini and Gemma/Qwen pipelines.</p>
             </div>
         </div>
 
+        <!-- BEST VALUE CALLOUT -->
         <div class="premium-highlight" id="best-value" style="background: #f0fdf4; border-color: #bbf7d0; margin-top: 32px;">
             <h3 style="color: #166534;">💡 Pro Tip: Best Value for Money</h3>
-            <p style="color: #166534; font-size: 14px; margin-bottom: 20px;">For the optimal balance of quality and cost, we recommend using <strong>Gemini 3 Flash</strong> or <strong>Gemini 3.1 Flash-Lite</strong> for translation and <strong>Gemma 4</strong> for OCR. Since OCR is the primary cost driver (5-6x more expensive than translation), switching to Gemma for screen scanning reduces your total hourly cost by approximately <strong>3 times</strong>.</p>
+            <p style="color: #166534; font-size: 14px; margin-bottom: 20px;">For the optimal balance of quality and cost, we recommend using <strong>Gemini 3 Flash</strong> for translation and <strong>Gemma 4</strong> for OCR. Since OCR is the primary cost driver (5-6x more expensive than translation), switching to Gemma for screen scanning reduces your total hourly cost by approximately <strong>3 times</strong>.</p>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
               <div style="background: rgba(255,255,255,0.7); padding: 16px; border-radius: 8px; border: 1px solid rgba(22,101,52,0.1);">
                 <strong style="color: #166534; display: block; margin-bottom: 8px;">Recommended (Best Value)</strong>
@@ -389,53 +390,107 @@
               </div>
             </div>
             <p style="color: #166534; font-size: 12px; margin-top: 20px; opacity: 0.8; line-height: 1.4;">
-              <strong>Disclaimer:</strong> Costs are estimates based on a 750ms Scan Interval and are provided for illustrative purposes only. Actual costs depend on screen content, token density, and current API pricing. <strong>You are solely responsible for monitoring and managing your own API usage and billing through your official Google or DeepInfra provider accounts.</strong>
+              <strong>Disclaimer:</strong> Costs are estimates based on a 750ms Scan Interval and are provided for illustrative purposes only. Actual costs depend on screen content, token density, and current API pricing.
             </p>
         </div>
 
-        <div class="premium-highlight" style="background: #f0f9ff; border-color: #bae6fd; margin-top: 16px;">
-            <h3 style="color: #0369a1;">💰 Model Pricing Comparison (per 1M tokens)</h3>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; color: #0369a1; background: rgba(255,255,255,0.4); border-radius: 8px;">
-              <thead>
-                <tr style="border-bottom: 2px solid #bae6fd; text-align: left;">
-                  <th style="padding: 10px;">Model Provider / Name</th>
-                  <th style="padding: 10px;">Input (Image / Text)</th>
-                  <th style="padding: 10px;">Output (OCR / Translation)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style="border-bottom: 1px solid #bae6fd;">
-                  <td style="padding: 10px;"><strong>Gemma 4 26B A4B (DeepInfra)</strong></td>
-                  <td style="padding: 10px;">$0.07</td>
-                  <td style="padding: 10px;">$0.34</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #bae6fd;">
-                  <td style="padding: 10px;"><strong>Gemini 3.1 Flash-Lite (Google)</strong></td>
-                  <td style="padding: 10px;">$0.25</td>
-                  <td style="padding: 10px;">$1.50</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px;"><strong>Gemini 3 Flash (Google)</strong></td>
-                  <td style="padding: 10px;">$0.50</td>
-                  <td style="padding: 10px;">$3.00</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div style="margin-top: 16px; padding: 14px; background: rgba(255,255,255,0.6); border-radius: 8px; border: 1px dashed #bae6fd;">
-              <p style="margin: 0; font-size: 13px; color: #0369a1; line-height: 1.5;">
-                <strong>⚠️ Note on OCR Resolution (LOW vs MEDIUM):</strong><br>
-                Although the price per token is identical, the <strong>MEDIUM</strong> resolution setting captures more pixels and sends a larger data payload per image compared to <strong>LOW</strong>. Consequently, each screenshot in MEDIUM mode consumes more tokens, resulting in higher actual hourly expenses. Stick to LOW resolution unless you encounter extremely complex or tiny fonts.
-              </p>
+        <!-- NEW SECTION: NEURAL VOICE-OVER (TTS) IN ACTION -->
+        <div class="card" style="border-left: 4px solid #0284c7; background: #ffffff;">
+            <h2><span class="icon">🎙️</span>Neural Voice-Over (TTS) in Action – Game Demonstrations</h2>
+            <p style="color: var(--slate); font-size: 14px;">Experience real-time AI speech synthesis directly synced with cinematic in-game dialogue. Powered by the offline <strong>Supertonic 3</strong> neural engine with <strong>zero voice API costs</strong>:</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
+                <!-- FF16 Video Embed -->
+                <div style="text-align: center;">
+                    <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.25);">
+                        <iframe 
+                            src="https://www.youtube.com/embed/qzKY3d8DEoQ" 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                            allowfullscreen
+                            title="Final Fantasy XVI Real-Time Neural Voice-Over Demo">
+                        </iframe>
+                    </div>
+                    <p style="font-weight: 700; color: #0369a1; margin-top: 0.8rem; font-size: 15px;">🗡️ <strong>Final Fantasy XVI</strong></p>
+                    <p style="font-size: 0.9rem; color: #64748b; margin-top: 0.2rem;">Real-Time Neural Voice-Over in fast-paced cinematic action</p>
+                </div>
+                
+                <!-- SWTOR Video Embed -->
+                <div style="text-align: center;">
+                    <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.25);">
+                        <iframe 
+                            src="https://www.youtube.com/embed/011Evjv-Rys" 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                            allowfullscreen
+                            title="Star Wars: The Old Republic Real-Time Neural Voice-Over Demo">
+                        </iframe>
+                    </div>
+                    <p style="font-weight: 700; color: #0369a1; margin-top: 0.8rem; font-size: 15px;">🌌 <strong>Star Wars: The Old Republic</strong></p>
+                    <p style="font-size: 0.9rem; color: #64748b; margin-top: 0.2rem;">Voice-Over + Subtitles synchronized dialogue</p>
+                </div>
             </div>
 
-            <p style="color: #0369a1; font-size: 11px; margin-top: 12px; opacity: 0.7; text-align: right; font-style: italic;">
-              *Pricing data verified as of May 2026.
-            </p>
+            <!-- KEY ADVANTAGES CALLOUT -->
+            <div style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
+                <h3 style="color: #0369a1; margin-bottom: 1rem; font-size: 1.1rem;">⚡ Why Voice-Over (TTS) in Game-Changing Translator?</h3>
+                <ul style="list-style: none; margin: 0; padding: 0;">
+                    <li style="margin: 0.6rem 0; padding-left: 1.6rem; position: relative; font-size: 14px;">
+                        <span style="position: absolute; left: 0;">🎧</span>
+                        <strong>4 Flexible Output Modes:</strong> Choose <em>Voice-over only</em> (pure sound immersion with zero subtitle clutter), <em>Voice-over and subtitles</em>, <em>Subtitles only</em>, or <em>Read original subtitles</em> (listen in source language with <strong>zero translation API cost</strong>).
+                    </li>
+                    <li style="margin: 0.6rem 0; padding-left: 1.6rem; position: relative; font-size: 14px;">
+                        <span style="position: absolute; left: 0;">⚡</span>
+                        <strong>Optimised for Voice-Over Mode:</strong> A dedicated translation engine that produces punchy, concise, idiomatic sentences to minimize speech duration and eliminate audio lag.
+                    </li>
+                    <li style="margin: 0.6rem 0; padding-left: 1.6rem; position: relative; font-size: 14px;">
+                        <span style="position: absolute; left: 0;">💻</span>
+                        <strong>100% Offline Neural Model:</strong> Runs on your local hardware using Supertonic 3 with zero per-word API fees.
+                    </li>
+                    <li style="margin: 0.6rem 0; padding-left: 1.6rem; position: relative; font-size: 14px;">
+                        <span style="position: absolute; left: 0;">👑</span>
+                        <strong>Free 3-Minute Trial on Every Launch:</strong> All users can test all 10 voices and modes for 3 minutes on every startup. PRO licence unlocks unlimited usage.
+                    </li>
+                </ul>
+
+                <h4 style="color: #0369a1; margin-top: 1.2rem; margin-bottom: 0.4rem; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">Supported 31 Languages:</h4>
+                <div class="tts-lang-grid">
+                    <div class="tts-lang-item">English</div>
+                    <div class="tts-lang-item">Arabic</div>
+                    <div class="tts-lang-item">Bulgarian</div>
+                    <div class="tts-lang-item">Croatian</div>
+                    <div class="tts-lang-item">Czech</div>
+                    <div class="tts-lang-item">Danish</div>
+                    <div class="tts-lang-item">Dutch</div>
+                    <div class="tts-lang-item">Estonian</div>
+                    <div class="tts-lang-item">Finnish</div>
+                    <div class="tts-lang-item">French</div>
+                    <div class="tts-lang-item">German</div>
+                    <div class="tts-lang-item">Greek</div>
+                    <div class="tts-lang-item">Hindi</div>
+                    <div class="tts-lang-item">Hungarian</div>
+                    <div class="tts-lang-item">Indonesian</div>
+                    <div class="tts-lang-item">Italian</div>
+                    <div class="tts-lang-item">Japanese</div>
+                    <div class="tts-lang-item">Korean</div>
+                    <div class="tts-lang-item">Latvian</div>
+                    <div class="tts-lang-item">Lithuanian</div>
+                    <div class="tts-lang-item">Polish</div>
+                    <div class="tts-lang-item">Portuguese</div>
+                    <div class="tts-lang-item">Romanian</div>
+                    <div class="tts-lang-item">Russian</div>
+                    <div class="tts-lang-item">Slovak</div>
+                    <div class="tts-lang-item">Slovenian</div>
+                    <div class="tts-lang-item">Spanish</div>
+                    <div class="tts-lang-item">Swedish</div>
+                    <div class="tts-lang-item">Turkish</div>
+                    <div class="tts-lang-item">Ukrainian</div>
+                    <div class="tts-lang-item">Vietnamese</div>
+                </div>
+            </div>
         </div>
 
+        <!-- SUBTITLE TRANSLATION DEMONSTRATIONS -->
         <div class="card">
-            <h2><span class="icon">🎬</span>Watch It In Action - Game Demonstrations</h2>
+            <h2><span class="icon">🎬</span>Real-Time Screen Translation Demonstrations</h2>
             
             <!-- Main Featured Video -->
             <div style="text-align: center; margin: 1.5rem 0;">
@@ -478,37 +533,11 @@
                     <p style="font-size: 0.9rem; color: #666; margin-top: 0.2rem;">French to English Translation</p>
                 </div>
             </div>
-
-            <div style="background: #f0f8ff; padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
-                <h3 style="color: #1e40af; margin-bottom: 1rem; text-align: center;">🚀 What These Demos Showcase:</h3>
-                <ul style="list-style: none; margin: 0; padding: 0;">
-                    <li style="margin: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-                        <span style="position: absolute; left: 0;">✨</span>
-                        <strong>Advanced Multi-Model AI OCR</strong> (Gemini &amp; Gemma) handling complex backgrounds and stylised fonts that break traditional OCR engines
-                    </li>
-                    <li style="margin: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-                        <span style="position: absolute; left: 0;">🧠</span>
-                        <strong>Context-aware translation</strong> maintaining narrative coherence across different game dialogues
-                    </li>
-                    <li style="margin: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-                        <span style="position: absolute; left: 0;">⚡</span>
-                        <strong>Real-time performance</strong> with floating overlays that work seamlessly over any game interface
-                    </li>
-                    <li style="margin: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-                        <span style="position: absolute; left: 0;">🎯</span>
-                        <strong>Superior accuracy</strong> where competitors fail on challenging subtitle scenarios
-                    </li>
-                    <li style="margin: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-                        <span style="position: absolute; left: 0;">🌍</span>
-                        <strong>Multi-language support</strong> demonstrating various language pairs in gaming contexts
-                    </li>
-                </ul>
-            </div>
         </div>
 
         <div class="cta-section">
-            <h2>🎮 Perfect for Gamers & Language Learners</h2>
-            <p>Whether you're playing games with foreign subtitles, learning languages through entertainment, or translating any screen content - our revolutionary AI OCR delivers accuracy that traditional tools can't match.</p>
+            <h2>🎮 Perfect for Gamers, Movie Lovers &amp; Language Learners</h2>
+            <p>Whether you're playing games with foreign subtitles, learning languages through entertainment, or listening to seamless AI voice-over - our revolutionary tool delivers an unmatched experience.</p>
             
             <div class="cta-buttons">
                 <a href="https://github.com/tomkam1702/OCR-Translator/releases" class="btn btn-primary">
@@ -520,21 +549,22 @@
                 <a href="https://github.com/tomkam1702/OCR-Translator" class="btn btn-secondary">
                     ⭐ Star on GitHub
                 </a>
-                <a href="https://github.com/tomkam1702/OCR-Translator" class="btn btn-secondary">
-                    👁️ View on GitHub
+                <a href="https://tomkam17.gumroad.com/l/gct" class="btn btn-secondary">
+                    👑 Get GCT PRO
                 </a>
             </div>
         </div>
 
-        <div class="card" style="margin-top: 2rem;">
+        <div class="card">
             <h2><span class="icon">⚙️</span>System Requirements</h2>
             <p><strong>Minimal Requirements:</strong></p>
-            <ul class="feature-list">
-                <li>Windows 10/11 (any edition)</li>
-		<li>A valid API key from <strong>Google</strong> or <strong>DeepInfra</strong></li>
-                <li>No CUDA/GPU requirements</li>
+            <ul style="padding-left: 20px; color: var(--slate); font-size: 14px; margin-top: 8px;">
+                <li>Windows 10/11 (64-bit)</li>
+                <li>A valid API key from <strong>Google</strong> (AI Studio) or <strong>DeepInfra</strong></li>
+                <li>Modern CPU with <strong>AVX2 support</strong> (standard for CPUs since 2016) and <strong>16 GB RAM</strong> recommended for local Neural Voice-Over</li>
+                <li>No dedicated GPU/CUDA required – runs efficiently on CPU</li>
             </ul>
-            <p style="margin-top: 1rem;"><strong>Quick Start:</strong> Download → Install → Select areas → Start translating!</p>
+            <p style="margin-top: 1rem; font-size: 14px;"><strong>Quick Start:</strong> Download → Select areas → Pick languages → Start translating &amp; listening!</p>
         </div>
 
         <footer class="footer">
