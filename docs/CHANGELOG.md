@@ -5,6 +5,25 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.1] - 2026-08-22
+
+### Added
+- **Full / Lite update packages**: If Supertonic TTS neural models are already installed locally, the app automatically downloads the smaller Lite installer (~50 MB instead of ~410 MB) and safely preserves the existing models with validation and rollback.
+- **Disaster-Recovery Backups (`%APPDATA%`)**: Automatic timestamped snapshots of user data (`ocr_translator_config.ini`, `licence_data.json`, all `.ctp`/`.cop` prompt profiles) stored in `%APPDATA%\GameChangingTranslator\backups\`. Snapshots are created strictly on application exit and before every update. Chronological FIFO rotation keeps the 5 newest snapshots (with golden licence protection and content deduplication).
+- **MASTER Anchor Vault (`MASTER/`)**: Permanent storage for your PRO licence and API keys only; during restore, missing licence or API keys are automatically fused into the restored settings from MASTER.
+- **Restore Settings/Licence from Backup (About tab)**: One-click restore of settings, PRO licence, and prompt profiles from the `%APPDATA%` backup store. The app automatically restarts after restoring so the restored state (including PRO status) is fully applied without risking settings overwrite.
+- **PRO Licence Grace Period (offline)**: If online licence verification fails due to a connection problem (no internet or a firewall blocking the newly updated exe), PRO remains active for up to 7 days since the last successful online verification (tracked via `last_online_verified_at` in `licence_data.json`).
+- **Tolerant Machine-ID Matching**: Licence verification now accepts any valid local machine identifier (SMBIOS UUID via PowerShell, WMIC fallback, or hostname composite). A temporarily unavailable detection method no longer triggers a false "licence is for a different computer" error.
+
+### Fixed
+- **Settings silently reset after update**: Fixed a critical bug where a settings file edited in Windows Notepad (UTF-8 BOM) — or containing a `%` character in any value — was replaced with defaults on the first launch after an update. The file is now read with BOM support and without interpolation, and the original is preserved as `.bak` / `.corrupted.bak` before any rewrite.
+- **Configuration path consistency**: `load_app_config()` and `save_app_config()` now use the same absolute path in the application folder, independent of the working directory.
+- **Update process safety**:
+  - Downloaded installers are verified against the expected size — truncated downloads are rejected before anything is modified.
+  - Failed updates now roll back completely, including restoring the launcher executable.
+  - Custom prompt profiles (`.ctp`/`.cop`) are explicitly preserved during updates.
+  - The update batch no longer risks terminating unrelated processes (PID-reuse protection).
+
 ## [4.5.0] - 2026-08-18
 
 ### Added

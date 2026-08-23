@@ -180,7 +180,7 @@
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-badge">📖 User Manual · v4.5.0</div>
+  <div class="hero-badge">📖 User Manual · v4.5.1</div>
   <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 24px;">
     <img src="user_manual/app_icon_shadow.webp" alt="GCT App Icon" style="width: 130px; height: auto; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));">
     <h1 style="text-align: left; margin-bottom: 0;">Game-Changing<br><span>Translator</span></h1>
@@ -189,7 +189,7 @@
   for game and movie subtitles.<br>
   AI-based OCR (Gemini, Gemma, Qwen) and context-aware engines,<br>
   providing high-quality translation in over 100 languages.</p>
-  <div class="hero-meta">Copyright © 2025–2026 Tomasz Kamiński &nbsp;·&nbsp; Released 18 August 2026 &nbsp;·&nbsp; Built with ❤️ for gamers and language learners</div>
+  <div class="hero-meta">Copyright © 2025–2026 Tomasz Kamiński &nbsp;·&nbsp; Released 22 August 2026 &nbsp;·&nbsp; Built with ❤️ for gamers and language learners</div>
 </div>
 
 <!-- WHY GAME-CHANGING TRANSLATOR -->
@@ -1189,7 +1189,21 @@
         <div class="callout-num">2</div>
         <div class="callout-body">
           <strong>Check for Updates</strong>
-          <p>Queries the GitHub API for the latest release. If a newer version is available, it is downloaded to a staging directory and applied automatically.</p>
+          <p>Queries the GitHub API for the latest release. If a newer version is available, it is downloaded (with size verification - truncated downloads are rejected) to a staging directory and applied automatically. If the TTS models are already installed locally, the application downloads the smaller <b>Lite</b> package (without models) and preserves your existing models automatically. Otherwise the full package is used. Your settings, PRO licence and prompt profiles are always preserved during the update; if anything goes wrong, the previous version is rolled back automatically.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="callout-num">3</div>
+        <div class="callout-body">
+          <strong>Restore Settings/Licence from Backup</strong>
+          <p>One click restores your settings, PRO licence and prompt profiles from the automatic backup store (<code>%APPDATA%\GameChangingTranslator\backups\</code>). Missing licence files or API keys are automatically recovered and merged from the permanent <code>MASTER</code> anchor vault. The application restarts automatically after restoring, so the licence and all settings are applied in a fully consistent state.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="callout-num">4</div>
+        <div class="callout-body">
+          <strong>Automatic Data Backups</strong>
+          <p>Your settings (<code>ocr_translator_config.ini</code>), PRO licence (<code>licence_data.json</code>) and prompt profiles (<code>*.ctp</code> / <code>*.cop</code>) are automatically backed up to <code>%APPDATA%\GameChangingTranslator\backups\</code> on application exit and before every update — with a dedicated <code>MASTER</code> anchor folder guarding your licence and API keys — so your data survives even a manual reinstall into a new folder.</p>
         </div>
       </div>
       <div class="callout premium">
@@ -1205,7 +1219,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <p>Game-Changing Translator v4.5.0 &nbsp;·&nbsp; Copyright © 2025–2026 <a href="https://github.com/tomkam1702/OCR-Translator">Tomasz Kamiński</a></p>
+  <p>Game-Changing Translator v4.5.1 &nbsp;·&nbsp; Copyright © 2025–2026 <a href="https://github.com/tomkam1702/OCR-Translator">Tomasz Kamiński</a></p>
   <p style="margin-top:8px;">AI-powered real-time screen translation · Gemini, Gemma &amp; Qwen OCR · Gemini, Gemma &amp; DeepL Translation · Supertonic Neural Voice-Over</p>
 </footer>
 
