@@ -24,8 +24,8 @@ Whether you're exploring the cinematic world of *The Witcher*, playing Japanese 
 > 👑 **PRO tier:** Unlocks unlimited, continuous voice-over.
 
 > [!TIP]
-> ### ⚡ Near-Gemini Quality @ 4x Lower Cost!
-> Support for **Gemma 4 (DeepInfra)** and **Qwen3-VL-30B** provides lightning-fast OCR and near-Gemini precision for a fraction of the price (~$0.16/hour for OCR).
+> ### ⚡ Latest Google Frontier Models in v4.5.2!
+> Version **4.5.2** now fully supports Google's latest models — **Gemini 3.7 Flash** and **Gemini 3.8 Flash** — for translation, configured for lightning-fast responses with minimal latency.
 > 
 > 💡 **PRO TIP:** Combine Gemini (Translation) + Gemma (OCR) for the ultimate 3x cost reduction!  
 > 👉 [Read the **Best Value for Money** guide in the manual](https://tomkam1702.github.io/OCR-Translator/docs/user-manual.html#best-value)

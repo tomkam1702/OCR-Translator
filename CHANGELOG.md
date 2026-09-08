@@ -5,6 +5,16 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.2] - 2026-09-08
+
+### Added
+- **Gemini 3.7 Flash & Gemini 3.8 Flash Translation Support**: Added full support for Google's frontier models (`gemini-3.7-flash` and `gemini-3.8-flash`) as translation engines:
+  - Configured with `thinking_level="low"` to ensure rapid real-time subtitle translation and low latency while preventing `400 INVALID_ARGUMENT` errors (resolving the deprecation of the `MINIMAL` thinking level).
+  - Automatically omitted deprecated sampling parameters (`temperature`, `top_p`, `top_k`) for Gemini 3.7+ models.
+
+### Changed
+- **Context-Aware Demo Announcement Language**: In the Free trial tier, demo start and expiration announcements now dynamically match the active mode's language — spoken in the native source language when using **Read Original Subtitles (No Translation)**, and in the target language when using translation modes (**Voice-Over Only** or **Voice-Over and Subtitles**).
+
 ## [4.5.1] - 2026-08-22
 
 ### Added
