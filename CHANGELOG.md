@@ -5,6 +5,17 @@ All notable changes to the Game-Changing Translator project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.3] - 2026-10-08
+
+### Changed
+- **Gemini API Parameter Compliance (Google deprecation)**: Removed all deprecated generation parameters from Gemini requests to prevent future `400 INVALID_ARGUMENT` errors:
+  - Removed `temperature`, `top_p`, and `top_k` from every Gemini translation and OCR configuration, including the default Gemini 3.0–3.1 path.
+  - Removed legacy `thinking_budget`; Gemini 3.x requests now use `thinking_level` only (`minimal` for 3.1/3.5/3.6, `low` for 3.7/3.8).
+  - The generic default configuration now sends no sampling or thinking parameters and relies on model defaults.
+
+### Fixed
+- **Gemini SDK declaration**: `requirements.txt` and `setup.py` now declare the SDK actually used by the code (`google-genai>=2.0.0`) instead of the unused legacy `google-generativeai`. Fresh installs via `install_dependencies.bat` now install the correct Gemini SDK.
+
 ## [4.5.2] - 2026-09-08
 
 ### Added
